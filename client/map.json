@@ -1,0 +1,26 @@
+{
+	//节点信息
+	nodes : {
+		//根节点
+		root : {
+			//父节点列表
+			parents : [],
+			//子节点列表
+			children : [],
+			//内容（文字）
+			content : '',
+			//位置信息
+			offset : {
+				x : 10,
+				y : 10
+			},
+			//样式信息
+			style : 'root'
+		},
+		//其他节点
+		nodeOne : {},
+		nodeTwo : {}
+	},
+	//map配置信息
+	config : {}
+}

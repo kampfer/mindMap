@@ -1,0 +1,30 @@
+/*
+YUI 2: Reset CSS
+Copyright (c) 2011, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 2.9.0
+*/
+html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,select,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,button,caption,cite,code,dfn,em,input,optgroup,option,select,strong,textarea,th,var{font:inherit}del,ins{text-decoration:none}li{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:baseline}sub{vertical-align:baseline}legend{color:#000}
+
+div.node {
+    position: absolute;    
+}
+
+div.node-caption {
+    position: absolute;
+    width:200px;
+    background-color: #CCDDEE;
+    border-color: #8BA2C0 #5890BF #4F93CA #768FA5;
+    border-radius: 16px 16px 16px 16px;
+    border-style: solid;
+    border-width: 2px;
+    color: #FFFFFF;
+    font: 12px/1.5 "Tahoma", Geneva, sans-serif;
+    padding:10px;
+    text-shadow: 1px 2px 2px rgba(10, 10, 10, 0.5);
+    z-index: 99;
+    text-align: center;
+}
+
+div.node canvas{position:absolute;}

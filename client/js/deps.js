@@ -1,0 +1,11 @@
+kampfer.addDependency('lib/ui/layer.js', ['ui.Layer'], ['dom','Class']);
+kampfer.addDependency('lib/dom.js', [], []);
+kampfer.addDependency('lib/json2.js', ['JSON'], []);
+kampfer.addDependency('lib/style.js', ['style'], []);
+kampfer.addDependency('lib/class.js', ['Class'], []);
+kampfer.addDependency('mapController.js', ['mindMap.MapController'], ['Class','mindMap.Map','mindMap.nodeController']);
+kampfer.addDependency('app.js', ['app'], []);
+kampfer.addDependency('nodeController.js', ['mindMap.NodeController'], ['Class']);
+kampfer.addDependency('map.js', ['mindMap.Map'], ['Class','JSON']);
+kampfer.addDependency('config.js', ['mindMap','mindMap.config'], []);
+kampfer.addDependency('base.js', [], []);
