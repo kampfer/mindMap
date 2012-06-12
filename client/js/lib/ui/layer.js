@@ -9,9 +9,7 @@ kampfer.provide('ui.Layer');
 kampfer.ui.Layer = kampfer.Class.extend({
 	
 	init : function(opts) {
-		//this.left = 0;
-		//this.top = 0;
-		//this.rendered = false;
+
 		this.isVisible = false;
 		
 		this.opts = kampfer.extend({}, {
@@ -36,9 +34,6 @@ kampfer.ui.Layer = kampfer.Class.extend({
 	resizeBg : function() {
 		var doc = kampfer.global.document;
 		
-		if(this.bgIframe) {
-			this.bgIframe.style.display = 'none';
-		}
 		if(this.bgDiv) {
 			this.bgDiv.style.display = 'none';
 		}
@@ -46,10 +41,6 @@ kampfer.ui.Layer = kampfer.Class.extend({
 		var w = Math.max(doc.body.scrollWidth, doc.documentElement.clientWidth),	
 			h = Math.max(doc.body.scrollHeight, doc.documentElement.clientHeight);
 		
-		if(this.bgIframe) {
-			this.bgIframe.width = w;
-			this.bgIframe.height = h;
-		}
 		if(this.bgDiv) {
 			this.bgDiv.style.width = w + 'px';
 			this.bgDiv.style.height = h + 'px';
@@ -58,10 +49,8 @@ kampfer.ui.Layer = kampfer.Class.extend({
 	
 	destory : function() {
 		var docBody = kampfer.global.document.body;
-		docBody.removeChild(this.bgIframe);
 		docBody.removeChild(this.bgDiv);
 		docBody.removeChild(this.element);
-		this.bgIframe = null;
 		this.bgDiv = null;
 		this.element = null;
 	},
@@ -71,7 +60,6 @@ kampfer.ui.Layer = kampfer.Class.extend({
 		this.createDiv();
 		this.createBgDiv();
 		this.createBgIframe();
-		docBody.appendChild(this.bgIframe);
 		docBody.appendChild(this.bgDiv);
 		docBody.appendChild(this.element);
 		this.resizeBg();
@@ -98,9 +86,11 @@ kampfer.ui.Layer = kampfer.Class.extend({
 	},
 	
 	show : function() {
-		if(this.bgIframe) {
-			this.bgIframe.style.display = '';
+		
+		if( !kampfer.event.trigger(this, 'beforeshow') ) {
+			return;
 		}
+		
 		if(this.bgDiv) {
 			this.bgDiv.style.display = '';
 		}
@@ -108,12 +98,17 @@ kampfer.ui.Layer = kampfer.Class.extend({
 			this.element.style.display = '';
 		}
 		this.isVisible = true;
+		
+		kampfer.event.trigger(this, 'show');
+	
 	},
 	
 	hide : function() {
-		if(this.bgIframe) {
-			this.bgIframe.style.display = 'none';
+		
+		if( !kampfer.event.trigger(this, 'beforehide') ) {
+			return;
 		}
+		
 		if(this.bgDiv) {
 			this.bgDiv.style.display = 'none';
 		}
@@ -121,6 +116,9 @@ kampfer.ui.Layer = kampfer.Class.extend({
 			this.element.style.display = 'none';
 		}
 		this.isVisible = false;
+		
+		kampfer.event.trigger(this, 'hide');
+		
 	}
 	
 });
