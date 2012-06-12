@@ -1,46 +1,36 @@
 /*global kampfer*/
-kampfer.require('dom');
 kampfer.require('Class');
+kampfer.require('dom');
+kampfer.require('style');
+kampfer.require('event');
 
 kampfer.provide('ui.Layer');
 
 kampfer.ui.Layer = kampfer.Class.extend({
 	
 	init : function(opts) {
-		//this.width = width;
-		//this.height = height;
-		this.left = 0;
-		this.top = 0;
-		this.rendered = false;
+		//this.left = 0;
+		//this.top = 0;
+		//this.rendered = false;
 		this.isVisible = false;
+		
 		this.opts = kampfer.extend({}, {
 			css : 'kampfer-layer',
 			cssBg : 'kampfer-layer-bg'
 		}, opts);
+		
 	},
 	
-	createDiv : function() {
-		var div = this.element = kampfer.global.document.createElement('div');
-		div.style.display = 'none';
-		div.style.position = 'absolute';
+	createContainer : function() {
+		var div = this.element = kampfer.dom.create('div');
+		kampfer.style.setStyle(div, 'display', 'none');
 		kampfer.dom.addClass(div, this.opts.css);
 	},
 	
-	createBgDiv : function() {
-		var div = this.bgDiv = kampfer.global.document.createElement('div');
-		div.style.display = 'none';
-		div.style.position = 'absolute';
+	createBg : function() {
+		var div = this.bgDiv = kampfer.dom.create('div');
+		kampfer.style.setStyle(div, 'display', 'none');
 		kampfer.dom.addClass(div, this.opts.cssBg);
-	},
-	
-	createBgIframe : function() {
-		var iframe = this.bgIframe = kampfer.global.document.createElement('iframe');
-		iframe.style.display = 'none';
-		iframe.style.position = 'absolute';
-		kampfer.dom.addClass(iframe, this.opts.cssBg);
-		iframe.style.opacity = '0';
-		iframe.style.borderWidth = '0';
-		iframe.frameborder = 0;
 	},
 	
 	resizeBg : function() {

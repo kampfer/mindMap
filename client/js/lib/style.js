@@ -28,7 +28,8 @@ kampfer.style.getStyle = function(element, style) {
 //需要输入正确的javascript格式名
 //TODO 处理样式名
 kampfer.style.setStyle = function(element, name, value) {
-	if( kampfer.type(name) === 'string' ) {
+	if( kampfer.type(name) === 'string' && 
+		kampfer.isDefAndNotNull(value) ) {
 		element.style[name] = value;
 	} else if( kampfer.isObject(name) ) {
 		var cssText = element.style.cssText;

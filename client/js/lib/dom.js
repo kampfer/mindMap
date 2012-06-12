@@ -3,6 +3,10 @@ kampfer.require('string');
 
 kampfer.provide('dom');
 
+kampfer.dom.create = function(name) {
+	return kampfer.global.document.createElement(name);
+};
+
 kampfer.dom.addClass = function(elem, value) {
 		
 	var classNames, i, l,
