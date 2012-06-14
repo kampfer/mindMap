@@ -1,4 +1,4 @@
-//var path = require('path');
+var path = require('path');
 var makeDeps = require('./dependency').makeDeps;
 
-makeDeps();
+makeDeps( path.resolve( __dirname, '../client/js/') );

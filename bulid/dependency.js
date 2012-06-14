@@ -1,9 +1,7 @@
-/*global console*/
+/*global console process*/
 
 var fs = require('fs'),
-	path = require('path'),
-//TODO 去掉对config文件的依赖
-	config = require('../config');
+	path = require('path');
 	
 /**
  * 保存依赖性信息的对象。dependency组件不仅将依赖性信息保存在deps.js文件中，而且
@@ -16,6 +14,13 @@ var dependencies = {
 	nameToPath: {},		// 1 to 1
 	requires: {}		// 1 to many
 };
+
+
+var platform = process.platform;
+
+function isOnWindow() {
+	return (/win/g).test(platform);
+}
 
 
 /**
@@ -63,6 +68,7 @@ function addDepsToFile(path, provides, requires) {
 	
 	var insertText, fd;
 	
+	path = path.replace(/\\/g, '/');
 	requires = '[' + requires.join(',') + ']';
 	provides = '[' + provides.join(',') + ']';
 	
@@ -162,14 +168,14 @@ function visit(uri) {
  * 记录依赖性的文件所在的目录名。
  * @type	{string}
  */
-exports.dir = path.join(config.jsPath, '');
+exports.dir = '';
 
 
 /**
  * 记录依赖性的文件的地址（绝对路径保存），文件名为‘deps.js’。
  * @type	{string}
  */
-exports.path = path.join(exports.dir, 'deps.js');
+exports.path = '';
 
 
 /**
@@ -180,10 +186,11 @@ exports.path = path.join(exports.dir, 'deps.js');
 exports.makeDeps = function(uri, deps) {
 	
 	if(!uri) {
-		uri = exports.dir;
-	}else{
-		exports.dir = path.dirname(uri);
+		return;
 	}
+	
+	exports.dir = uri;
+	exports.path = path.join(exports.dir, 'deps.js');
 	
 	if(!deps) {
 		deps = exports.path;
@@ -191,6 +198,7 @@ exports.makeDeps = function(uri, deps) {
 		exports.path = deps;
 	}
 	
+	console.log('make dependency file: ' + deps);
 	//创建deps.js文件，若已经存在，删除旧的然后重新创建新文件
 	var fd = fs.openSync(deps, 'w');
 	fs.writeSync(fd, '', 0, 'utf8');
