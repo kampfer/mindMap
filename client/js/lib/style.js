@@ -28,17 +28,12 @@ kampfer.style.getStyle = function(element, style) {
 //需要输入正确的javascript格式名
 //TODO 处理样式名
 kampfer.style.setStyle = function(element, name, value) {
-	if( kampfer.type(name) === 'string' && 
-		kampfer.isDefAndNotNull(value) ) {
+	if( kampfer.isDefAndNotNull(value) && 
+		kampfer.type(name) === 'string' ) {
 		element.style[name] = value;
 	} else if( kampfer.isObject(name) ) {
-		var cssText = element.style.cssText;
-		if( cssText.lastIndexOf(';') !== cssText.length - 1 ) {
-			cssText += ';';
+		for(var attr in name) {
+			kampfer.style.setStyle(element, attr, name[attr]);
 		}
-		for( var attr in name ) {
-			cssText += attr + ':' + name[attr] + ';';
-		}
-		element.style.cssText = cssText;
 	}
 };
