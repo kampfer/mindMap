@@ -3,27 +3,74 @@
 /*
  * map控制器类，控制map在浏览器的表现
  */
-kampfer.require('Class');
 kampfer.require('dom');
-kampfer.require('mindMap.Map');
-kampfer.require('mindMap.nodeController');
+kampfer.require('style');
+kampfer.require('event');
+kampfer.require('ui.Layer');
 
 kampfer.provide('mindMap.MapController');
 
-kampfer.mindMap.MapController = kampfer.Class.extend({
+kampfer.mindMap.MapController = kampfer.ui.Layer.extend({
 	
-	init : function(container) {
-	 
-		if(!container) {
-			return;
-		}
+	init : function(opts) {
+		
+		this._super(opts);
+		
+		this.currentState = this.initialState;
 
 	},
 	
-	createDom : function() {
-		var div = document.createElement('div');
+	render : function() {},
+	
+	center : function() {
+		this.move();
 	},
 	
-	render : function() {}
+	saveCursorPosition : function() {},
+	
+	initialState : 'active',
+	
+	handleEvent : function(event) {
+		
+	},
+	
+	actionTransitionFunctions : {
+		
+		active : {
+			
+			click : function() {},
+			
+			mousedown : function() {},
+			
+			mouseout : function() {}
+			
+		},
+		
+		capture : {
+			
+			mousemove : function() {},
+			
+			mouseup : function() {}
+			
+		},
+		
+		//TODO 与capture状态重复，删除。
+		move : {
+			
+			mousemove : function() {},
+			
+			mouseup : function() {}
+		
+		},
+		
+		afk : {
+			
+			mouseover : function() {}
+			
+		}
+		
+	},
+	
+	unexpectedEvent : function() {}
 	
 });
