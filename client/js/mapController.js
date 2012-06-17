@@ -1,4 +1,4 @@
-/*global kampfer*/
+/*global kampfer console*/
 
 /*
  * map控制器类，控制map在浏览器的表现
@@ -12,65 +12,131 @@ kampfer.provide('mindMap.MapController');
 
 kampfer.mindMap.MapController = kampfer.ui.Layer.extend({
 	
-	init : function(opts) {
+	init : function(data, opts) {
 		
 		this._super(opts);
 		
 		this.currentState = this.initialState;
+		
+		this.left = 0;
+		
+		this.top = 0;
 
 	},
 	
-	render : function() {},
+	initialState : 'active',
 	
-	center : function() {
-		this.move();
+	render : function() {
+		
+		var that = this;
+		
+		this._super();
+		
+		this.element.innerHTML = 'test';
+		
+		function bind(event) {
+			that.handleEvent(event);
+		}	
+		
+		kampfer.each(['mouseover', 'mouseout', 'mousedown', 'mouseup', 'mousemove', 'click'], function(index, type){
+			kampfer.addEvent(that.element, type, bind);
+		});
+		
 	},
 	
-	saveCursorPosition : function() {},
+	move : function(event) {
+		var offset = {
+			x : event.pageX - this.lastCursorPosition.x,
+			y : event.pageY - this.lastCursorPosition.y
+		};
+		this.moveTo(this.left + offset.x, this.top + offset.y);
+	},
 	
-	initialState : 'active',
+	saveCursorPosition : function(event) {
+		this.lastCursorPosition = {
+			x : event.pageX,
+			y : event.pageY
+		};
+	},
 	
 	handleEvent : function(event) {
 		
+		var action = this.actionFuns[this.currentState][event.type];
+		
+		if(!action) {
+			action = this.unexpectedEvent;
+		}
+		
+		var nextState = action.call(this, event);
+		if(!this.actionFuns[nextState]){
+			nextState = this.undefinedState(nextState);
+		}
+		this.currentState = nextState;
 	},
 	
-	actionTransitionFunctions : {
+	actionFuns : {
 		
 		active : {
 			
-			click : function() {},
+			click : function() {
+				return 'active';
+			},
 			
-			mousedown : function() {},
+			mousedown : function(event) {
+				this.saveCursorPosition(event);
+				return 'capture';
+			},
 			
-			mouseout : function() {}
+			mouseout : function() {
+				return 'afk';
+			}
 			
 		},
 		
 		capture : {
 			
-			mousemove : function() {},
+			mousemove : function(event) {
+				this.move(event);
+				return 'move';
+			},
 			
-			mouseup : function() {}
+			mouseup : function() {
+				return 'active';
+			}
 			
 		},
 		
-		//TODO 与capture状态重复，删除。
 		move : {
 			
-			mousemove : function() {},
+			mousemove : function(event) {
+				this.move(event);
+				return 'move';
+			},
 			
-			mouseup : function() {}
+			mouseup : function(event) {
+				this.left += event.pageX - this.lastCursorPosition.x;
+				this.top += event.pageY - this.lastCursorPosition.y;
+				return 'active';
+			}
 		
 		},
 		
 		afk : {
 			
-			mouseover : function() {}
+			mouseover : function() {
+				return 'active';
+			}
 			
 		}
 		
 	},
 	
-	unexpectedEvent : function() {}
+	unexpectedEvent : function() {
+		return 'active';
+	},
+	
+	undefinedState : function() {
+		return 'active';
+	}
 	
 });

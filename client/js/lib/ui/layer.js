@@ -14,8 +14,13 @@ kampfer.ui.Layer = kampfer.Class.extend({
 		
 		this.isInDocument = false;
 		
-		kampfer.extend(true, this, kampfer.ui.Layer.defaultOptions, opts);
+		kampfer.extend(this, kampfer.ui.Layer.defaultOptions, opts);
 		
+	},
+	
+	render : function() {
+		this.createElement();
+		this.enterDocument();
 	},
 	
 	getDocument : function() {
@@ -51,8 +56,11 @@ kampfer.ui.Layer = kampfer.Class.extend({
 			this.createElment();
 		}
 		
-		this.getDocument().body
-			.appendChild(this.element);
+		var parentNode;
+		parentNode = this.parentNode ? this.parentNode :
+			this.getDocument().body;
+			
+		parentNode.appendChild(this.element);
 		this.isInDocument = true;
 		
 	},
@@ -68,8 +76,7 @@ kampfer.ui.Layer = kampfer.Class.extend({
 	},
 	
 	//移动layer
-	//TODO 不传递参数，layer将移动到父元素的正中间
-	move : function(x, y) {
+	moveTo : function(x, y) {
 		x = x + 'px';
 		y = y + 'px';
 		kampfer.style.setStyle(this.element, {
@@ -81,7 +88,7 @@ kampfer.ui.Layer = kampfer.Class.extend({
 	//显示layer
 	show : function() {
 		
-		if( !kampfer.event.trigger(this, 'beforeshow') ) {
+		if( kampfer.event.trigger(this, 'beforeshow') === false ) {
 			return;
 		}
 		
@@ -97,7 +104,7 @@ kampfer.ui.Layer = kampfer.Class.extend({
 	//隐藏layer
 	hide : function() {
 		
-		if( !kampfer.event.trigger(this, 'beforehide') ) {
+		if( kampfer.event.trigger(this, 'beforehide') === false ) {
 			return;
 		}
 		
