@@ -28,6 +28,7 @@ kampfer.ui.Layer = kampfer.Class.extend({
 	},
 	
 	//创建dom元素
+	//每次调用都会重新创建新的element
 	createElement : function() {
 		var div = this.element = kampfer.dom.create('div');
 		kampfer.style.setStyle(div, 'display', 'none');
@@ -36,13 +37,10 @@ kampfer.ui.Layer = kampfer.Class.extend({
 	
 	//将layer从document中移除
 	exitDocument : function() {
-		
 		if(this.element && this.isInDocument) {
-			this.getDocument().body
-				.removeChild(this.element);
+			this.parentNode.removeChild(this.element);
 			this.isInDocument = false;
 		}
-		
 	},
 	
 	//将layer添加到document
@@ -55,12 +53,8 @@ kampfer.ui.Layer = kampfer.Class.extend({
 		if(!this.element) {
 			this.createElment();
 		}
-		
-		var parentNode;
-		parentNode = this.parentNode ? this.parentNode :
-			this.getDocument().body;
 			
-		parentNode.appendChild(this.element);
+		this.parentNode.appendChild(this.element);
 		this.isInDocument = true;
 		
 	},
@@ -121,6 +115,8 @@ kampfer.ui.Layer = kampfer.Class.extend({
 
 kampfer.ui.Layer.defaultOptions = {
 	
-	cssName : 'kampfer-layer'
+	cssName : 'kampfer-layer',
+	
+	parentNode : kampfer.global.document.body
 	
 };
