@@ -82,6 +82,10 @@ kampfer.ui.Layer = kampfer.Class.extend({
 	//显示layer
 	show : function() {
 		
+		if(!this.isInDocument){
+			return;
+		}
+		
 		if( kampfer.event.trigger(this, 'beforeshow') === false ) {
 			return;
 		}
@@ -97,6 +101,10 @@ kampfer.ui.Layer = kampfer.Class.extend({
 	
 	//隐藏layer
 	hide : function() {
+		
+		if(!this.isInDocument){
+			return;
+		}
 		
 		if( kampfer.event.trigger(this, 'beforehide') === false ) {
 			return;

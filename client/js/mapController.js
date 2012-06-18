@@ -1,73 +1,30 @@
-/*global kampfer console*/
-
-/*
- * map控制器类。接受json数据，生成map视图
- */
+/*global kampfer*/
+kampfer.require('Class');
 kampfer.require('dom');
 kampfer.require('style');
 kampfer.require('event');
-kampfer.require('ui.Layer');
-kampfer.require('mindMap.NodeController');
+kampfer.require('mindMap.Map');
+kampfer.require('mindMap.Node');
 
 kampfer.provide('mindMap.MapController');
 
-kampfer.mindMap.MapController = kampfer.ui.Layer.extend({
+kampfer.mindMap.MapController = kampfer.Class.extend({
 	
-	init : function(data, opts) {
+	init : function(currentMapManager) {
 		
-		this._super(opts);
-		
-		this.nodes = [];
-		
-		this.data = data;
-		
-		this.parse(data.nodes);
-
-	},
-	
-	//overwrite
-	render : function() {
-		
-		this.enterDocument();
-		
-		for(var i = 0, l = this.nodes.length; i < l; i++) {
-			this.nodes[i].render();
-		}
+		this.currentMapManager = currentMapManager;
 		
 	},
 	
-	parse : function(data) {
-		if(!this.element) {
-			this.createElement();	
-		}
-		
-		for(var item in data) {
-			var node = data[item];
-			this.nodes.push( new kampfer.mindMap.NodeController(node, {
-				cssName : 'node',
-				parentNode : this.element
-			}) );
-		}
-	},
+	createMap : function() {
 	
-	show : function() {
-		
-		//自定义事件show的发生时间有偏差
-		this._super();
-		
-		for(var i = 0, l = this.nodes.length; i < l; i++) {
-			this.nodes[i].show();
-		}
-		
-	},
-	
-	hide : function() {
-		
-		//自定义事件hide的发生时间有偏差
-		this._super();
-		
-		for(var i = 0, l = this.nodes.length; i < l; i++) {
-			this.nodes[i].hide();
+		if(!this.currentMap) {
+			
+			var nodes = this.currentMapManager.getNodes(),
+				opts = this.currentMapManager.getOptions;
+			
+			this.currentMap = new kampfer.mindMap.Map(nodes, opts);
+			
 		}
 		
 	}
