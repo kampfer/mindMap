@@ -1,7 +1,7 @@
 /*global kampfer console*/
 kampfer.require('Class');
-kampfer.require('dom');
-kampfer.require('style');
+//kampfer.require('dom');
+//kampfer.require('style');
 kampfer.require('event');
 kampfer.require('mindMap.Map');
 kampfer.require('mindMap.Node');
@@ -33,14 +33,14 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	render : function() {
 		
 		if(!this.map) {
-			this.map = new kampfer.mindMap.Map(this.currentMapManager);
+			this.map = new kampfer.mindMap.Map(this, this.currentMapManager);
 			this.map.render();
 		}
 		
 		if(!this.nodes.length) {
-			var nodes = this.currentMapManager.getNodes();
-			kampfer.each(nodes, function(id, node){
-				this.nodes[id] = new kampfer.mindMap.Node(node);
+			var nodes = this.currentMapManager.getAllNodes();
+			kampfer.each(nodes, function(id, node) {
+				this.nodes[id] = new kampfer.mindMap.Node(this, this.currentMapManager);
 				this.nodes[id].render();
 			});
 		}
@@ -48,33 +48,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		this.monitorEvents();
 		
 	},
-	
-	addNode : function(parent) {
-		
-		kampfer.event.trigger(this, 'addNode', {
-			parent : parent
-		});
-		
-	},
-	
-	removeNode : function(id) {
-		
-		kampfer.event.trigger(this, 'removeNode', {
-			id : id
-		});
-		
-	},
-	
-	
-	setNodeText : function(id, text) {
-		
-		kampfer.event.trigger(this, 'setNodeText', {
-			id : id,
-			text : text
-		});
-		
-	},
-	
+
 	monitorEvents : function() {
 		
 		var that = this;
@@ -86,17 +60,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			controller.currentState = func.call(controller, event);
 		}
 		
-		function handleMenuClick(event) {
-			var controller = that,
-				command;
-				
-			command = controller.getCommand(event);
-			
-			controller.action2Function.editNode(command);
-		}
-		
 		kampfer.addEvent(this.map.element, '*', handleEvent);
-		kampfer.addEvent(this.menu.element, 'click', handleMenuClick);
 		
 	},
 	
@@ -107,7 +71,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			
 			mouseout : function(event) {
 				var relatedTarget = event.relatedTarget;
-				if( relatedTarget.getAttribute('node-type') === 'node' ) {
+				if( this.isNodeElement(relatedTarget) ) {
 					return 'nodeActivated';
 				}
 				return 'afk';
@@ -116,10 +80,9 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			mousedown : function(event) {
 				if(event.button === 1) {
 					this.saveCursorPosition(event);
-				}else if(event.button === 3) {
-					console.log('button = 3');
+					return 'mapfocus';
 				}
-				return 'mapfocus';
+				return 'mapActivated';
 			}
 
 		},
@@ -131,7 +94,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			
 				var offsetX = event.pageX - this.lastCursorX,
 					offsetY = event.pageY - this.lastCursorY;
-						
+				
 				kampfer.event.trigger(this, 'moveMap', {
 					offsetX: offsetX,
 					offsetY : offsetY
@@ -152,23 +115,27 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			
 			mouserout : function() {
 				var relatedTarget = event.relatedTarget;
-				if( relatedTarget.getAttribute('node-type') === 'map' ) {
+				if( this.isMapElement(relatedTarget) ) {
 					return 'mapActivated';
 				}
+				return 'nodeActivated';
 			},
 			
 			mousedown : function(event) {
+				this.getCurrentNode(event);
 				
 				if(event.button === 3) {
 					//显示编辑菜单
-					console.log('显示编辑菜单');
+					kampfer.event.trigger(this, 'showMenu', {
+						currentNode : this.currentNode
+					});
 					return 'nodeActivated';
 				}
 				
-				this.saveCursorPosition(event);
-				this.getCurrentNode(event);
-				
-				return 'nodefocus';
+				if(event.button === 1) {
+					this.saveCursorPosition(event);
+					return 'nodefocus';
+				}
 			}
 			
 		},
@@ -192,19 +159,15 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				return 'nodeActivated';
 			}
 			
-		},
+		}
 		
 		//鼠标移出了map
 		afk : {
 			mouseover : function() {
 				return 'mapActivated';
 			}
-		},
-		
-		editNode : {
-			
 		}
-		
+
 	},
 	
 	initialState : 'mapActivated',
@@ -215,22 +178,52 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	},
 	
 	getCurrentNode : function(event) {
-		var target = event.target;
 		
-		while( target && target.getAttribute('node-type') !== 'node' ) {
-			target = target.parentNode;
-		}
+		var nodeElement = this.getNodeElement(event.target),
+			id = nodeElement.id;
 		
-		if(target) {
-			this.currentNode = target;
+		this.currentNode = this.nodes[id];
+		
+	},
+	
+	getNodeElement : function(element) {
+	
+		do {
+			if( element.getAttribute('node-type') === 'node' ) {
+				return element;
+			}
+			element = element.parentNode;
+		}while(element);
+		
+		return null;
+		
+	},
+	
+	isNodeElement : function(element) {
+		
+		do {
+			if( element.getAttribute('node-type') === 'node' ) {
+				return true;
+			}
+			element = element.parentNode;
+		}while(element);
+		
+		return false;
+		
+	},
+	
+	isMapElement : function(element) {
+		if( element.getAttribute('node-type') === 'map' ) {
+			return true;
 		}
+		return false;
 	},
 	
 	getCommand : function(event) {
 		var element = event.target,
 			ret;
 			
-		while( element && !(ret = element.getAttribute('action'))) {
+		while( element && !(ret = element.getAttribute('action')) ) {
 			element = element.parentNode;
 		}
 		
