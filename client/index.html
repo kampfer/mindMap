@@ -6,9 +6,14 @@
 		<title>templates</title>
 		<link href="css/app.css" rel="stylesheet" type="text/css"/>
 		<script type="text/javascript" src="js/base.js"></script>
+		<script type="text/javascript">
+			kampfer.require('mindMap.MapManager');
+			kampfer.require('mindMap.MapController');
+		</script>
 	</head>
 	<body>
 		<div style="width:100%;height:600px;overflow: hidden;position: relative;" id="container">
+			<!--
 			<div style="position:absolute;width:3000px;height:2000px;" id="mind-map">
 				<div class="node" style="top:50px;left:50px;">
 					<div class="node-caption">根节点</div>
@@ -20,9 +25,77 @@
 					</div>
 				</div>
 			</div>
+			-->
 		</div>
 		<script type="text/javascript">
-			kampfer.require('app');
+			var data = {
+				//节点信息
+				nodes : {
+					//根节点
+					root : {
+						id : 'root',
+						//父节点列表
+						parent : null,
+						//子节点列表
+						children : [],
+						//内容（文字）
+						content : 'root',
+						//位置信息
+						offset : {
+							x : 100,
+							y : 100
+						},
+						//样式信息
+						style : 'root'
+					},
+					abe : {
+						id : 'abe',
+						parent : 'root',
+						children : [],
+						content : '2012',
+						offset : {
+							x : 300,
+							y : 140
+						}
+					},
+					abec : {
+						id : 'abec',
+						parent : 'root',
+						children : [],
+						content : '2012年06月24日15时59分在云南省丽江市宁蒗彝族',
+						offset : {
+							x : -100,
+							y : 14
+						}
+					},
+					abed : {
+						id : 'abed',
+						parent : 'root',
+						children : [],
+						content : '2012',
+						offset : {
+							x : 100,
+							y : -70
+						}
+					},
+					abee : {
+						id : 'abee',
+						parent : 'root',
+						children : [],
+						content : '2012年06月24日15时',
+						offset : {
+							x : -100,
+							y : -14
+						}
+					},
+					
+				},
+				//map配置信息
+				config : {}
+			};
+			var manager = new kampfer.mindMap.MapManager(data);
+			var controller = new kampfer.mindMap.MapController(manager);
+			controller.render();
 		</script>
 	</body>
 </html>

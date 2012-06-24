@@ -18,6 +18,7 @@ kampfer.ui.Layer = kampfer.Class.extend({
 		
 	},
 	
+	//生成dom，并将dom插入文档
 	render : function() {
 		this.createElement();
 		this.enterDocument();
@@ -31,7 +32,7 @@ kampfer.ui.Layer = kampfer.Class.extend({
 	//每次调用都会重新创建新的element
 	createElement : function() {
 		var div = this.element = kampfer.dom.create('div');
-		kampfer.style.setStyle(div, 'display', 'none');
+		//kampfer.style.setStyle(div, 'display', 'none');
 		kampfer.dom.addClass(div, this.cssName);
 	},
 	

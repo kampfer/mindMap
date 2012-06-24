@@ -5,9 +5,13 @@ kampfer.provide('mindMap.MapManager');
 
 kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
-	init : function() {},
+	init : function(data) {
+		this.data = data;
+	},
 	
-	getNodes : function() {},
+	getAllNodes : function() {
+		return this.data.nodes;
+	},
 	
 	getOptions : function() {}
 	

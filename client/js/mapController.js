@@ -1,7 +1,5 @@
 /*global kampfer console*/
 kampfer.require('Class');
-//kampfer.require('dom');
-//kampfer.require('style');
 kampfer.require('event');
 kampfer.require('mindMap.Map');
 kampfer.require('mindMap.Node');
@@ -21,10 +19,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		//保存一个map视图的引用
 		this.map = null;
 		
-		//保存所有node视图的引用
-		this.nodes = [];
-		
-		this.currentNode = null;
+		this.currentNodeId = '';
 		
 		this.currentState = this.initialState;
 		
@@ -35,14 +30,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		if(!this.map) {
 			this.map = new kampfer.mindMap.Map(this, this.currentMapManager);
 			this.map.render();
-		}
-		
-		if(!this.nodes.length) {
-			var nodes = this.currentMapManager.getAllNodes();
-			kampfer.each(nodes, function(id, node) {
-				this.nodes[id] = new kampfer.mindMap.Node(this, this.currentMapManager);
-				this.nodes[id].render();
-			});
+			this.map.show();
 		}
 		
 		this.monitorEvents();
@@ -127,7 +115,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				if(event.button === 3) {
 					//显示编辑菜单
 					kampfer.event.trigger(this, 'showMenu', {
-						currentNode : this.currentNode
+						currentNodeId : this.currentNodeId
 					});
 					return 'nodeActivated';
 				}
@@ -159,7 +147,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				return 'nodeActivated';
 			}
 			
-		}
+		},
 		
 		//鼠标移出了map
 		afk : {
@@ -177,12 +165,14 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		this.lastCursorY = event.pageY;
 	},
 	
-	getCurrentNode : function(event) {
+	getCurrentNodeId : function(event) {
 		
 		var nodeElement = this.getNodeElement(event.target),
 			id = nodeElement.id;
+			
+		this.currentNodeId = id;
 		
-		this.currentNode = this.nodes[id];
+		return id;
 		
 	},
 	
