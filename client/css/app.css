@@ -12,8 +12,9 @@ div.node {
 }
 
 div.node-caption {
-    position: absolute;
+    position: relative;
     min-width: 100px;
+	max-width: 200px;
     background-color: #CCDDEE;
     border-color: #8BA2C0 #5890BF #4F93CA #768FA5;
     border-radius: 16px 16px 16px 16px;

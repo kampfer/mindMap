@@ -30,6 +30,7 @@ kampfer.mindMap.Node = kampfer.ui.Layer.extend({
 		this.setContent(this.content);
 		this.moveTo(this.offset.x, this.offset.y);
 		this.enterDocument();
+		//将node插入文档之后再生成 branch，保证此后branch能正常获得node的尺寸
 		this.createBranch();
 	},
 	
@@ -79,6 +80,46 @@ kampfer.mindMap.Node = kampfer.ui.Layer.extend({
 				width : parentNode.offsetWidth,
 				height : parentNode.offsetHeight
 			};
+		}
+	},
+	
+	getPosition : function() {
+		return {
+			x : this.offset.x,
+			y : this.offset.y
+		}
+	},
+	
+	getCenterPosition : function() {
+		return {
+			x : this.offset.x + this.getSize().width / 2,
+			y : this.offset.y + this.getSize().height / 2
+		}
+	},
+	
+	getQuadrant : function() {
+		var	parentSize = this.getParentSize(),
+			thisCenter = this.getCenterPosition(),
+			parentCenter = {},
+			x, y;
+		
+		parentCenter.x = parentSize.width / 2;
+		parentCenter.y = parentSize.height / 2;
+		
+		x = thisCenter.x - parentCenter.x;
+		y = thisCenter.y - parentCenter.y;
+		
+		if(x > 0 && y < 0) {
+			return 1;
+		}
+		if(x < 0 && y < 0) {
+			return 2;
+		}
+		if(x < 0 && y > 0) {
+			return 3;
+		}
+		if(x > 0 && y > 0) {
+			return 4;
 		}
 	},
 	

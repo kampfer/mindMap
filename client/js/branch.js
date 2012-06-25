@@ -40,56 +40,40 @@ kampfer.mindMap.Branch = kampfer.Class.extend({
 	},
 	
 	getSize : function() {
-		var x = Math.abs(this.parent.data.offset.x),
-			y = Math.abs(this.parent.data.offset.y);
-		this.width = x - this.parent.getParentSize().width / 2 + 
-			this.parent.getSize().width / 2;
-		this.height = y - this.parent.getParentSize().height / 2 + 
-			this.parent.getSize().height / 2;
+		var parentCenterPosition = this.parent.getCenterPosition(),
+			parentQuadrant = this.parent.getQuadrant(),
+			grandparentSize = this.parent.getParentSize();
+
+		this.width = Math.abs(parentCenterPosition.x - grandparentSize.width / 2);
+		this.height = Math.abs(parentCenterPosition.y - grandparentSize.height / 2);
 	},
 	
 	getPosition : function() {
 		var x = this.parent.data.offset.x,
 			y = this.parent.data.offset.y,
-			quadrant = this.getQuadrant();
+			quadrant = this.parent.getQuadrant();
 		if(quadrant === 1) {
-			this.left =	-this.width + this.parent.getSize().width / 2;
-			this.top = this.height - this.parent.getParentSize().height;
+			this.left = -(this.width - this.parent.getSize().width / 2);
+			this.top = this.parent.getSize().height / 2;
 		}
 		if(quadrant === 2) {
-			this.left = x;
-			this.top = y;
+			this.left = this.parent.getSize().width / 2;
+			this.top = this.parent.getSize().height / 2;
 		}
 		if(quadrant === 3) {
-			this.left = x;
-			this.top = 0;
+			this.left = this.parent.getSize().width / 2;
+			this.top = -(this.height - this.parent.getSize().height / 2);
 		}
 		if(quadrant === 4) {
-			this.left =	-this.width + this.parent.getSize().width / 2;
-			this.top = -this.height + this.parent.getSize().height / 2;
-		}
-	},
-	
-	getQuadrant : function() {
-		var x = this.parent.data.offset.x,
-			y = this.parent.data.offset.y;
-		if(x > 0 && y < 0) {
-			return 1;
-		}
-		if(x < 0 && y < 0) {
-			return 2;
-		}
-		if(x < 0 && y > 0) {
-			return 3;
-		}
-		if(x > 0 && y > 0) {
-			return 4;
+			this.left = -(this.width - this.parent.getSize().width / 2);
+			this.top = -(this.height - this.parent.getSize().height / 2);
 		}
 	},
 	
 	drawLine : function() {
-		var quadrant = this.getQuadrant(),
+		var quadrant = this.parent.getQuadrant(),
 			ctx = this.element.getContext('2d');
+		ctx.lineWidth = 2;
 		ctx.beginPath();
 		if(quadrant === 1 || quadrant === 3) {
 			ctx.moveTo(0, ctx.canvas.height);

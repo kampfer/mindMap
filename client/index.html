@@ -12,49 +12,28 @@
 		</script>
 	</head>
 	<body>
-		<div style="width:100%;height:600px;overflow: hidden;position: relative;" id="container">
-			<!--
-			<div style="position:absolute;width:3000px;height:2000px;" id="mind-map">
-				<div class="node" style="top:50px;left:50px;">
-					<div class="node-caption">根节点</div>
-					<canvas width="100" height="100"></canvas>
-					<div class="node" style="left:300px;top:100px;">
-						<div class="node-caption">6月中旬，酒泉卫星发射基地将迎来规模空前的航天盛宴——神舟九号飞船将在此起飞，
-							并首次通过人工手动对接在轨运行的天宫一号目标飞行器，三名宇航员还将进入天空一号工作和生活，开展科学实验，进一步实现人类的飞天梦想。此外，中国首位女宇航员将进入太空，实现零的突破。</div>
-						<canvas></canvas>
-					</div>
-				</div>
-			</div>
-			-->
-		</div>
+		<div style="width:100%;height:600px;overflow: hidden;position: relative;" id="container"></div>
 		<script type="text/javascript">
 			var data = {
-				//节点信息
 				nodes : {
-					//根节点
 					root : {
 						id : 'root',
-						//父节点列表
-						parent : null,
-						//子节点列表
+						parent : '',
 						children : [],
-						//内容（文字）
 						content : 'root',
-						//位置信息
 						offset : {
-							x : 100,
-							y : 100
+							x : 560,
+							y : 200
 						},
-						//样式信息
 						style : 'root'
 					},
 					abe : {
 						id : 'abe',
 						parent : 'root',
 						children : [],
-						content : '2012',
+						content : '201212121212111111111111112',
 						offset : {
-							x : 300,
+							x : 200,
 							y : 140
 						}
 					},
@@ -62,10 +41,10 @@
 						id : 'abec',
 						parent : 'root',
 						children : [],
-						content : '2012年06月24日15时59分在云南省丽江市宁蒗彝族',
+						content : '2012年06月24日15时59分在云南省丽江市宁蒗彝族云南省丽江市宁蒗彝族云南省丽江市宁蒗彝族云南省丽江市宁蒗彝族云南省丽江市宁蒗彝族云南省丽江市宁蒗彝族云南省丽江市宁蒗彝族',
 						offset : {
 							x : -100,
-							y : 14
+							y : 140
 						}
 					},
 					abed : {
@@ -85,10 +64,39 @@
 						content : '2012年06月24日15时',
 						offset : {
 							x : -100,
-							y : -14
+							y : -100
 						}
 					},
-					
+					abeeddd : {
+						id : 'abeeddd',
+						parent : 'root',
+						children : [],
+						content : '6月24日15时59分在云南省丽江市宁蒗彝族云南省丽江市宁蒗彝族云南省丽江市 ',
+						offset : {
+							x : -190,
+							y : 120
+						}
+					},
+					abeedddccc : {
+						id : 'abeedddccc',
+						parent : 'abed',
+						children : [],
+						content : '6月24日15时59分在云南省丽江市宁蒗彝族云南省丽',
+						offset : {
+							x : 190,
+							y : -120
+						}
+					},
+					abeedddcccddd : {
+						id : 'abeedddcccddd',
+						parent : 'abeedddccc',
+						children : [],
+						content : '6月24日15时59分在云南省丽江市宁蒗彝族云南省丽',
+						offset : {
+							x : 0,
+							y : 100
+						}
+					}
 				},
 				//map配置信息
 				config : {}
