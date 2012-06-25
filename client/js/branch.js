@@ -46,6 +46,14 @@ kampfer.mindMap.Branch = kampfer.Class.extend({
 
 		this.width = Math.abs(parentCenterPosition.x - grandparentSize.width / 2);
 		this.height = Math.abs(parentCenterPosition.y - grandparentSize.height / 2);
+		
+		if(this.width === 0 ) {
+			this.width = 10;
+		}
+		
+		if(this.height === 0 ) {
+			this.height = 10;
+		}
 	},
 	
 	getPosition : function() {
@@ -73,17 +81,28 @@ kampfer.mindMap.Branch = kampfer.Class.extend({
 	drawLine : function() {
 		var quadrant = this.parent.getQuadrant(),
 			ctx = this.element.getContext('2d');
-		ctx.lineWidth = 2;
 		ctx.beginPath();
-		if(quadrant === 1 || quadrant === 3) {
+		if(quadrant === 1) {
 			ctx.moveTo(0, ctx.canvas.height);
 			ctx.lineTo(ctx.canvas.width, 0);
+			ctx.lineTo(0, ctx.canvas.height - 6);
 		}
-		if(quadrant === 2 || quadrant === 4) {
+		if(quadrant === 2) {
+			ctx.moveTo(ctx.canvas.width, ctx.canvas.height);
+			ctx.lineTo(0, 0);
+			ctx.lineTo(ctx.canvas.width, ctx.canvas.height - 6);
+		}
+		if(quadrant === 3) {
+			ctx.moveTo(ctx.canvas.width, 0);
+			ctx.lineTo(0, ctx.canvas.height);
+			ctx.lineTo(ctx.canvas.width, 6);
+		}
+		if(quadrant === 4) {
 			ctx.moveTo(0, 0);
 			ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+			ctx.lineTo(0, 6);
 		}
-		ctx.stroke();
+		ctx.fill();
 	},
 	
 	prefix : 'canvas-'

@@ -87,14 +87,14 @@ kampfer.mindMap.Node = kampfer.ui.Layer.extend({
 		return {
 			x : this.offset.x,
 			y : this.offset.y
-		}
+		};
 	},
 	
 	getCenterPosition : function() {
 		return {
 			x : this.offset.x + this.getSize().width / 2,
 			y : this.offset.y + this.getSize().height / 2
-		}
+		};
 	},
 	
 	getQuadrant : function() {
@@ -112,13 +112,13 @@ kampfer.mindMap.Node = kampfer.ui.Layer.extend({
 		if(x > 0 && y < 0) {
 			return 1;
 		}
-		if(x < 0 && y < 0) {
+		if(x <= 0 && y <= 0) {
 			return 2;
 		}
-		if(x < 0 && y > 0) {
+		if(x <= 0 && y > 0) {
 			return 3;
 		}
-		if(x > 0 && y > 0) {
+		if(x > 0 && y >= 0) {
 			return 4;
 		}
 	},
