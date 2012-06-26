@@ -83,24 +83,24 @@ kampfer.mindMap.Branch = kampfer.Class.extend({
 			ctx = this.element.getContext('2d');
 		ctx.beginPath();
 		if(quadrant === 1) {
-			ctx.moveTo(0, ctx.canvas.height);
+			ctx.moveTo(0, ctx.canvas.height - 6);
+			ctx.lineTo(6, ctx.canvas.height);
 			ctx.lineTo(ctx.canvas.width, 0);
-			ctx.lineTo(0, ctx.canvas.height - 6);
 		}
 		if(quadrant === 2) {
-			ctx.moveTo(ctx.canvas.width, ctx.canvas.height);
+			ctx.moveTo(ctx.canvas.width, ctx.canvas.height - 6);
+			ctx.lineTo(ctx.canvas.width - 6, ctx.canvas.height);
 			ctx.lineTo(0, 0);
-			ctx.lineTo(ctx.canvas.width, ctx.canvas.height - 6);
 		}
 		if(quadrant === 3) {
-			ctx.moveTo(ctx.canvas.width, 0);
-			ctx.lineTo(0, ctx.canvas.height);
+			ctx.moveTo(ctx.canvas.width - 6, 0);
 			ctx.lineTo(ctx.canvas.width, 6);
+			ctx.lineTo(0, ctx.canvas.height);
 		}
 		if(quadrant === 4) {
-			ctx.moveTo(0, 0);
-			ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+			ctx.moveTo(6, 0);
 			ctx.lineTo(0, 6);
+			ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
 		}
 		ctx.fill();
 	},
