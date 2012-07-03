@@ -9,8 +9,26 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		this.data = data;
 	},
 	
-	getAllNodes : function() {
-		return this.data.nodes;
+	getNode : function(id) {
+		var node = this.data.nodes[id];
+		if(node) {
+			return node;
+		}
+	},
+	
+	getRootNode : function() {
+		return this.getNode('root');
+	},
+	
+	getChildren : function(id) {
+		var node = this.data.nodes[id], 
+			nodes = [];
+		if(node && node.children.length > 0) {
+			for(var i = 0, l = node.children.length; i < l; i++) {
+				nodes.push( this.getNode(node.children[i]) );
+			}
+		}
+		return nodes;
 	},
 	
 	getOptions : function() {}

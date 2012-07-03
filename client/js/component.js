@@ -1,3 +1,4 @@
+/*global kampfer console*/
 kampfer.require('Class');
 kampfer.require('style');
 
@@ -151,7 +152,7 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 	},
 	
 	createDom : function() {
-		this._element = this._doc.body.createElement('div');
+		this._element = this._doc.createElement('div');
 	},
 	
 	getElement : function() {

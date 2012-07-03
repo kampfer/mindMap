@@ -1,6 +1,5 @@
 /*global kampfer console*/
 kampfer.require('mindMap.Component');
-kampfer.require('dom');
 kampfer.require('style');
 kampfer.require('event');
 
@@ -39,9 +38,10 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 	
 	getSize : function() {
 		var offset = this.node.getOffset(),
-			x, y;
-		( x = Math.abs(offset.x) ) <= 0 ? 10 : x;
-		( y = Math.abs(offset.y) ) <= 0 ? 10 : y;
+			x = Math.abs(offset.x),
+			y = Math.abs(offset.y);
+		x = x <= 0 ? 10 : x;
+		y = y <= 0 ? 10 : y;
 		return {
 			width : x,
 			height : y

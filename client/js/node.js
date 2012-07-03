@@ -3,7 +3,7 @@ kampfer.require('style');
 kampfer.require('event');
 kampfer.require('mindMap.Component');
 kampfer.require('mindMap.Branch');
-kampfer.require('mindMap.caption');
+kampfer.require('mindMap.Caption');
 
 kampfer.provide('mindMap.Node');
 
