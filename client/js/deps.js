@@ -18,4 +18,4 @@ kampfer.addDependency('map.js', ['mindMap.Map'], ['event','mindMap.Component','m
 kampfer.addDependency('mapController.js', ['mindMap.MapController'], ['Class','event','mindMap.Map']);
 kampfer.addDependency('MapManager.js', ['mindMap.MapManager'], ['Class']);
 kampfer.addDependency('MapsManager.js', ['mindMap.MapsManager'], ['Class']);
-kampfer.addDependency('node.js', ['mindMap.Node'], ['style','event','mindMap.Component','mindMap.Branch','mindMap.Caption']);
+kampfer.addDependency('node.js', ['mindMap.Node'], ['style','event','dom','mindMap.Component','mindMap.Branch','mindMap.Caption']);

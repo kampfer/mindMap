@@ -1,6 +1,7 @@
 /*global kampfer console*/
 kampfer.require('style');
 kampfer.require('event');
+kampfer.require('dom');
 kampfer.require('mindMap.Component');
 kampfer.require('mindMap.Branch');
 kampfer.require('mindMap.Caption');
@@ -35,7 +36,7 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		var children = this.manager.getChildren(this.data.id);
 		for(var i = 0, l = children.length; i < l; i++) {
 			var child = children[i];
-			this.addChild( new kampfer.mindMap.Node(newchild, this.controller, this.manager) );
+			this.addChild( new kampfer.mindMap.Node(child, this.controller, this.manager) );
 		}
 	},
 	
@@ -60,7 +61,7 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		if(x < 0 && y < 0) {
 			return 2;
 		}
-		if(x < 0 && Y === 0) {
+		if(x < 0 && y === 0) {
 			return 'leftX';
 		}
 		if(x < 0 && y > 0) {
@@ -82,7 +83,7 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		this._super();
 		
 		this._element.id = this._id;
-		kampfer.style.addClass(this._element, 'node');
+		kampfer.dom.addClass(this._element, 'node');
 	}
 	
 });

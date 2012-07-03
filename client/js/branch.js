@@ -11,6 +11,8 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 		this.controller = controller;
 		this.manager = manager;
 		this.node = node;
+		
+		this._id = 'branch';
 	},
 	
 	createDom : function() {
@@ -99,8 +101,8 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 	},
 	
 	drawLine : function() {
-		var quadrant = this.parent.getQuadrant(),
-			ctx = this.element.getContext('2d');
+		var quadrant = this.node.getQuadrant(),
+			ctx = this._element.getContext('2d');
 		ctx.beginPath();
 		if(quadrant === 1) {
 			ctx.moveTo(0, ctx.canvas.height - 6);

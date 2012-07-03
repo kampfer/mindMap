@@ -137,11 +137,7 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 				this.createDom();
 			}
 			
-			if( this._parent && this._parent.getElement() ) {
-				this._parent.getElement().appendChild(this._element);
-			} else {
-				this._doc.body.appendChild(this._element);
-			}
+			this.enterDocument();
 			
 			this.decorate();
 			

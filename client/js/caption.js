@@ -11,6 +11,7 @@ kampfer.mindMap.Caption = kampfer.mindMap.Component.extend({
 		this.controller = controller;
 		this.manager = manager;
 		this.node = node;
+		this._id = 'caption';
 	},
 	
 	decorate : function() {
