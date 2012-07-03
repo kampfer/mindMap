@@ -2,7 +2,6 @@
 kampfer.require('Class');
 kampfer.require('event');
 kampfer.require('mindMap.Map');
-kampfer.require('mindMap.Node');
 
 kampfer.provide('mindMap.MapController');
 
@@ -26,15 +25,11 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	},
 	
 	render : function() {
-		
 		if(!this.map) {
 			this.map = new kampfer.mindMap.Map(this, this.currentMapManager);
-			this.map.render();
-			this.map.show();
 		}
 		
-		this.monitorEvents();
-		
+		this.map.render();
 	},
 
 	monitorEvents : function() {

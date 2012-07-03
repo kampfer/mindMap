@@ -1,133 +1,88 @@
 /*global kampfer console*/
 kampfer.require('style');
 kampfer.require('event');
-kampfer.require('ui.Layer');
+kampfer.require('mindMap.Component');
 kampfer.require('mindMap.Branch');
+kampfer.require('mindMap.caption');
 
 kampfer.provide('mindMap.Node');
 
-kampfer.mindMap.Node = kampfer.ui.Layer.extend({
+kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 	
-	init : function(data, map) {
-		
-		this._super({
-			cssName : 'node',
-			parentNode : data.id === 'root' ? 
-				map.element : 
-				map.getNode(data.parent).element
-		});
-		
+	init : function(data, controller, manager) {
 		this.data = data;
+		this.controller = controller;
+		this.manager = manager;
 		
-		this.id = data.id;
-		this.content = data.content;
-		this.offset = data.offset;
+		this._id = this.data.id;
 		
+		this.addCaption();
+		this.addBranch();
+		this.addChildren();
 	},
 	
-	render : function() {
-		this.createDom();
-		this.setContent(this.content);
-		this.moveTo(this.offset.x, this.offset.y);
-		this.enterDocument();
-		//将node插入文档之后再生成 branch，保证此后branch能正常获得node的尺寸
-		this.createBranch();
+	addCaption : function() {
+		var caption = new kampfer.mindMap.Caption(this, this.controller, this.manager);
+		this.addChild(caption);
 	},
 	
-	createDom : function() {
-		this.createElement();
-		this.decorateElement();
-		this.createContentContainer();
+	addBranch : function() {
+		var branch = new kampfer.mindMap.Branch(this, this.controller, this.manager);
+		this.addChild(branch);
 	},
 	
-	createContentContainer : function() {
-		if(!this.contentDiv) {
-			var contentDiv = document.createElement('div');
-			contentDiv.className = 'node-caption';
-			contentDiv.id = 'node-caption-' + this.id;
-			this.contentDiv = contentDiv;
-		}
-		this.element.appendChild(this.contentDiv);
-	},
-	
-	createBranch : function() {
-		if(this.id !== 'root' && !this.branch) {
-			this.branch = new kampfer.mindMap.Branch(this);
-			this.branch.render();
+	addChildren : function() {
+		var children = this.manager.getChildren(this.data.id);
+		for(var i = 0, l = children.length; i < l; i++) {
+			var child = children[i];
+			this.addChild( new kampfer.mindMap.Node(newchild, this.controller, this.manager) );
 		}
 	},
 	
-	decorateElement : function() {
-		this.element.id = this.id;
-		this.element.setAttribute('node-type', 'node');
+	getContent : function() {
+		return this.data.content;
 	},
 	
-	setContent : function(text) {
-		this.contentDiv.innerHTML = text;
-	},
-	
-	getSize : function() {
-		return {
-			width : this.contentDiv.offsetWidth,
-			height : this.contentDiv.offsetHeight
-		};
-	},
-	
-	getParentSize : function() {
-		if(this.data.parent) {
-			var parentNode = document.getElementById('node-caption-' + this.data.parent);
-			return {
-				width : parentNode.offsetWidth,
-				height : parentNode.offsetHeight
-			};
-		}
-	},
-	
-	getPosition : function() {
-		return {
-			x : this.offset.x,
-			y : this.offset.y
-		};
-	},
-	
-	getCenterPosition : function() {
-		return {
-			x : this.offset.x + this.getSize().width / 2,
-			y : this.offset.y + this.getSize().height / 2
-		};
+	getOffset : function() {
+		return this.data.offset;
 	},
 	
 	getQuadrant : function() {
-		var	parentSize = this.getParentSize(),
-			thisCenter = this.getCenterPosition(),
-			parentCenter = {},
-			x, y;
+		var x = this.data.offset.x,
+			y = this.data.offset.y;
 		
-		parentCenter.x = parentSize.width / 2;
-		parentCenter.y = parentSize.height / 2;
-		
-		x = thisCenter.x - parentCenter.x;
-		y = thisCenter.y - parentCenter.y;
-		
-		if(x > 0 && y <= 0) {
+		if(x > 0 && y < 0) {
 			return 1;
 		}
-		if(x <= 0 && y < 0) {
+		if(x === 0 && y < 0) {
+			return 'topY';
+		}
+		if(x < 0 && y < 0) {
 			return 2;
 		}
-		if(x < 0 && y >= 0) {
+		if(x < 0 && Y === 0) {
+			return 'leftX';
+		}
+		if(x < 0 && y > 0) {
 			return 3;
 		}
-		if(x >= 0 && y > 0) {
+		if(x === 0 && y > 0) {
+			return 'bottomY';
+		}
+		if(x > 0 && y > 0) {
 			return 4;
+		}
+		if(x > 0 && y === 0) {
+			return 'rightX';
 		}
 	},
 	
-	move : function(x, y) {
-		var currentPosition = this.data.offset;
-		this.data.offset.x = x += currentPosition.x;
-		this.data.offset.y = y += currentPosition.y;
-		this.moveTo(x, y);
+	/* 拓展此方法 */
+	decorate : function() {
+		this._super();
+		
+		this._element.id = this._id;
+		kampfer.style.addClass(this._element, 'node');
 	}
 	
 });

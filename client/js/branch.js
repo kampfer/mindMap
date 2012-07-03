@@ -1,80 +1,100 @@
 /*global kampfer console*/
-kampfer.require('Class');
+kampfer.require('mindMap.Component');
 kampfer.require('dom');
 kampfer.require('style');
 kampfer.require('event');
 
 kampfer.provide('mindMap.Branch');
 
-kampfer.mindMap.Branch = kampfer.Class.extend({
+kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 	
-	init : function(parent) {
+	init : function(node, controller, manager) {
+		this.controller = controller;
+		this.manager = manager;
+		this.node = node;
+	},
+	
+	createDom : function() {
+		this._element = kampfer.global.document.createElement('canvas');
+	},
+	
+	decorate : function() {
+		this._super();
 		
-		this.parent = parent;
-		
-	},
-	
-	render : function() {
-		if(!this.element) {
-			this.createElement();
-			this.decorateElement();
-			this.drawLine();
-		}
-		this.parent.element.appendChild(this.element);
-	},
-	
-	createElement : function() {
-		this.element = kampfer.global.document.createElement('canvas');
-	},
-	
-	decorateElement : function() {
-		this.getSize();
-		this.getPosition();
-		kampfer.style.setStyle(this.element, {
-			left : this.left + 'px',
-			top : this.top + 'px'
+		var size = this.getSize(),
+			position = this.calculatePosition();
+			
+		kampfer.style.setStyle(this._element, {
+			left : position.left + 'px',
+			top : position.top + 'px'
 		});
-		this.element.width = this.width;
-		this.element.height = this.height;
-		this.element.id = this.prefix + this.parent.id;
+		
+		this._element.width = size.width;
+		this._element.height = size.height;
+		
+		this._element.id = this.prefix + this.getParent().getId();
+		
+		this.drawLine();
 	},
 	
 	getSize : function() {
-		var parentCenterPosition = this.parent.getCenterPosition(),
-			parentQuadrant = this.parent.getQuadrant(),
-			grandparentSize = this.parent.getParentSize();
-
-		this.width = Math.abs(parentCenterPosition.x - grandparentSize.width / 2);
-		this.height = Math.abs(parentCenterPosition.y - grandparentSize.height / 2);
-		
-		if(this.width === 0 ) {
-			this.width = 10;
-		}
-		
-		if(this.height === 0 ) {
-			this.height = 10;
-		}
+		var offset = this.node.getOffset(),
+			x, y;
+		( x = Math.abs(offset.x) ) <= 0 ? 10 : x;
+		( y = Math.abs(offset.y) ) <= 0 ? 10 : y;
+		return {
+			width : x,
+			height : y
+		};
 	},
 	
-	getPosition : function() {
-		var x = this.parent.data.offset.x,
-			y = this.parent.data.offset.y,
-			quadrant = this.parent.getQuadrant();
-		if(quadrant === 1) {
-			this.left = -(this.width - this.parent.getSize().width / 2);
-			this.top = this.parent.getSize().height / 2;
-		}
-		if(quadrant === 2) {
-			this.left = this.parent.getSize().width / 2;
-			this.top = this.parent.getSize().height / 2;
-		}
-		if(quadrant === 3) {
-			this.left = this.parent.getSize().width / 2;
-			this.top = -(this.height - this.parent.getSize().height / 2);
-		}
-		if(quadrant === 4) {
-			this.left = -(this.width - this.parent.getSize().width / 2);
-			this.top = -(this.height - this.parent.getSize().height / 2);
+	calculatePosition : function() {
+		var quadrant = this.node.getQuadrant(),
+			offset = this.node.getOffset();
+		
+		switch(quadrant) {
+			case 1 :
+				return {
+					left : -offset.x,
+					top : 0
+				};
+			case 'topY' :
+				return {
+					left : -5,
+					top : 0
+				};
+			case 2 :
+				return {
+					left : 0,
+					top : 0
+				};
+			case 'leftX' : 
+				return {
+					left : 0,
+					top : -5
+				};
+			case 3 : 
+				return {
+					left : 0,
+					top : -offset.y
+				};
+			case 'bottomY' : 
+				return {
+					left : -5,
+					top : -offset.y
+				};
+			case 4 : 
+				return {
+					left : -offset.x,
+					top : -offset.y
+				};
+			case 'rightX' :
+				return {
+					left : -offset.x,
+					top : -5
+				};
+			default :
+				throw ('invalid quadrant!');
 		}
 	},
 	
@@ -87,20 +107,40 @@ kampfer.mindMap.Branch = kampfer.Class.extend({
 			ctx.lineTo(6, ctx.canvas.height);
 			ctx.lineTo(ctx.canvas.width, 0);
 		}
+		if(quadrant === 'topY') {
+			ctx.moveTo(0, ctx.canvas.height);
+			ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+			ctx.lineTo(ctx.canvas.width / 2, 0);
+		}
 		if(quadrant === 2) {
 			ctx.moveTo(ctx.canvas.width, ctx.canvas.height - 6);
 			ctx.lineTo(ctx.canvas.width - 6, ctx.canvas.height);
 			ctx.lineTo(0, 0);
+		}
+		if(quadrant === 'leftX') {
+			ctx.moveTo(ctx.canvas.width, 0);
+			ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+			ctx.lineTo(0, ctx.canvas.height / 2);
 		}
 		if(quadrant === 3) {
 			ctx.moveTo(ctx.canvas.width - 6, 0);
 			ctx.lineTo(ctx.canvas.width, 6);
 			ctx.lineTo(0, ctx.canvas.height);
 		}
+		if(quadrant === 'bottomY') {
+			ctx.moveTo(0, 0);
+			ctx.lineTo(ctx.canvas.width, 0);
+			ctx.lineTo(ctx.canvas.width / 2, ctx.canvas.height);
+		}
 		if(quadrant === 4) {
 			ctx.moveTo(6, 0);
 			ctx.lineTo(0, 6);
 			ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+		}
+		if(quadrant === 'rightX') {
+			ctx.moveTo(0, 0);
+			ctx.lineTo(0, ctx.canvas.height);
+			ctx.lineTo(ctx.canvas.width, ctx.canvas.height / 2);
 		}
 		ctx.fill();
 	},
