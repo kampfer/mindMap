@@ -12,7 +12,7 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 		this.manager = manager;
 		this.node = node;
 		
-		this._id = 'branch';
+		this._id = 'branch-' + this.node.getId();
 	},
 	
 	createDom : function() {
@@ -22,7 +22,7 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 	decorate : function() {
 		this._super();
 		
-		var size = this.getSize(),
+		var size = this.calculateSize(),
 			position = this.calculatePosition();
 			
 		kampfer.style.setStyle(this._element, {
@@ -38,10 +38,10 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 		this.drawLine();
 	},
 	
-	getSize : function() {
+	calculateSize : function() {
 		var offset = this.node.getOffset(),
-			x = Math.abs(offset.x),
-			y = Math.abs(offset.y);
+			x = Math.abs(offset.left),
+			y = Math.abs(offset.top);
 		x = x <= 0 ? 10 : x;
 		y = y <= 0 ? 10 : y;
 		return {
@@ -57,7 +57,7 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 		switch(quadrant) {
 			case 1 :
 				return {
-					left : -offset.x,
+					left : -offset.left,
 					top : 0
 				};
 			case 'topY' :
@@ -78,21 +78,21 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 			case 3 : 
 				return {
 					left : 0,
-					top : -offset.y
+					top : -offset.top
 				};
 			case 'bottomY' : 
 				return {
 					left : -5,
-					top : -offset.y
+					top : -offset.top
 				};
 			case 4 : 
 				return {
-					left : -offset.x,
-					top : -offset.y
+					left : -offset.left,
+					top : -offset.top
 				};
 			case 'rightX' :
 				return {
-					left : -offset.x,
+					left : -offset.left,
 					top : -5
 				};
 			default :

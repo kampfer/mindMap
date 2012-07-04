@@ -110,7 +110,16 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 	
 	getChild : function(id) {
 		if(this._children) {
-			return this._chileren[id];
+			var ret = null;
+			this.eachChild(function(child) {
+				if(child._id === id) {
+					ret = child;
+					return false;
+				}else{
+					ret = child.getChild(id);
+				}
+			});
+			return ret;
 		}
 	},
 	
@@ -118,7 +127,9 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 	eachChild : function(fn, context) {
 		if(this._children) {
 			for(var id in this._children) {
-				fn.call(context, this._children[id], id);
+				if( fn.call(context, this._children[id], id) === false ) {
+					return;
+				}
 			}
 		}
 	},
@@ -209,14 +220,6 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 				height : this._element.offsetHeight
 			};
 		}
-	},
-	
-	setSize : function() {},
-	
-	move : function() {},
-	
-	show : function() {},
-	
-	hide : function() {}
+	}
 	
 });

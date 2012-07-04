@@ -20,6 +20,10 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 		rootNode = new kampfer.mindMap.Node(rootNode, this.controller, this.manager);
 		
 		this.addChild(rootNode);
+	},
+	
+	decorate : function() {
+		this._element.id = 'map';
 	}
 	
 });

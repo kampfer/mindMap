@@ -18,7 +18,9 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		this._id = this.data.id;
 		
 		this.addCaption();
-		this.addBranch();
+		if(this._id !== 'root') {
+			this.addBranch();
+		}
 		this.addChildren();
 	},
 	
@@ -45,7 +47,8 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 	},
 	
 	getOffset : function() {
-		return this.data.offset;
+		//return this.data.offset;
+		return this.getPosition();
 	},
 	
 	getQuadrant : function() {
@@ -84,6 +87,16 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		
 		this._element.id = this._id;
 		kampfer.dom.addClass(this._element, 'node');
+		
+		kampfer.style.setStyle(this._element, {
+			left : this.data.offset.x + 'px',
+			top : this.data.offset.y + 'px'
+		});
+	},
+	
+	move : function(x, y) {
+		var oriPosition = this.getPosition();
+		this.setPosition(oriPosition.left + x, oriPosition.top + y);
 	}
 	
 });

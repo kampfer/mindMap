@@ -31,6 +31,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		
 		this.map.render();
 	},
+	
+	getNode : function(id) {
+		return this.map.getChild(id);
+	},
 
 	monitorEvents : function() {
 		
