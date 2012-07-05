@@ -11,12 +11,14 @@ kampfer.mindMap.Caption = kampfer.mindMap.Component.extend({
 		this.controller = controller;
 		this.manager = manager;
 		this.node = node;
-		this._id = 'caption';
+		this._id = this.prefix + this.node.getId();
 	},
 	
 	decorate : function() {
+		this._super();
+		
 		this._element.className = 'node-caption';
-		this._element.id = 'node-caption-' + this.node.getId();
+		this._element.id = this.prefix + this.node.getId();
 		this.setContent( this.node.getContent() );
 		this.fixPosition();
 	},
@@ -28,6 +30,8 @@ kampfer.mindMap.Caption = kampfer.mindMap.Component.extend({
 	fixPosition : function() {
 		var size = this.getSize();
 		this.setPosition( -(size.width / 2), -(size.height / 2) );
-	}
+	},
+	
+	prefix : 'caption-'
 	
 });

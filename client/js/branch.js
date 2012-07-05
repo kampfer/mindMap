@@ -12,7 +12,7 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 		this.manager = manager;
 		this.node = node;
 		
-		this._id = 'branch-' + this.node.getId();
+		this._id = this.prefix + this.node.getId();
 	},
 	
 	createDom : function() {
@@ -147,6 +147,6 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 		ctx.fill();
 	},
 	
-	prefix : 'canvas-'
+	prefix : 'branch-'
 	
 });

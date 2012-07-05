@@ -47,8 +47,13 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 	},
 	
 	getOffset : function() {
-		//return this.data.offset;
 		return this.getPosition();
+	},
+	
+	getBranch : function() {
+	},
+	
+	getCaption : function() {
 	},
 	
 	getQuadrant : function() {

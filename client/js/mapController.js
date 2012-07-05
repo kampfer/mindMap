@@ -18,8 +18,6 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		//保存一个map视图的引用
 		this.map = null;
 		
-		this.currentNodeId = '';
-		
 		this.currentState = this.initialState;
 		
 	},
@@ -33,7 +31,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	},
 	
 	getNode : function(id) {
-		return this.map.getChild(id);
+		return this.map.getNode(id);
 	},
 
 	monitorEvents : function() {
@@ -44,10 +42,15 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			var controller = that;
 			
 			var func = controller.action2Function[controller.currentState][event.type];
+			if(!func) {
+				func = controller.action2Function.unexceptedEvent;
+			}
 			controller.currentState = func.call(controller, event);
 		}
 		
-		kampfer.addEvent(this.map.element, '*', handleEvent);
+		kampfer.addEvent(this.map.getElement(), 'mousedown', handleEvent);
+		kampfer.addEvent(this.map.getElement(), 'mousemove', handleEvent);
+		kampfer.addEvent(this.map.getElement(), 'mouseup', handleEvent);
 		
 	},
 	
@@ -65,7 +68,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			},
 			
 			mousedown : function(event) {
-				if(event.button === 1) {
+				if(event.button === 0) {
 					this.saveCursorPosition(event);
 					return 'mapfocus';
 				}
@@ -153,6 +156,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			mouseover : function() {
 				return 'mapActivated';
 			}
+		},
+		
+		unexceptedEvent : function() {
+			return this.currentState;
 		}
 
 	},

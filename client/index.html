@@ -141,15 +141,16 @@
 			controller.render();
 			var i = 0;
 			setTimeout(function() {
-				if(i <= 20) {
+				if(i <= 10) {
 					i++;
 					var node = controller.getNode('abee4');
 					var branch = node.getChild('branch-abee4');
-					node.move(5, 5);
+					node.move(0, 5);
 					branch.decorate();
 					setTimeout(arguments.callee, 25);
 				}
-			}, 25);
+			}, 15);
+			controller.monitorEvents();
 		</script>
 	</body>
 </html>

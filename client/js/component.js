@@ -81,7 +81,7 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 			}
 			child.render();
 		} else if(!child._inDocument && this._inDocument) {
-		//如果子component不在文档流中，而父component在。那么如果子component在已生成了dom对象，
+		//如果子component不在文档流中，而父component在。那么如果子component已生成了dom对象，
 		//就将子component插入文档流
 			if( child.getElement() ) {
 				child.enterDocument();
@@ -108,18 +108,10 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 		return child;
 	},
 	
+	//composition只负责子component
 	getChild : function(id) {
 		if(this._children) {
-			var ret = null;
-			this.eachChild(function(child) {
-				if(child._id === id) {
-					ret = child;
-					return false;
-				}else{
-					ret = child.getChild(id);
-				}
-			});
-			return ret;
+			return this._children[id];
 		}
 	},
 	

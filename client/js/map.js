@@ -24,6 +24,21 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 	
 	decorate : function() {
 		this._element.id = 'map';
+	},
+	
+	getNode : function(id) {
+		var node;
+		
+		this.eachChild(function(child) {
+			if(child.getId() === id) {
+				node = child;
+				return false;
+			}else {
+				child.eachChild(arguments.callee);
+			}
+		});
+
+		return node;
 	}
 	
 });
