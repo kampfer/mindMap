@@ -139,18 +139,11 @@
 			var manager = new kampfer.mindMap.MapManager(data);
 			var controller = new kampfer.mindMap.MapController(manager);
 			controller.render();
-			var i = 0;
-			setTimeout(function() {
-				if(i <= 10) {
-					i++;
-					var node = controller.getNode('abee4');
-					var branch = node.getChild('branch-abee4');
-					node.move(0, 5);
-					branch.decorate();
-					setTimeout(arguments.callee, 25);
-				}
-			}, 15);
 			controller.monitorEvents();
+			
+			var node = controller.map.getNode('abee411');
+			var element = node.getElement();
+			console.log(node.getBoundingClientRect());
 		</script>
 	</body>
 </html>

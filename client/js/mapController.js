@@ -36,7 +36,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 
 	monitorEvents : function() {
 		
-		var that = this;
+		var that = this,
+			element = this.map.getElement();
 		
 		function handleEvent(event) {
 			var controller = that;
@@ -45,56 +46,26 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			if(!func) {
 				func = controller.action2Function.unexceptedEvent;
 			}
+			
 			controller.currentState = func.call(controller, event);
 		}
 		
-		kampfer.addEvent(this.map.getElement(), 'mousedown', handleEvent);
-		kampfer.addEvent(this.map.getElement(), 'mousemove', handleEvent);
-		kampfer.addEvent(this.map.getElement(), 'mouseup', handleEvent);
+		kampfer.addEvent(element, 'mousedown', handleEvent);
+		kampfer.addEvent(element, 'mousemove', handleEvent);
+		kampfer.addEvent(element, 'mouseup', handleEvent);
+		kampfer.addEvent(element, 'mouseover', handleEvent);
+		kampfer.addEvent(element, 'mouseout', handleEvent);
 		
 	},
 	
 	action2Function : {
 		
-		//鼠标在map上
 		mapActivated : {
 			
-			mouseout : function(event) {
-				var relatedTarget = event.relatedTarget;
-				if( this.isNodeElement(relatedTarget) ) {
+			mouseover : function(event) {
+				if( this.isNodeElement(event.target) ) {
 					return 'nodeActivated';
 				}
-				return 'afk';
-			},
-			
-			mousedown : function(event) {
-				if(event.button === 0) {
-					this.saveCursorPosition(event);
-					return 'mapfocus';
-				}
-				return 'mapActivated';
-			}
-
-		},
-		
-		//在map上按住鼠标左键
-		mapfocus : {
-			
-			mousemove : function(event) {
-			
-				var offsetX = event.pageX - this.lastCursorX,
-					offsetY = event.pageY - this.lastCursorY;
-				
-				kampfer.event.trigger(this, 'moveMap', {
-					offsetX: offsetX,
-					offsetY : offsetY
-				});
-				
-				return 'mapfocus';
-				
-			},
-			
-			mouseup : function(event) {
 				return 'mapActivated';
 			}
 			
@@ -112,9 +83,9 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			},
 			
 			mousedown : function(event) {
-				this.getCurrentNode(event);
-				
-				if(event.button === 3) {
+				event.preventDefault();
+			
+				if(event.button === 2) {
 					//显示编辑菜单
 					kampfer.event.trigger(this, 'showMenu', {
 						currentNodeId : this.currentNodeId
@@ -122,7 +93,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 					return 'nodeActivated';
 				}
 				
-				if(event.button === 1) {
+				if(event.button === 0) {
 					this.saveCursorPosition(event);
 					return 'nodefocus';
 				}
@@ -134,28 +105,25 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		nodefocus : {
 			
 			mousemove : function() {
-				var offsetX = event.pageX - this.lastCursorX,
-					offsetY = event.pageY - this.lastCursorY;
+				if( !this.isNodeElement(event.target) ) {
+					return 'nodeActivated';
+				} else {
+					var offsetX = event.pageX - this.lastCursorX,
+						offsetY = event.pageY - this.lastCursorY,
+						id = this.getCurrentNodeId(event),
+						node = this.map.getNode(id);
 						
-				kampfer.event.trigger(this, 'moveNode', {
-					offsetX : offsetX,
-					offsetY : offsetY
-				});
-				
-				return 'nodefocus';
+					this.saveCursorPosition(event);
+					node.move(offsetX, offsetY);
+					
+					return 'nodefocus';
+				}
 			},
 			
 			mouseup : function() {
 				return 'nodeActivated';
 			}
 			
-		},
-		
-		//鼠标移出了map
-		afk : {
-			mouseover : function() {
-				return 'mapActivated';
-			}
 		},
 		
 		unexceptedEvent : function() {
@@ -172,18 +140,13 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	},
 	
 	getCurrentNodeId : function(event) {
-		
 		var nodeElement = this.getNodeElement(event.target),
 			id = nodeElement.id;
-			
-		this.currentNodeId = id;
 		
 		return id;
-		
 	},
 	
 	getNodeElement : function(element) {
-	
 		do {
 			if( element.getAttribute('node-type') === 'node' ) {
 				return element;
@@ -192,20 +155,24 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		}while(element);
 		
 		return null;
-		
 	},
 	
+	//判断dom是否在一个node中，或者它就是node。
+	//但是排除branch的情况
 	isNodeElement : function(element) {
+		var nodeType;
 		
 		do {
-			if( element.getAttribute('node-type') === 'node' ) {
+			nodeType = element.getAttribute('node-type');
+			if( nodeType === 'node' ) {
 				return true;
+			}else if( nodeType === 'branch' ) {
+				return false;
 			}
 			element = element.parentNode;
 		}while(element);
 		
 		return false;
-		
 	},
 	
 	isMapElement : function(element) {

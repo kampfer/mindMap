@@ -16,6 +16,8 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		this.manager = manager;
 		
 		this._id = this.data.id;
+		this.offsetX = data.offset.x;
+		this.offsetY = data.offset.y;
 		
 		this.addCaption();
 		if(this._id !== 'root') {
@@ -50,15 +52,21 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		return this.getPosition();
 	},
 	
+	getBoundingClientRect : function() {
+		return this._element.getBoundingClientRect();
+	},
+	
 	getBranch : function() {
+		return this.getChild('branch-' + this._id);
 	},
 	
 	getCaption : function() {
+		return this.getChild('caption-' + this._id);
 	},
 	
 	getQuadrant : function() {
-		var x = this.data.offset.x,
-			y = this.data.offset.y;
+		var x = this.offsetX,
+			y = this.offsetY;
 		
 		if(x > 0 && y < 0) {
 			return 1;
@@ -92,6 +100,7 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		
 		this._element.id = this._id;
 		kampfer.dom.addClass(this._element, 'node');
+		this._element.setAttribute('node-type', 'node');
 		
 		kampfer.style.setStyle(this._element, {
 			left : this.data.offset.x + 'px',
@@ -101,7 +110,17 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 	
 	move : function(x, y) {
 		var oriPosition = this.getPosition();
-		this.setPosition(oriPosition.left + x, oriPosition.top + y);
+		
+		x += oriPosition.left;
+		y += oriPosition.top;
+		
+		this.offsetX = x;
+		this.offsetY = y;
+			
+		this.setPosition(x, y);
+		if(this._id !== 'root') {
+			this.getBranch().decorate();
+		}
 	}
 	
 });

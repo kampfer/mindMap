@@ -19,6 +19,7 @@ kampfer.mindMap.Caption = kampfer.mindMap.Component.extend({
 		
 		this._element.className = 'node-caption';
 		this._element.id = this.prefix + this.node.getId();
+		this._element.setAttribute('node-type', 'caption');
 		this.setContent( this.node.getContent() );
 		this.fixPosition();
 	},

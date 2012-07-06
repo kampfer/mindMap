@@ -34,6 +34,7 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 		this._element.height = size.height;
 		
 		this._element.id = this.prefix + this.getParent().getId();
+		this._element.setAttribute('node-type', 'branch');
 		
 		this.drawLine();
 	},
