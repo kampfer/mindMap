@@ -23,7 +23,16 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 	},
 	
 	decorate : function() {
+		var winSize = this.getWindowRect();
+		
 		this._element.id = 'map';
+		kampfer.dom.addClass(this._element, 'map');
+		kampfer.style.setStyle(this._element, {
+			width : '2000px',
+			height : '2000px',
+			left : winSize.width / 2 - 1000 + 'px',
+			top : winSize.height / 2 - 1000 + 'px'
+		});
 	},
 	
 	getNode : function(id) {
@@ -39,6 +48,15 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 		});
 
 		return node;
+	},
+	
+	getWindowRect : function() {
+		return {
+			width : Math.max(document.documentElement.clientWidth,
+				document.documentElement.clientWidth),
+			height : Math.max(document.documentElement.clientHeight,
+				document.documentElement.clientHeight)
+		};
 	}
 	
 });

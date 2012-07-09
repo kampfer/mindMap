@@ -1,4 +1,4 @@
-/*global kampfer console*/
+/*global window kampfer console*/
 kampfer.require('Class');
 kampfer.require('event');
 kampfer.require('mindMap.Map');
@@ -67,6 +67,35 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 					return 'nodeActivated';
 				}
 				return 'mapActivated';
+			},
+			
+			mousedown : function(event) {
+				event.preventDefault();
+				
+				if(event.button === 0) {
+					this.saveCursorPosition(event);
+					return 'mapFocus';
+				}
+				
+				return 'mapActivated';
+			}
+			
+		},
+		
+		mapFocus : {
+			
+			mousemove : function(event) {
+				var offsetX = event.pageX - this.lastCursorX,
+					offsetY = event.pageY - this.lastCursorY;
+				
+				this.saveCursorPosition(event);
+				window.scrollBy(offsetX, offsetY);
+				
+				return 'mapFocus';
+			},
+			
+			mouseup : function() {
+				return 'mapActivated';
 			}
 			
 		},
@@ -74,7 +103,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		//鼠标在node上
 		nodeActivated : {
 			
-			mouserout : function() {
+			mouseout : function(event) {
 				var relatedTarget = event.relatedTarget;
 				if( this.isMapElement(relatedTarget) ) {
 					return 'mapActivated';
@@ -104,7 +133,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		//在node上按住鼠标左键
 		nodefocus : {
 			
-			mousemove : function() {
+			mousemove : function(event) {
 				if( !this.isNodeElement(event.target) ) {
 					return 'nodeActivated';
 				} else {
@@ -161,6 +190,11 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	//但是排除branch的情况
 	isNodeElement : function(element) {
 		var nodeType;
+		
+		console.log(element);
+		if(!element) {
+			return false;
+		}
 		
 		do {
 			nodeType = element.getAttribute('node-type');

@@ -11,13 +11,11 @@
 			kampfer.require('mindMap.MapController');
 		</script>
 		<style type="text/css">
-			#map{position:absolute;left:50%;top:50%;}
+			body{overflow:hidden;}
+			#map{position:absolute;}
 		</style>
 	</head>
-	<body style="cursor:move;">
-		<!--
-		<div style="width:100%;height:600px;overflow: hidden;position: relative;" id="container"></div>
-		-->
+	<body>
 		<script type="text/javascript">
 			var data = {
 				nodes : {
@@ -27,8 +25,8 @@
 						children : ['abe', 'abec', 'abed', 'abee', 'abee1', 'abee2', 'abee3', 'abee4'],
 						content : 'root',
 						offset : {
-							x : 0,
-							y : 0
+							x : '1000',
+							y : '1000'
 						},
 						style : 'root'
 					},
@@ -143,7 +141,6 @@
 			
 			var node = controller.map.getNode('abee411');
 			var element = node.getElement();
-			console.log(node.getBoundingClientRect());
 		</script>
 	</body>
 </html>
