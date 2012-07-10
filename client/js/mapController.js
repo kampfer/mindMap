@@ -2,6 +2,7 @@
 kampfer.require('Class');
 kampfer.require('event');
 kampfer.require('mindMap.Map');
+kampfer.require('mindMap.Menu');
 
 kampfer.provide('mindMap.MapController');
 
@@ -20,14 +21,24 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		
 		this.currentState = this.initialState;
 		
-	},
-	
-	render : function() {
 		if(!this.map) {
 			this.map = new kampfer.mindMap.Map(this, this.currentMapManager);
 		}
 		
+		this.menu = new kampfer.mindMap.Menu();
+		this.menu.addItem( new kampfer.mindMap.MenuItem('test', function(){
+			alert(kampfer);
+		}) );
+		this.menu.addItem( new kampfer.mindMap.MenuItem('test1') );
+		this.menu.addItem( new kampfer.mindMap.MenuItem('test2') );
+		this.menu.addItem( new kampfer.mindMap.MenuItem('test3') );
+		this.menu.addItem( new kampfer.mindMap.MenuItem('test4111111111111111111111111') );
+		
+	},
+	
+	render : function() {
 		this.map.render();
+		this.menu.render();
 	},
 	
 	getNode : function(id) {
@@ -89,7 +100,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 					offsetY = event.pageY - this.lastCursorY;
 				
 				this.saveCursorPosition(event);
-				window.scrollBy(offsetX, offsetY);
+				this.map.move(offsetX, offsetY);
 				
 				return 'mapFocus';
 			},
@@ -104,8 +115,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		nodeActivated : {
 			
 			mouseout : function(event) {
-				var relatedTarget = event.relatedTarget;
-				if( this.isMapElement(relatedTarget) ) {
+				if( this.isNodeElement(event.target) ) {
 					return 'mapActivated';
 				}
 				return 'nodeActivated';
@@ -143,6 +153,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 						node = this.map.getNode(id);
 						
 					this.saveCursorPosition(event);
+					//TODO node移动太快时会出现丢失焦点的情况，需要提高移动动画的效率。
 					node.move(offsetX, offsetY);
 					
 					return 'nodefocus';
@@ -181,7 +192,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				return element;
 			}
 			element = element.parentNode;
-		}while(element);
+		}while(element && element.getAttribute);
 		
 		return null;
 	},
@@ -191,12 +202,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	isNodeElement : function(element) {
 		var nodeType;
 		
-		console.log(element);
-		if(!element) {
-			return false;
-		}
-		
-		do {
+		while(element && element.getAttribute) {
 			nodeType = element.getAttribute('node-type');
 			if( nodeType === 'node' ) {
 				return true;
@@ -204,31 +210,9 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				return false;
 			}
 			element = element.parentNode;
-		}while(element);
+		}
 		
 		return false;
-	},
-	
-	isMapElement : function(element) {
-		if( element.getAttribute('node-type') === 'map' ) {
-			return true;
-		}
-		return false;
-	},
-	
-	getCommand : function(event) {
-		var element = event.target,
-			ret;
-			
-		while( element && !(ret = element.getAttribute('action')) ) {
-			element = element.parentNode;
-		}
-		
-		if(!ret) {
-			throw 'err';
-		}
-		
-		return ret;
 	}
 	
 });

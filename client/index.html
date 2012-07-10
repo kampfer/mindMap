@@ -13,6 +13,43 @@
 		<style type="text/css">
 			body{overflow:hidden;}
 			#map{position:absolute;}
+			
+			.menu{
+				background: white;
+				border-color: #CCC #666 #666 #CCC;
+				border-style: solid;
+				border-width: 1px;
+				cursor: default;
+				font: normal 13px Arial, sans-serif;
+				margin: 0;
+				outline: none;
+				padding: 4px 0;
+				position: absolute;
+				z-index: 20000;
+				left:100px;
+				top:100px;
+			}
+			.menu-label{width:10px;height:10px;background-color:blue;border-radius:5px;position:absolute;left:-5px;top:-5px;}
+			.menu-label:hover,
+			.menu-label.hover{width:12px;height:12px;border-radius:6px;}
+			.menu-body{}
+			.menu-item{
+				color: black;
+				font: normal 13px Arial, sans-serif;
+				list-style: none;
+				margin: 0;
+				padding: 4px 7em 4px 28px;
+				white-space: nowrap;
+			}
+			.menu-item:hover,
+			.menu-item.hover{
+				background-color: #D6E9F8;
+				border-color: #D6E9F8;
+				border-style: dotted;
+				border-width: 1px 0;
+				padding-bottom: 3px;
+				padding-top: 3px;
+			}
 		</style>
 	</head>
 	<body>
@@ -140,6 +177,7 @@
 			controller.monitorEvents();
 			
 			var node = controller.map.getNode('abee411');
+			
 			var element = node.getElement();
 		</script>
 	</body>

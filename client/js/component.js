@@ -38,9 +38,21 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 			( this._id = this.generateUniqueId() );
 	},
 	
-	//生成唯一id。(原理简陋，不确定真的是唯一)
+	/*
+	 * 生成唯一id
+	 * 直接使用时间戳不可行
+	 * 以下方法摘自http://www.cnblogs.com/NoRoad/archive/2010/03/12/1684759.html
+	 */
 	generateUniqueId : function() {
-		return kampfer.now().toString(32);
+		var guid = "";
+		for(var i = 1; i <= 32; i++) {
+			var n = Math.floor(Math.random() * 16.0).toString(16);
+			guid += n;
+			if((i == 8) || (i == 12) || (i == 16) || (i == 20)) {
+				guid += "-";
+			}
+		}
+		return guid;
 	},
 	
 	setParent : function(parent) {
@@ -167,10 +179,12 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 		this._wasDecorated = true;
 	},
 	
-	enterDocument : function() {
+	enterDocument : function(parent) {
 		this._inDocument = true;
 		
-		if( this._parent && this._parent.getElement() ) {
+		if(parent && parent.nodeType) {
+			parent.appendChild(this._element);
+		} else if( this._parent && this._parent.getElement() ) {
 			this._parent.getElement().appendChild(this._element);
 		} else {
 			this._doc.body.appendChild(this._element);
@@ -178,11 +192,12 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 	},
 	
 	exitDocument : function() {
-		if( this._parent && this._parent.getElement() ) {
-			this._parent.getElement().removeChild(this._element);
-		} else {
-			this._doc.body.removeChild(this._element);
-		}
+		//if( this._parent && this._parent.getElement() ) {
+		//	this._parent.getElement().removeChild(this._element);
+		//} else {
+		//	this._doc.body.removeChild(this._element);
+		//}
+		this._element.parentNode.removeChild(this._element);
 
 		this._inDocument = false;
 	},

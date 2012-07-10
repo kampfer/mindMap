@@ -57,6 +57,15 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 			height : Math.max(document.documentElement.clientHeight,
 				document.documentElement.clientHeight)
 		};
+	},
+	
+	move : function(x, y) {
+		var oriPosition = this.getPosition();
+		
+		x += oriPosition.left;
+		y += oriPosition.top;
+			
+		this.setPosition(x, y);
 	}
 	
 });

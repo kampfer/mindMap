@@ -12,7 +12,7 @@ div.node {
 }
 
 div.node-caption {
-    position: relative;
+    position: absolute;
     min-width: 100px;
 	max-width: 200px;
     background-color: #CCDDEE;
