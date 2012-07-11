@@ -32,7 +32,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		this.menu.addItem( new kampfer.mindMap.MenuItem('test1') );
 		this.menu.addItem( new kampfer.mindMap.MenuItem('test2') );
 		this.menu.addItem( new kampfer.mindMap.MenuItem('test3') );
-		this.menu.addItem( new kampfer.mindMap.MenuItem('test4111111111111111111111111') );
+		this.menu.addItem( new kampfer.mindMap.MenuItem('test4') );
 		
 	},
 	
@@ -74,7 +74,14 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		mapActivated : {
 			
 			mouseover : function(event) {
-				if( this.isNodeElement(event.target) ) {
+				var node = this.getNodeFromElement(event.target),
+					position, size;
+				if( node ) {
+					position = node.getBoundingClientRect();
+					size = node.getCaption().getSize();
+					this.menu.setPosition(position.left + size.width / 2 + 5, 
+						position.top - size.height / 2);
+					this.menu.show();
 					return 'nodeActivated';
 				}
 				return 'mapActivated';
@@ -186,13 +193,18 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		return id;
 	},
 	
-	getNodeElement : function(element) {
-		do {
-			if( element.getAttribute('node-type') === 'node' ) {
-				return element;
+	getNodeFromElement : function(element) {
+		var nodeType;
+		
+		while(element && element.getAttribute) {
+			nodeType = element.getAttribute('node-type');
+			if(nodeType === 'node') {
+				return this.getNode(element.id);
+			}else if( nodeType === 'branch' ) {
+				return null;
 			}
 			element = element.parentNode;
-		}while(element && element.getAttribute);
+		}
 		
 		return null;
 	},

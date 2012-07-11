@@ -1,6 +1,7 @@
 /*global kampfer console*/
 kampfer.require('mindMap.Component');
 kampfer.require('dom');
+kampfer.require('event');
 
 kampfer.provide('mindMap.Menu');
 kampfer.provide('mindMap.MenuItem');
@@ -44,17 +45,56 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	decorate : function() {
 		this._super();
 		
+		this.setVisible(this._element, false);
+		this.setBodyVisible(false);
+		this.setLabelVisible(false);
+		
 		kampfer.dom.addClass(this._element, 'menu');
 		kampfer.dom.addClass(this._label, 'menu-label');
 		kampfer.dom.addClass(this._body, 'menu-body');
+	},
+	
+	render : function() {
+		this._super();
+		
+		var that = this;
+		kampfer.event.addEvent(this._label, 'click', function(){
+			that.setVisible(that._body, true);
+		});
 	},
 	
 	getBody : function() {
 		return this._body;
 	},
 	
+	getLabel : function() {
+		return this._label;
+	},
+	
 	addItem : function(item) {
 		this.addChild(item, true);
+	},
+	
+	show : function() {
+		this.setVisible(this._element, true);
+		this.setVisible(this._label, true);
+	},
+	
+	setVisible : function(element, visible) {
+		if(!element || !element.nodeType) {
+			return;
+		}
+		
+		var display = visible ? '' : 'none';
+		element.style.display = display;
+	},
+	
+	setBodyVisible : function(visible) {
+		this.setVisible(this._body, visible);
+	},
+	
+	setLabelVisible : function(visible) {
+		this.setVisible(this._label, visible);
 	}
 	
 });
