@@ -35,7 +35,9 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			that.currentNode.addChild( 
 				new kampfer.mindMap.Node(data, that, that.currentMapManager), true );
 		}) );
-		this.menu.addItem( new kampfer.mindMap.MenuItem('test1') );
+		this.menu.addItem( new kampfer.mindMap.MenuItem('编辑', function() {
+			console.log('edit');	
+		}) );
 		this.menu.addItem( new kampfer.mindMap.MenuItem('test2') );
 		this.menu.addItem( new kampfer.mindMap.MenuItem('test3') );
 		this.menu.addItem( new kampfer.mindMap.MenuItem('test4') );
