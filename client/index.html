@@ -16,14 +16,21 @@
 			
 			.menu{
 				position: absolute;
-				left:100px;
-				top:100px;
+				width:25px;
+				height:25px;
 				z-index: 20000;
 			}
-			.menu-label{width:10px;height:10px;background-color:blue;border-radius:5px;position:absolute;left:-5px;top:-5px;}
+			.menu-label{
+				width:10px;
+				height:10px;
+				background-color:blue;
+				border-radius:5px;
+				position:absolute;
+			}
 			.menu-label:hover,
 			.menu-label.hover{width:12px;height:12px;border-radius:6px;}
 			.menu-body{
+				position: absolute;
 				background: white;
 				border-color: #CCC #666 #666 #CCC;
 				border-style: solid;
@@ -53,7 +60,7 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body oncontextmenu="return false">
 		<script type="text/javascript">
 			var data = {
 				nodes : {

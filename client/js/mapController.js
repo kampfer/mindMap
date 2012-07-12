@@ -2,6 +2,7 @@
 kampfer.require('Class');
 kampfer.require('event');
 kampfer.require('mindMap.Map');
+kampfer.require('mindMap.Node');
 kampfer.require('mindMap.Menu');
 
 kampfer.provide('mindMap.MapController');
@@ -21,13 +22,18 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		
 		this.currentState = this.initialState;
 		
+		this.currentNode = null;
+		
 		if(!this.map) {
 			this.map = new kampfer.mindMap.Map(this, this.currentMapManager);
 		}
 		
+		var that = this;
 		this.menu = new kampfer.mindMap.Menu();
-		this.menu.addItem( new kampfer.mindMap.MenuItem('test', function(){
-			alert(kampfer);
+		this.menu.addItem( new kampfer.mindMap.MenuItem('添加新节点', function() {
+			var data = that.currentMapManager.createNode( that.currentNode.getId() );
+			that.currentNode.addChild( 
+				new kampfer.mindMap.Node(data, that, that.currentMapManager), true );
 		}) );
 		this.menu.addItem( new kampfer.mindMap.MenuItem('test1') );
 		this.menu.addItem( new kampfer.mindMap.MenuItem('test2') );
@@ -74,14 +80,9 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		mapActivated : {
 			
 			mouseover : function(event) {
-				var node = this.getNodeFromElement(event.target),
-					position, size;
+				var node = this.getNodeFromElement(event.target);
 				if( node ) {
-					position = node.getBoundingClientRect();
-					size = node.getCaption().getSize();
-					this.menu.setPosition(position.left + size.width / 2 + 5, 
-						position.top - size.height / 2);
-					this.menu.show();
+					this.currentNode = node;
 					return 'nodeActivated';
 				}
 				return 'mapActivated';
@@ -91,6 +92,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				event.preventDefault();
 				
 				if(event.button === 0) {
+					this.menu.hide();
 					this.saveCursorPosition(event);
 					return 'mapFocus';
 				}
@@ -132,10 +134,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				event.preventDefault();
 			
 				if(event.button === 2) {
-					//显示编辑菜单
-					kampfer.event.trigger(this, 'showMenu', {
-						currentNodeId : this.currentNodeId
-					});
+					this.menu.setPosition(event.pageX, event.pageY);
+					this.menu.show();
 					return 'nodeActivated';
 				}
 				
@@ -156,8 +156,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				} else {
 					var offsetX = event.pageX - this.lastCursorX,
 						offsetY = event.pageY - this.lastCursorY,
-						id = this.getCurrentNodeId(event),
-						node = this.map.getNode(id);
+						node = this.getNodeFromElement(event.target);
 						
 					this.saveCursorPosition(event);
 					//TODO node移动太快时会出现丢失焦点的情况，需要提高移动动画的效率。
@@ -187,7 +186,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	},
 	
 	getCurrentNodeId : function(event) {
-		var nodeElement = this.getNodeElement(event.target),
+		var nodeElement = this.getNodeFromElement(event.target),
 			id = nodeElement.id;
 		
 		return id;

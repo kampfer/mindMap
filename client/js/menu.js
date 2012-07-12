@@ -15,10 +15,16 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	},
 	
 	decorate : function() {
+		var that = this;
 		kampfer.dom.addClass(this._element, 'menu-item');
 		this._element.innerHTML = this._content;
 		
-		kampfer.event.addEvent(this._element, 'click', this._fn);
+		kampfer.event.addEvent(this._element, 'click', function() {
+			if(that._fn) {
+				that._fn();
+			}
+			that.getParent().hide();
+		});
 	},
 	
 	enterDocument : function() {
@@ -35,9 +41,6 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	createDom : function() {
 		this._super();
 		
-		this._label = this._doc.createElement('div');
-		this._element.appendChild(this._label);
-		
 		this._body = this._doc.createElement('div');
 		this._element.appendChild(this._body);
 	},
@@ -50,25 +53,11 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 		this.setLabelVisible(false);
 		
 		kampfer.dom.addClass(this._element, 'menu');
-		kampfer.dom.addClass(this._label, 'menu-label');
 		kampfer.dom.addClass(this._body, 'menu-body');
-	},
-	
-	render : function() {
-		this._super();
-		
-		var that = this;
-		kampfer.event.addEvent(this._label, 'click', function(){
-			that.setVisible(that._body, true);
-		});
 	},
 	
 	getBody : function() {
 		return this._body;
-	},
-	
-	getLabel : function() {
-		return this._label;
 	},
 	
 	addItem : function(item) {
@@ -77,7 +66,12 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	
 	show : function() {
 		this.setVisible(this._element, true);
-		this.setVisible(this._label, true);
+		this.setVisible(this._body, true);
+	},
+	
+	hide : function() {
+		this.setVisible(this._element, false);
+		this.setVisible(this._body, false);
 	},
 	
 	setVisible : function(element, visible) {
@@ -98,5 +92,3 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	}
 	
 });
-
-
