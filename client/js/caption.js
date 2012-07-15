@@ -28,9 +28,29 @@ kampfer.mindMap.Caption = kampfer.mindMap.Component.extend({
 		this._element.innerHTML = text;
 	},
 	
+	getContent : function() {
+		return this._element.innerHTML;
+	},
+	
 	fixPosition : function() {
 		var size = this.getSize();
 		this.setPosition( -(size.width / 2), -(size.height / 2) );
+	},
+	
+	insertTextarea : function() {
+		var value = this.getContent();
+		this._textarea = this._doc.createElement('textarea');
+		this._textarea.value = value;
+		this._element.innerHTML = '';
+		this._element.appendChild(this._textarea);
+	},
+	
+	insertText : function() {
+		if(this._textarea) {
+			var text = this._textarea.value;
+			this._textarea.parentNode.removeChild(this._textarea);
+			this._element.innerHTML = text;
+		}
 	},
 	
 	prefix : 'caption-'
