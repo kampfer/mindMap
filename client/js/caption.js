@@ -41,6 +41,9 @@ kampfer.mindMap.Caption = kampfer.mindMap.Component.extend({
 		var value = this.getContent();
 		this._textarea = this._doc.createElement('textarea');
 		this._textarea.value = value;
+		this._textarea.id = 'node-editor';
+		this._textarea.setAttribute('node-type', 'editor');
+		this._textarea.className = 'node-editor';
 		this._element.innerHTML = '';
 		this._element.appendChild(this._textarea);
 	},

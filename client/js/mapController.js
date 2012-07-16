@@ -36,6 +36,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				new kampfer.mindMap.Node(data, that, that.currentMapManager), true );
 		}) );
 		this.menu.addItem( new kampfer.mindMap.MenuItem('编辑', function() {
+			that.currentState = 'nodeEditing';
 			that.currentNode.getCaption().insertTextarea();
 		}) );
 		this.menu.addItem( new kampfer.mindMap.MenuItem('test2') );
@@ -91,8 +92,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			},
 			
 			mousedown : function(event) {
-				event.preventDefault();
-				
+				//event.preventDefault();
 				if(event.button === 0) {
 					this.menu.hide();
 					this.saveCursorPosition(event);
@@ -133,9 +133,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			},
 			
 			mousedown : function(event) {
-				event.preventDefault();
-			
 				if(event.button === 2) {
+					event.preventDefault();
 					this.menu.setPosition(event.pageX, event.pageY);
 					this.menu.show();
 					return 'nodeActivated';
@@ -172,6 +171,18 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				return 'nodeActivated';
 			}
 			
+		},
+		
+		nodeEditing : {
+			mousedown : function(event) {
+				if( !this.isTextEditor(event.target) ) {
+					this.currentNode.getCaption().insertText();
+					this.currentMapManager.setNodeContent(this.currentNode.getId(),
+						this.currentNode.getCaption().getContent());
+					return 'mapActivated';
+				}
+				return 'nodeEditing';
+			}
 		},
 		
 		unexceptedEvent : function() {
@@ -225,6 +236,14 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			element = element.parentNode;
 		}
 		
+		return false;
+	},
+	
+	isTextEditor : function(element) {
+		var attr = element.getAttribute('node-type');
+		if(attr && attr === 'editor') {
+			return true;
+		}
 		return false;
 	}
 	

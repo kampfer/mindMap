@@ -76,3 +76,7 @@ div.node canvas{
     padding-bottom: 3px;
     padding-top: 3px;
 }
+
+textarea.node-editor{
+    width:100px;
+}

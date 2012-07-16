@@ -33,7 +33,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
 	createNode : function(parent) {
 		var id = this.generateUniqueId();
-		this.data[id] = {
+		this.data.nodes[id] = {
 			id : id,
 			parent : parent,
 			children : [],
@@ -43,7 +43,11 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 				y : 100
 			}
 		};
-		return this.data[id];
+		return this.data.nodes[id];
+	},
+	
+	setNodeContent : function(id, text) {
+		this.data.nodes[id].content = text;
 	},
 	
 	/*
