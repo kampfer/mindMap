@@ -53,6 +53,7 @@ kampfer.mindMap.Caption = kampfer.mindMap.Component.extend({
 			var text = this._textarea.value;
 			this._textarea.parentNode.removeChild(this._textarea);
 			this._element.innerHTML = text;
+			this.fixPosition();
 		}
 	},
 	

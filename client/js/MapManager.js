@@ -9,6 +9,10 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		this.data = data;
 	},
 	
+	getData : function() {
+		return this.data;
+	},
+	
 	getNode : function(id) {
 		var node = this.data.nodes[id];
 		if(node) {
@@ -37,17 +41,23 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 			id : id,
 			parent : parent,
 			children : [],
-			content : 'node',
+			content : 'new node',
 			offset : {
 				x : 0,
 				y : 100
 			}
 		};
+		this.data.nodes[parent].children.push(id);
 		return this.data.nodes[id];
 	},
 	
 	setNodeContent : function(id, text) {
 		this.data.nodes[id].content = text;
+	},
+	
+	setNodePosition : function(id, x, y) {
+		this.data.nodes[id].offset.x = x;
+		this.data.nodes[id].offset.y = y;
 	},
 	
 	/*

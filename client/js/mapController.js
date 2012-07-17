@@ -1,4 +1,4 @@
-/*global window kampfer console*/
+/*global window kampfer console localStorage*/
 kampfer.require('Class');
 kampfer.require('event');
 kampfer.require('mindMap.Map');
@@ -29,25 +29,31 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		}
 		
 		var that = this;
-		this.menu = new kampfer.mindMap.Menu();
-		this.menu.addItem( new kampfer.mindMap.MenuItem('添加新节点', function() {
+		
+		this.menuForNode = new kampfer.mindMap.Menu();
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('添加新节点', function() {
 			var data = that.currentMapManager.createNode( that.currentNode.getId() );
 			that.currentNode.addChild( 
 				new kampfer.mindMap.Node(data, that, that.currentMapManager), true );
 		}) );
-		this.menu.addItem( new kampfer.mindMap.MenuItem('编辑', function() {
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('编辑', function() {
 			that.currentState = 'nodeEditing';
 			that.currentNode.getCaption().insertTextarea();
 		}) );
-		this.menu.addItem( new kampfer.mindMap.MenuItem('test2') );
-		this.menu.addItem( new kampfer.mindMap.MenuItem('test3') );
-		this.menu.addItem( new kampfer.mindMap.MenuItem('test4') );
+		
+		this.menuForMap = new kampfer.mindMap.Menu();
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('保存', function(){
+			var data = JSON.stringify( that.currentMapManager.getData() );
+			console.log(data);
+			localStorage.aMap = data;
+		}) );
 		
 	},
 	
 	render : function() {
 		this.map.render();
-		this.menu.render();
+		this.menuForNode.render();
+		this.menuForMap.render();
 	},
 	
 	getNode : function(id) {
@@ -92,11 +98,17 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			},
 			
 			mousedown : function(event) {
-				//event.preventDefault();
+				this.menuForNode.hide();
+				
 				if(event.button === 0) {
-					this.menu.hide();
+					this.menuForMap.hide();
 					this.saveCursorPosition(event);
 					return 'mapFocus';
+				}
+				
+				if(event.button === 2) {
+					this.menuForMap.setPosition(event.pageX, event.pageY);
+					this.menuForMap.show();
 				}
 				
 				return 'mapActivated';
@@ -133,10 +145,12 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			},
 			
 			mousedown : function(event) {
-				if(event.button === 2) {
-					event.preventDefault();
-					this.menu.setPosition(event.pageX, event.pageY);
-					this.menu.show();
+				this.menuForNode.hide();
+				this.menuForMap.hide();
+				
+				if(event.button === 2) {	
+					this.menuForNode.setPosition(event.pageX, event.pageY);
+					this.menuForNode.show();
 					return 'nodeActivated';
 				}
 				
@@ -168,6 +182,9 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			},
 			
 			mouseup : function() {
+				var position = this.currentNode.getPosition();
+				this.currentMapManager.setNodePosition(this.currentNode.getId(),
+					position.left, position.top);
 				return 'nodeActivated';
 			}
 			
@@ -236,6 +253,14 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			element = element.parentNode;
 		}
 		
+		return false;
+	},
+	
+	isMapElement : function(element) {
+		var attr = element.getAttribute('node-type');
+		if(attr && attr === 'map') {
+			return true;
+		}
 		return false;
 	},
 	

@@ -16,22 +16,27 @@
 	</head>
 	<body oncontextmenu="return false">
 		<script type="text/javascript">
-			var data = {
-				nodes : {
-					root : {
-						id : 'root',
-						parent : '',
-						children : [],
-						content : 'root',
-						offset : {
-							x : '1000',
-							y : '1000'
-						},
-						style : 'root'
-					}
-				},
-				config : {}
-			};
+			var data;
+			if(localStorage && localStorage.aMap) {
+				data = JSON.parse(localStorage.aMap);
+			} else {
+				data = {
+					nodes : {
+						root : {
+							id : 'root',
+							parent : '',
+							children : [],
+							content : 'root',
+							offset : {
+								x : '1000',
+								y : '1000'
+							},
+							style : 'root'
+						}
+					},
+					config : {}
+				};
+			}
 			var manager = new kampfer.mindMap.MapManager(data);
 			var controller = new kampfer.mindMap.MapController(manager);
 			controller.render();
