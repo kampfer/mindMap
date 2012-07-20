@@ -44,6 +44,10 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		}
 	},
 	
+	removeChild : function(child) {
+		this._super(child, true);
+	},
+	
 	getContent : function() {
 		return this.data.content;
 	},

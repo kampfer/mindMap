@@ -40,6 +40,12 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			that.currentState = 'nodeEditing';
 			that.currentNode.getCaption().insertTextarea();
 		}) );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('删除', function() {
+			var parent = that.currentNode.getParent(),
+				id = that.currentNode.getId();
+			that.currentMapManager.deleteNode(id);
+			parent.removeChild(that.currentNode);
+		}) );
 		
 		this.menuForMap = new kampfer.mindMap.Menu();
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('保存', function(){

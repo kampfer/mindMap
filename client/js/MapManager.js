@@ -51,6 +51,21 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		return this.data.nodes[id];
 	},
 	
+	deleteNode : function(id) {
+		var node = this.data.nodes[id],
+			parent = this.data.nodes[node.parent],
+			i, l;
+		for(i = 0, l = node.children.length; i < l; i++) {
+			this.deleteNode(node.children[i]);
+		}
+		delete this.data.nodes[id];
+		for(i = 0, l = parent.children.length; i < l; i++) {
+			if(parent.children[i] === id) {
+				parent.children.splice(i, 1);
+			}
+		}
+	},
+	
 	setNodeContent : function(id, text) {
 		this.data.nodes[id].content = text;
 	},
