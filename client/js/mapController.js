@@ -172,19 +172,15 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		nodefocus : {
 			
 			mousemove : function(event) {
-				if( !this.isNodeElement(event.target) ) {
-					return 'nodeActivated';
-				} else {
-					var offsetX = event.pageX - this.lastCursorX,
-						offsetY = event.pageY - this.lastCursorY,
-						node = this.getNodeFromElement(event.target);
-						
-					this.saveCursorPosition(event);
-					//TODO node移动太快时会出现丢失焦点的情况，需要提高移动动画的效率。
-					node.move(offsetX, offsetY);
+				var offsetX = event.pageX - this.lastCursorX,
+					offsetY = event.pageY - this.lastCursorY,
+					node = this.currentNode;
 					
-					return 'nodefocus';
-				}
+				this.saveCursorPosition(event);
+				
+				node.move(offsetX, offsetY);
+				
+				return 'nodefocus';
 			},
 			
 			mouseup : function() {
