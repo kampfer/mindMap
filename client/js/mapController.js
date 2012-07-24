@@ -30,6 +30,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		
 		var that = this;
 		
+		//TODO 将menu与mapController解耦
 		this.menuForNode = new kampfer.mindMap.Menu();
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('添加新节点', function() {
 			var data = that.currentMapManager.createNode( that.currentNode.getId() );
@@ -125,8 +126,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		mapFocus : {
 			
 			mousemove : function(event) {
-				var offsetX = event.pageX - this.lastCursorX,
-					offsetY = event.pageY - this.lastCursorY;
+				var offsetX = event.pageX - this.lastPageX,
+					offsetY = event.pageY - this.lastPageY;
 				
 				this.saveCursorPosition(event);
 				this.map.move(offsetX, offsetY);
@@ -175,10 +176,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				var offsetX = event.pageX - this.lastCursorX,
 					offsetY = event.pageY - this.lastCursorY,
 					node = this.currentNode;
-					
-				this.saveCursorPosition(event);
-				
-				node.move(offsetX, offsetY);
+			
+				node.moveTo(offsetX, offsetY);
 				
 				return 'nodefocus';
 			},
@@ -213,8 +212,11 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	initialState : 'mapActivated',
 	
 	saveCursorPosition : function(event) {
-		this.lastCursorX = event.pageX;
-		this.lastCursorY = event.pageY;
+		var position = this.currentNode.getPosition();
+		this.lastPageX = event.pageX;
+		this.lastPageY = event.pageY;
+		this.lastCursorX = event.pageX - position.left;
+		this.lastCursorY = event.pageY - position.top;
 	},
 	
 	getCurrentNodeId : function(event) {

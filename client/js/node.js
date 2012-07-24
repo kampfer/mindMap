@@ -118,9 +118,13 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		x += oriPosition.left;
 		y += oriPosition.top;
 		
+		this.moveTo(x, y);
+	},
+	
+	moveTo : function(x, y) {
 		this.offsetX = x;
 		this.offsetY = y;
-			
+	
 		this.setPosition(x, y);
 		if(this._id !== 'root') {
 			this.getBranch().decorate();

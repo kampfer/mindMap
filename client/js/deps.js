@@ -1,4 +1,4 @@
-kampfer.addDependency('app.js', [], ['mindMap.mapController']);
+kampfer.addDependency('app.js', ['mindMap.app'], ['mindMap.MapManager','mindMap.MapController']);
 kampfer.addDependency('base.js', [], []);
 kampfer.addDependency('branch.js', ['mindMap.Branch'], ['mindMap.Component','style','event']);
 kampfer.addDependency('caption.js', ['mindMap.Caption'], ['mindMap.Component','style','event']);
@@ -15,7 +15,7 @@ kampfer.addDependency('lib/tools/json2.js', ['JSON'], []);
 kampfer.addDependency('lib/tools/qunit.js', [], []);
 kampfer.addDependency('lib/ui/layer.js', ['ui.Layer'], ['Class','dom','style','event']);
 kampfer.addDependency('map.js', ['mindMap.Map'], ['event','mindMap.Component','mindMap.Node']);
-kampfer.addDependency('mapController.js', ['mindMap.MapController'], ['Class','event','mindMap.Map','mindMap.Menu']);
+kampfer.addDependency('mapController.js', ['mindMap.MapController'], ['Class','event','mindMap.Map','mindMap.Node','mindMap.Menu']);
 kampfer.addDependency('MapManager.js', ['mindMap.MapManager'], ['Class']);
 kampfer.addDependency('MapsManager.js', ['mindMap.MapsManager'], ['Class']);
 kampfer.addDependency('menu.js', ['mindMap.Menu','mindMap.MenuItem'], ['mindMap.Component','dom','event']);

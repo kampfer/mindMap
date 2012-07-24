@@ -7,40 +7,13 @@
 		<link href="css/app.css" rel="stylesheet" type="text/css"/>
 		<script type="text/javascript" src="js/base.js"></script>
 		<script type="text/javascript">
-			kampfer.require('mindMap.MapManager');
-			kampfer.require('mindMap.MapController');
+			//kampfer.require('mindMap.app');
 		</script>
-		<style type="text/css">
-			
-		</style>
 	</head>
 	<body oncontextmenu="return false">
 		<script type="text/javascript">
-			var data;
-			if(localStorage && localStorage.aMap) {
-				data = JSON.parse(localStorage.aMap);
-			} else {
-				data = {
-					nodes : {
-						root : {
-							id : 'root',
-							parent : '',
-							children : [],
-							content : 'root',
-							offset : {
-								x : '1000',
-								y : '1000'
-							},
-							style : 'root'
-						}
-					},
-					config : {}
-				};
-			}
-			var manager = new kampfer.mindMap.MapManager(data);
-			var controller = new kampfer.mindMap.MapController(manager);
-			controller.render();
-			controller.monitorEvents();
+			kampfer.require('mindMap.app');
+			//console.log(kampfer.mindMap.app);
 		</script>
 	</body>
 </html>
