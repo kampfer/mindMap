@@ -1,4 +1,4 @@
-/*global kampfer*/
+/*global window kampfer console localStorage*/
 kampfer.require('mindMap.MapManager');
 kampfer.require('mindMap.MapController');
 
