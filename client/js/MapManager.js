@@ -36,19 +36,28 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	},
 	
 	createNode : function(parent) {
-		var id = this.generateUniqueId();
-		this.data.nodes[id] = {
-			id : id,
-			parent : parent,
-			children : [],
-			content : 'new node',
-			offset : {
-				x : 0,
-				y : 100
+		var type = kampfer.type(parent), node;
+		if(type === 'string') {
+			var id = this.generateUniqueId();
+			node = this.data.nodes[id] = {
+				id : id,
+				parent : parent,
+				children : [],
+				content : 'new node',
+				offset : {
+					x : 0,
+					y : 100
+				}
+			};
+			this.data.nodes[parent].children.push(id);
+		} else if(type === 'object') {
+			node = parent;
+			if(!this.data.nodes[node.id]) {
+				this.data.nodes[node.id] = node;
+				this.data.nodes[node.parent].children.push(node.id);
 			}
-		};
-		this.data.nodes[parent].children.push(id);
-		return this.data.nodes[id];
+		}
+		return node;
 	},
 	
 	deleteNode : function(id) {

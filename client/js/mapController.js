@@ -4,6 +4,7 @@ kampfer.require('event');
 kampfer.require('mindMap.Map');
 kampfer.require('mindMap.Node');
 kampfer.require('mindMap.Menu');
+kampfer.require('mindMap.commandManager');
 
 kampfer.provide('mindMap.MapController');
 
@@ -53,6 +54,12 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			var data = JSON.stringify( that.currentMapManager.getData() );
 			console.log(data);
 			localStorage.aMap = data;
+		}) );
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('undo', function(){
+			kampfer.mindMap.commandManager.undo(1);
+		}) );
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('redo', function(){
+			kampfer.mindMap.commandManager.redo(1);
 		}) );
 		
 	},
@@ -184,8 +191,12 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			
 			mouseup : function() {
 				var position = this.currentNode.getPosition();
-				this.currentMapManager.setNodePosition(this.currentNode.getId(),
-					position.left, position.top);
+				//this.currentMapManager.setNodePosition(this.currentNode.getId(),
+				//	position.left, position.top);
+				var command = new kampfer.mindMap.commandManager.saveNodePositionCommand(
+					this.currentNode, this.currentMapManager, position);
+				command.execute();
+				kampfer.mindMap.commandManager.addCommand(command);
 				return 'nodeActivated';
 			}
 			
