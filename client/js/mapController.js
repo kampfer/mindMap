@@ -38,15 +38,15 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			that.currentNode.addChild( 
 				new kampfer.mindMap.Node(data, that, that.currentMapManager), true );
 		}) );
-		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('编辑', function() {
-			that.currentState = 'nodeEditing';
-			that.currentNode.getCaption().insertTextarea();
-		}) );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('删除', function() {
 			var parent = that.currentNode.getParent(),
 				id = that.currentNode.getId();
 			that.currentMapManager.deleteNode(id);
 			parent.removeChild(that.currentNode);
+		}) );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('编辑', function() {
+			that.currentState = 'nodeEditing';
+			that.currentNode.getCaption().insertTextarea();
 		}) );
 		
 		this.menuForMap = new kampfer.mindMap.Menu();
@@ -55,10 +55,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			console.log(data);
 			localStorage.aMap = data;
 		}) );
-		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('undo', function(){
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('撤消', function(){
 			kampfer.mindMap.commandManager.undo(1);
 		}) );
-		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('redo', function(){
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('恢复', function(){
 			kampfer.mindMap.commandManager.redo(1);
 		}) );
 		
@@ -72,6 +72,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	
 	getNode : function(id) {
 		return this.map.getNode(id);
+	},
+	
+	getNodeData : function(id) {
+		return this.currentMapManager.getNode(id);
 	},
 
 	monitorEvents : function() {
@@ -205,9 +209,13 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		nodeEditing : {
 			mousedown : function(event) {
 				if( !this.isTextEditor(event.target) ) {
-					this.currentNode.getCaption().insertText();
-					this.currentMapManager.setNodeContent(this.currentNode.getId(),
-						this.currentNode.getCaption().getContent());
+					//this.currentNode.getCaption().insertText();
+					//this.currentMapManager.setNodeContent(this.currentNode.getId(),
+					//	this.currentNode.getCaption().getContent());
+					var command = new kampfer.mindMap.commandManager.saveNodeContentCommand(
+						this.currentNode.getId(), this.currentNode.getCaption().insertText(), this);
+					command.execute();
+					kampfer.mindMap.commandManager.addCommand(command);
 					return 'mapActivated';
 				}
 				return 'nodeEditing';
@@ -230,6 +238,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		this.lastCursorY = event.pageY - position.top;
 	},
 	
+	//TODO 删除
 	getCurrentNodeId : function(event) {
 		var nodeElement = this.getNodeFromElement(event.target),
 			id = nodeElement.id;
@@ -271,6 +280,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		return false;
 	},
 	
+	//TODO 删除
 	isMapElement : function(element) {
 		var attr = element.getAttribute('node-type');
 		if(attr && attr === 'map') {
@@ -285,6 +295,30 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			return true;
 		}
 		return false;
+	},
+	
+	saveNodeContent : function(id, content) {
+		this.getNode(id).getCaption().setContent(content);
+		this.currentMapManager.setNodeContent(id, content);
+	},
+	
+	saveNodePosition : function(id, left, top) {
+		this.getNode(id).setPosition(left, top);
+		this.currentMapManager.setNodePosition(id, left, top);
+	},
+	
+	createNewNode : function(data) {
+		var data = this.currentMapManager.createNode(data);
+		var pid = kampfer.type(data) === 'string' ? data : data.parent;
+		this.currentMapController.getNode(pid).addChild(
+			new kampfer.mindMap.Node(data, this, this.currentMapManager), true );
+	},
+	
+	deleteNode : function(id) {
+		var node = this.currentMapController.getNode(pid),
+			parent = node.getParent();
+		this.currentMapManager.deleteNode(id);
+		parent.removeChild(node);
 	}
 	
 });

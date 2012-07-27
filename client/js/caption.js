@@ -49,7 +49,8 @@ kampfer.mindMap.Caption = kampfer.mindMap.Component.extend({
 	},
 	
 	insertText : function() {
-		if(this._textarea) {
+		//textarea存在且在文档中
+		if(this._textarea && this._textarea.parentNode) {
 			var text = this._textarea.value;
 			this._textarea.parentNode.removeChild(this._textarea);
 			this._element.innerHTML = text;
