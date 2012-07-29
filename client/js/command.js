@@ -61,83 +61,70 @@ kampfer.mindMap.commandManager = {
 
 kampfer.mindMap.commandManager.createNodeCommand = 
 	kampfer.mindMap.Command.extend({
-		init : function() {
+		init : function(pid, controller) {
+			this.pid = pid;
+			this.controller = controller;
 		},
 		
 		execute : function() {
-			var parentNode = this.mapController.currentNode,
-				pid = parentNode.getId(),
-				data = this.mapManager.createNode(pid);
-			
-			var newNode = new kampfer.mindMap.Node(data, 
-				this.mapController, this.mapManager);
-			this.mapController.currentNode.addChild(newNode, true);
-			
-			this.pid = pid;
-			this.newNodeId = newNode.getId();
+			var data = this.nodeData || this.pid;
+			this.nodeData = this.controller.createNode(data);
 		},
 		
 		unExecute : function() {
-			this.mapManager.deleteNode(this.newNodeId);
-			var parentNode = this.mapController.getNode(this.pid);
-			var newNode = this.MapController.getNode(this.newNodeId);
-			parentNode.removeChild(newNode);
+			var id = this.nodeData.id;
+			this.controller.deleteNode(id);
 		}
 });
 
 
 kampfer.mindMap.commandManager.deleteNodeCommand = 
 	kampfer.mindMap.Command.extend({
+		init : function(nodeId, controller) {
+			this.nodeId = nodeId;
+			this.controller = controller;
+			this.oldNodeData = controller.getNodeData(nodeId);
+		},
+		
 		execute : function() {
-			var deletedNode = this.mapController.currentNode,
-				id = deletedNode.getId();
-			
-			this.deletedNodeData = this.mapManager.getNode(id);
-			
-			var parentNode = deletedNode.getParent();
-			this.mapManager.deleteNode(id);
-			parentNode.removeChild(deletedNode);
+			this.controller.deleteNode(this.nodeId);
 		},
 		
 		unExecute : function() {
-			var parentNode = this.mapController.getNode(this.deletedNodeData.parent),
-				newNode = new kampfer.mindMap.Node(this.deletedNodeData, 
-				this.mapController, this.mapManager);
-				
-			this.mapManager.createNode(this.deletedNodeData);
-			parentNode.addChild(newNode);
+			this.controller.createNode(this.oldNodeData);
 		}
 });
 
 
 kampfer.mindMap.commandManager.saveNodeContentCommand = 
 	kampfer.mindMap.Command.extend({
-		init : function(node, content, controller) {
-			this.node = node;
+		init : function(nodeId, content, controller) {
+			this.nodeId = nodeId;
 			this.content = content;
 			this.controller = controller;
-			this.oriContent = controller.getNodeData(node).content;
+			this.oriContent = controller.getNodeData(nodeId).content;
 		},
 		
 		execute : function() {
-			this.controller.saveNodeContent(this.node, this.content);
+			this.controller.saveNodeContent(this.nodeId, this.content);
 		},
 		
 		unExecute : function() {
-			this.controller.saveNodeContent(this.node, this.oriContent);
+			this.controller.saveNodeContent(this.nodeId, this.oriContent);
 		}
 });
 
 
-//TODO 代码脏乱，需要整理
 kampfer.mindMap.commandManager.saveNodePositionCommand = 
 	kampfer.mindMap.Command.extend({
-		init : function(node, mapManager, position) {
-			this.node = node;
-			this.mapManager = mapManager;
+		init : function(nodeId, position, controller) {
+			this.nodeId = nodeId;
+			this.controller = controller;
 			this.newPosition = position;
 			
-			var nodeData = mapManager.getNode( node.getId() );
+			//保存旧位置
+			var nodeData = controller.getNodeData(nodeId);
+			//保存值而不是引用
 			this.lastPosition = {
 				left : nodeData.offset.x,
 				top : nodeData.offset.y
@@ -145,18 +132,12 @@ kampfer.mindMap.commandManager.saveNodePositionCommand =
 		},
 		
 		execute : function() {
-			var id = this.node.getId();
-			
-			this.mapManager.setNodePosition(id, 
+			this.controller.saveNodePosition(this.nodeId, 
 				this.newPosition.left, this.newPosition.top);
-			this.node.moveTo(this.newPosition.left, this.newPosition.top);
 		},
 		
 		unExecute : function() {
-			var id = this.node.getId(),
-				offset = this.lastPosition;
-			
-			this.mapManager.setNodePosition(id, offset.left, offset.top);
-			this.node.moveTo(offset.left, offset.top);
+			this.controller.saveNodePosition(this.nodeId,
+				this.lastPosition.left, this.lastPosition.top);
 		}
 });

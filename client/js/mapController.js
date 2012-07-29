@@ -34,15 +34,19 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		//TODO 将menu与mapController解耦
 		this.menuForNode = new kampfer.mindMap.Menu();
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('添加新节点', function() {
-			var data = that.currentMapManager.createNode( that.currentNode.getId() );
-			that.currentNode.addChild( 
-				new kampfer.mindMap.Node(data, that, that.currentMapManager), true );
+			//var data = that.currentMapManager.createNode( that.currentNode.getId() );
+			//that.currentNode.addChild( 
+				//new kampfer.mindMap.Node(data, that, that.currentMapManager), true );
+			var command = new kampfer.mindMap.commandManager.createNodeCommand(
+				that.currentNode.getId(), that);
+			command.execute();
+			kampfer.mindMap.commandManager.addCommand(command);
 		}) );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('删除', function() {
-			var parent = that.currentNode.getParent(),
-				id = that.currentNode.getId();
-			that.currentMapManager.deleteNode(id);
-			parent.removeChild(that.currentNode);
+			var command = new kampfer.mindMap.commandManager.deleteNodeCommand(
+				that.currentNode.getId(), that);
+			command.execute();
+			kampfer.mindMap.commandManager.addCommand(command);
 		}) );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('编辑', function() {
 			that.currentState = 'nodeEditing';
@@ -198,7 +202,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				//this.currentMapManager.setNodePosition(this.currentNode.getId(),
 				//	position.left, position.top);
 				var command = new kampfer.mindMap.commandManager.saveNodePositionCommand(
-					this.currentNode, this.currentMapManager, position);
+					this.currentNode.getId(), position, this);
 				command.execute();
 				kampfer.mindMap.commandManager.addCommand(command);
 				return 'nodeActivated';
@@ -303,19 +307,28 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	},
 	
 	saveNodePosition : function(id, left, top) {
-		this.getNode(id).setPosition(left, top);
+		this.getNode(id).moveTo(left, top);
 		this.currentMapManager.setNodePosition(id, left, top);
 	},
 	
-	createNewNode : function(data) {
-		var data = this.currentMapManager.createNode(data);
-		var pid = kampfer.type(data) === 'string' ? data : data.parent;
-		this.currentMapController.getNode(pid).addChild(
+	createNode : function(data) {
+		var pid;
+		if( kampfer.type(data) === 'string' ) {
+			pid = data;
+		}else{
+			pid = data.parent;
+		}
+		data = this.currentMapManager.createNode(data);
+		this.getNode(pid).addChild(
 			new kampfer.mindMap.Node(data, this, this.currentMapManager), true );
+		return data;
 	},
 	
 	deleteNode : function(id) {
-		var node = this.currentMapController.getNode(pid),
+		if( kampfer.type(id) === 'object' ) {
+			id = id.id;
+		}
+		var node = this.getNode(id),
 			parent = node.getParent();
 		this.currentMapManager.deleteNode(id);
 		parent.removeChild(node);
