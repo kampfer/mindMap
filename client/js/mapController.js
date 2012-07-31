@@ -34,9 +34,6 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		//TODO 将menu与mapController解耦
 		this.menuForNode = new kampfer.mindMap.Menu();
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('添加新节点', function() {
-			//var data = that.currentMapManager.createNode( that.currentNode.getId() );
-			//that.currentNode.addChild( 
-				//new kampfer.mindMap.Node(data, that, that.currentMapManager), true );
 			var command = new kampfer.mindMap.commandManager.createNodeCommand(
 				that.currentNode.getId(), that);
 			command.execute();
@@ -199,8 +196,6 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			
 			mouseup : function() {
 				var position = this.currentNode.getPosition();
-				//this.currentMapManager.setNodePosition(this.currentNode.getId(),
-				//	position.left, position.top);
 				var command = new kampfer.mindMap.commandManager.saveNodePositionCommand(
 					this.currentNode.getId(), position, this);
 				command.execute();
@@ -213,9 +208,6 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		nodeEditing : {
 			mousedown : function(event) {
 				if( !this.isTextEditor(event.target) ) {
-					//this.currentNode.getCaption().insertText();
-					//this.currentMapManager.setNodeContent(this.currentNode.getId(),
-					//	this.currentNode.getCaption().getContent());
 					var command = new kampfer.mindMap.commandManager.saveNodeContentCommand(
 						this.currentNode.getId(), this.currentNode.getCaption().insertText(), this);
 					command.execute();
