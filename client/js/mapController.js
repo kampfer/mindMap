@@ -34,19 +34,21 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		//TODO 将menu与mapController解耦
 		this.menuForNode = new kampfer.mindMap.Menu();
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('添加新节点', function() {
-			//var data = that.currentMapManager.createNode( that.currentNode.getId() );
-			//that.currentNode.addChild( 
-				//new kampfer.mindMap.Node(data, that, that.currentMapManager), true );
 			var command = new kampfer.mindMap.commandManager.createNodeCommand(
 				that.currentNode.getId(), that);
-			command.execute();
 			kampfer.mindMap.commandManager.addCommand(command);
+			command.execute();
 		}) );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('删除', function() {
+			var id = that.currentNode.getId();
+			if(id === 'root' ) {
+				alert('你不能删除root节点!');
+				return;
+			}
 			var command = new kampfer.mindMap.commandManager.deleteNodeCommand(
-				that.currentNode.getId(), that);
-			command.execute();
+				id, that);
 			kampfer.mindMap.commandManager.addCommand(command);
+			command.execute();
 		}) );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('编辑', function() {
 			that.currentState = 'nodeEditing';
@@ -60,9 +62,13 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			localStorage.aMap = data;
 		}) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('撤消', function(){
+			console.log(kampfer.mindMap.commandManager.commandList.length);
+			console.log(kampfer.mindMap.commandManager.index);
 			kampfer.mindMap.commandManager.undo(1);
 		}) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('恢复', function(){
+			console.log(kampfer.mindMap.commandManager.commandList.length);
+			console.log(kampfer.mindMap.commandManager.index);
 			kampfer.mindMap.commandManager.redo(1);
 		}) );
 		
@@ -199,12 +205,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			
 			mouseup : function() {
 				var position = this.currentNode.getPosition();
-				//this.currentMapManager.setNodePosition(this.currentNode.getId(),
-				//	position.left, position.top);
 				var command = new kampfer.mindMap.commandManager.saveNodePositionCommand(
 					this.currentNode.getId(), position, this);
-				command.execute();
 				kampfer.mindMap.commandManager.addCommand(command);
+				command.execute();
 				return 'nodeActivated';
 			}
 			
@@ -213,13 +217,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		nodeEditing : {
 			mousedown : function(event) {
 				if( !this.isTextEditor(event.target) ) {
-					//this.currentNode.getCaption().insertText();
-					//this.currentMapManager.setNodeContent(this.currentNode.getId(),
-					//	this.currentNode.getCaption().getContent());
 					var command = new kampfer.mindMap.commandManager.saveNodeContentCommand(
 						this.currentNode.getId(), this.currentNode.getCaption().insertText(), this);
-					command.execute();
 					kampfer.mindMap.commandManager.addCommand(command);
+					command.execute();
 					return 'mapActivated';
 				}
 				return 'nodeEditing';
