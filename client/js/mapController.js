@@ -36,14 +36,19 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('添加新节点', function() {
 			var command = new kampfer.mindMap.commandManager.createNodeCommand(
 				that.currentNode.getId(), that);
-			command.execute();
 			kampfer.mindMap.commandManager.addCommand(command);
+			command.execute();
 		}) );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('删除', function() {
+			var id = that.currentNode.getId();
+			if(id === 'root' ) {
+				alert('你不能删除root节点!');
+				return;
+			}
 			var command = new kampfer.mindMap.commandManager.deleteNodeCommand(
-				that.currentNode.getId(), that);
-			command.execute();
+				id, that);
 			kampfer.mindMap.commandManager.addCommand(command);
+			command.execute();
 		}) );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('编辑', function() {
 			that.currentState = 'nodeEditing';
@@ -57,9 +62,13 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			localStorage.aMap = data;
 		}) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('撤消', function(){
+			console.log(kampfer.mindMap.commandManager.commandList.length);
+			console.log(kampfer.mindMap.commandManager.index);
 			kampfer.mindMap.commandManager.undo(1);
 		}) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('恢复', function(){
+			console.log(kampfer.mindMap.commandManager.commandList.length);
+			console.log(kampfer.mindMap.commandManager.index);
 			kampfer.mindMap.commandManager.redo(1);
 		}) );
 		
@@ -198,8 +207,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				var position = this.currentNode.getPosition();
 				var command = new kampfer.mindMap.commandManager.saveNodePositionCommand(
 					this.currentNode.getId(), position, this);
-				command.execute();
 				kampfer.mindMap.commandManager.addCommand(command);
+				command.execute();
 				return 'nodeActivated';
 			}
 			
@@ -210,8 +219,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				if( !this.isTextEditor(event.target) ) {
 					var command = new kampfer.mindMap.commandManager.saveNodeContentCommand(
 						this.currentNode.getId(), this.currentNode.getCaption().insertText(), this);
-					command.execute();
 					kampfer.mindMap.commandManager.addCommand(command);
+					command.execute();
 					return 'mapActivated';
 				}
 				return 'nodeEditing';
