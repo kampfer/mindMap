@@ -135,9 +135,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				}
 				
 				if(event.button === 2) {
-					kampfer.trigger();
-					//this.menuForMap.setPosition(event.pageX, event.pageY);
-					//this.menuForMap.show();
+					this.menuForMap.setPosition(event.pageX, event.pageY);
+					this.menuForMap.show();
 				}
 				
 				return 'mapActivated';
