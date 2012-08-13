@@ -13,9 +13,13 @@ kampfer.mindMap.Command = kampfer.Class.extend({
 		this.mapManager = mapManager;
 	},
 	
-	execute : function() {},
+	execute : function() {
+		console.log(kampfer.mindMap.commandManager.index);
+	},
 	
-	unExecute : function() {}
+	unExecute : function() {
+		console.log(kampfer.mindMap.commandManager.index);
+	}
 	
 });
 
@@ -64,11 +68,13 @@ kampfer.mindMap.commandManager.createNodeCommand =
 		},
 		
 		execute : function() {
+			this._super();
 			var data = this.nodeData || this.pid;
 			this.nodeData = this.controller.createNode(data);
 		},
 		
 		unExecute : function() {
+			this._super();
 			var id = this.nodeData.id;
 			this.controller.deleteNode(id);
 		}
@@ -84,10 +90,12 @@ kampfer.mindMap.commandManager.deleteNodeCommand =
 		},
 		
 		execute : function() {
+			this._super();
 			this.controller.deleteNode(this.nodeId);
 		},
 		
 		unExecute : function() {
+			this._super();
 			this.controller.createNode(this.oldNodeData);
 		}
 });
@@ -103,10 +111,12 @@ kampfer.mindMap.commandManager.saveNodeContentCommand =
 		},
 		
 		execute : function() {
+			this._super();
 			this.controller.saveNodeContent(this.nodeId, this.content);
 		},
 		
 		unExecute : function() {
+			this._super();
 			this.controller.saveNodeContent(this.nodeId, this.oriContent);
 		}
 });
@@ -129,11 +139,13 @@ kampfer.mindMap.commandManager.saveNodePositionCommand =
 		},
 		
 		execute : function() {
+			this._super();
 			this.controller.saveNodePosition(this.nodeId, 
 				this.newPosition.left, this.newPosition.top);
 		},
 		
 		unExecute : function() {
+			this._super();
 			this.controller.saveNodePosition(this.nodeId,
 				this.lastPosition.left, this.lastPosition.top);
 		}
