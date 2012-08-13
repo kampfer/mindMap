@@ -43,18 +43,24 @@
 				div1_2 = $('div1_2'),
 				div1_1_1 = $('div1_1_1');
 			
-			test('成功储存事件处理函数', function() {
-				kampfer.events.addEvent(div1, 'click', function() {});
-				
-				var data1 = kampfer.dataManager._data(div1);
-				equal(data1.events.click.length, 1, "div1成功");
+			test('成功绑定事件', function(){
+				kampfer.events.addEvent(div1, 'click', function(){
+					console.log(1);
+					ok(true, 'div1成功触发click事件');
+				});
+				div1.click();
 			});
 			
-			test('重复绑定事件', function() {
-				kampfer.events.addEvent(div1, 'click', function() {});
-				
-				var data1 = kampfer.dataManager._data(div1);
-				equal(data1.events.click.length, 2, "成功储存事件处理函数");
+			test('重复绑定事件', function(){
+				kampfer.events.addEvent(div1, 'click', function(){
+					console.log(2);
+					ok(true, 'div1再次触发click事件');
+				});
+				div1.click();
+			});
+			
+			test('触发所有处理函数', function(){
+				div1.click();
 			});
 		</script>
 	</body>

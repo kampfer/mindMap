@@ -1,3 +1,4 @@
+/*global kampfer*/
 kampfer.require('dataManager');
 
 kampfer.provide('events');
@@ -26,7 +27,7 @@ kampfer.events.HandlerObj.key = 0;
  * @TODO 支持捕获?
  */
 kampfer.events.addEvent = function(elem, type, handler, scope) {
-	var elemData;
+	var elemData, events, handlers;
 	
 	//过滤异常情况，取得elem原始数据
 	if( elem.nodeType === 3 || elem.nodeType === 8 || !type ||
@@ -40,12 +41,6 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	}
 	events = elemData.events;
 	
-	//保存handlers数组
-	handlers = events[type];
-	if(!handlers) {
-		events[type] = handlers = [];
-	}
-	
 	//用户需要的处理操作
 	var handlerObj = new kampfer.events.HandlerObj(handler, type, scope);
 	
@@ -53,11 +48,17 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	var proxy = kampfer.events.getProxy();
 	proxy.srcElement = elem;
 	
-	if(elem.addEventListener) {
-		elem.addEventListener(type, proxy, false);
-	} else if(elem.attachEvent) {
-		elem.attachEvent("on" + type, proxy);
+	//保存handlers数组
+	handlers = events[type];
+	if(!handlers) {
+		events[type] = handlers = [];
+		if(elem.addEventListener) {
+			elem.addEventListener(type, proxy, false);
+		} else if(elem.attachEvent) {
+			elem.attachEvent("on" + type, proxy);
+		}
 	}
+	
 	//将用户操作保存
 	handlers.push(handlerObj);
 	
@@ -70,7 +71,7 @@ kampfer.events.fireEvent = function() {};
 kampfer.events.getProxy = function() {
 	return function proxy(event) {
 		kampfer.events.proxy.call(proxy.srcElement, event);
-	}
+	};
 };
 
 kampfer.events.proxy = function(event) {
