@@ -3,10 +3,13 @@ kampfer.require('dataManager');
 kampfer.provide('events');
 kampfer.provide('events.Event');
 
-kampfer.events.Event = function() {};
+kampfer.events.Event = function(src) {
+	this.src = src;
+	this.type = src.type;
+};
 
 kampfer.events.HandlerObj = function(handler, type, scope) {
-	this.handelr = handler;
+	this.handler = handler;
 	this.type = type;
 	this.scope = scope;
 	this.key = kampfer.events.HandlerObj.key++;
@@ -27,7 +30,7 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	
 	//过滤异常情况，取得elem原始数据
 	if( elem.nodeType === 3 || elem.nodeType === 8 || !type ||
-		!fn || !(elemData = kampfer.dataManager._data(elem)) ) {
+		!handler || !(elemData = kampfer.dataManager._data(elem)) ) {
 		return;
 	}
 	
@@ -37,18 +40,51 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	}
 	events = elemData.events;
 	
-	var handlerObj = new kampfer.events.HandlerObj(handler);
+	//保存handlers数组
+	handlers = events[type];
+	if(!handlers) {
+		events[type] = handlers = [];
+	}
 	
-	var proxy;
+	//用户需要的处理操作
+	var handlerObj = new kampfer.events.HandlerObj(handler, type, scope);
+	
+	//被绑定的操作
+	var proxy = kampfer.events.getProxy();
+	proxy.srcElement = elem;
 	
 	if(elem.addEventListener) {
 		elem.addEventListener(type, proxy, false);
 	} else if(elem.attachEvent) {
 		elem.attachEvent("on" + type, proxy);
 	}
+	//将用户操作保存
+	handlers.push(handlerObj);
 	
 };
 
 kampfer.events.removeEvent = function() {};
 
 kampfer.events.fireEvent = function() {};
+
+kampfer.events.getProxy = function() {
+	return function proxy(event) {
+		kampfer.events.proxy.call(proxy.srcElement, event);
+	}
+};
+
+kampfer.events.proxy = function(event) {
+	//生成一个新的event对象
+	var eventObj = new kampfer.events.Event(event);
+	
+	return kampfer.events.fireHandlers.call(this, eventObj);
+};
+
+kampfer.events.fireHandlers = function(eventObj) {
+	var elemData = kampfer.dataManager._data(this) || {},
+		handlerObjs = elemData.events[eventObj.type] || [];
+		
+	for(var i = 0, l = handlerObjs.length; i < l; i++) {
+		return handlerObjs[i].handler.call(this, eventObj);
+	}
+};
