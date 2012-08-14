@@ -70,7 +70,7 @@ kampfer.events.fireEvent = function() {};
 
 kampfer.events.getProxy = function() {
 	return function proxy(event) {
-		kampfer.events.proxy.call(proxy.srcElement, event);
+		return kampfer.events.proxy.call(proxy.srcElement, event);
 	};
 };
 
@@ -86,6 +86,12 @@ kampfer.events.fireHandlers = function(eventObj) {
 		handlerObjs = elemData.events[eventObj.type] || [];
 		
 	for(var i = 0, l = handlerObjs.length; i < l; i++) {
-		return handlerObjs[i].handler.call(this, eventObj);
+		//如果处理函数返回false，那么禁用默认行为
+		var scope = handlerObjs[i].scope || this;
+		if(handlerObjs[i].handler.call(scope, eventObj) === false) {
+			var ret = false;
+		}
 	}
+	
+	return ret;
 };

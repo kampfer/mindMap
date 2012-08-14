@@ -45,7 +45,6 @@
 			
 			test('成功绑定事件', function(){
 				kampfer.events.addEvent(div1, 'click', function(){
-					console.log(1);
 					ok(true, 'div1成功触发click事件');
 				});
 				div1.click();
@@ -53,15 +52,33 @@
 			
 			test('重复绑定事件', function(){
 				kampfer.events.addEvent(div1, 'click', function(){
-					console.log(2);
 					ok(true, 'div1再次触发click事件');
 				});
 				div1.click();
 			});
 			
-			test('触发所有处理函数', function(){
+			test('一次触发所有处理函数', function(){
 				div1.click();
 			});
+			
+			test('this被正确绑定', function(){
+				kampfer.events.addEvent(div1, 'click', function(){
+					deepEqual(this, div1, 'this === div1');
+				});
+				kampfer.events.addEvent(div1, 'click', function(){
+					deepEqual(this, kampfer, 'this === kampfer');
+				}, kampfer);
+				div1.click();
+			});
+			
+			test('event被正确传递', function(){
+				kampfer.events.addEvent(div1, 'click', function(event){
+					equal(event.type, 'click', 'event.type正确');
+					ok(event.src, 'event.src存在'); 
+				});
+				div1.click();
+			});
+			
 		</script>
 	</body>
 </html>
