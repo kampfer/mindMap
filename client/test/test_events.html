@@ -24,59 +24,71 @@
 			test markup, will be hidden
 		</div>
 		<!--	共用文件，不要修改	end	-->
-		<div id="div1">
-			1
-			<div id="div1_1">
-				1_1
-				<div  id="div1_1_1">
-				1_1_1</div>
-			</div>
-			<div  id="div1_2">1_2</div>
-		</div>
+		<div id="div1">div1</div>
+		<input id="b" />
+		<a href="http://www.baidu.com" id="a">baidu</a>
 		<script type="text/javascript">
 			function $(id) {
 				return document.getElementById(id);
 			}
 			
 			var div1 = $('div1'),
-				div1_1 = $('div1_1'),
-				div1_2 = $('div1_2'),
-				div1_1_1 = $('div1_1_1');
+				a = $('a'),
+				b = $('b');
 			
-			test('成功绑定事件', function(){
-				kampfer.events.addEvent(div1, 'click', function(){
+			test('成功绑定事件', function() {
+				kampfer.events.addEvent(div1, 'click', function() {
 					ok(true, 'div1成功触发click事件');
 				});
 				div1.click();
 			});
 			
-			test('重复绑定事件', function(){
-				kampfer.events.addEvent(div1, 'click', function(){
+			test('重复绑定事件', function() {
+				kampfer.events.addEvent(div1, 'click', function() {
 					ok(true, 'div1再次触发click事件');
 				});
 				div1.click();
 			});
 			
-			test('一次触发所有处理函数', function(){
+			test('一次触发所有处理函数', function() {
 				div1.click();
 			});
 			
-			test('this被正确绑定', function(){
-				kampfer.events.addEvent(div1, 'click', function(){
+			test('this被正确绑定', function() {
+				kampfer.events.addEvent(div1, 'click', function() {
 					deepEqual(this, div1, 'this === div1');
 				});
-				kampfer.events.addEvent(div1, 'click', function(){
+				kampfer.events.addEvent(div1, 'click', function() {
 					deepEqual(this, kampfer, 'this === kampfer');
 				}, kampfer);
 				div1.click();
 			});
 			
-			test('event被正确传递', function(){
-				kampfer.events.addEvent(div1, 'click', function(event){
+			test('event被正确传递', function() {
+				kampfer.events.addEvent(div1, 'click', function(event) {
 					equal(event.type, 'click', 'event.type正确');
 					ok(event.src, 'event.src存在'); 
+					equal(event.src.type, 'click', 'event.src.type === click');
+					//ok(event.src.target, 'event.src.target存在');
 				});
 				div1.click();
+			});
+			
+			test('同时绑定多个事件', function() {
+				kampfer.events.addEvent(b, ['focus', 'blur', 'click'], function(event) {
+					ok(true, event.type + '触发');
+				});
+				b.focus();
+				b.blur();
+				b.click();
+			});
+			
+			test('使用return false禁用默认行为（ie有效）', function() {
+				kampfer.events.addEvent(a, 'click', function(event) {
+					return false;
+				});
+				a.click();
+				ok(true, '页面未跳转');
 			});
 			
 		</script>

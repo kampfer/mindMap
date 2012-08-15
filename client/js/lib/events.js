@@ -35,6 +35,14 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 		return;
 	}
 	
+	//同时绑定多个事件
+	if( kampfer.type(type) === 'array' ) {
+		for(var i = 0, l = type.length; i < l; i++) {
+			kampfer.events.addEvent(elem, type[i], handler, scope);
+		}
+		return;
+	}
+	
 	//检查并保存events引用
 	if(!elemData.events) {
 		elemData.events = {};
@@ -44,14 +52,14 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	//用户需要的处理操作
 	var handlerObj = new kampfer.events.HandlerObj(handler, type, scope);
 	
-	//被绑定的操作
-	var proxy = kampfer.events.getProxy();
-	proxy.srcElement = elem;
-	
-	//保存handlers数组
 	handlers = events[type];
 	if(!handlers) {
 		events[type] = handlers = [];
+	
+		//被绑定的操作
+		var proxy = kampfer.events.getProxy();
+		proxy.srcElement = elem;
+		
 		if(elem.addEventListener) {
 			elem.addEventListener(type, proxy, false);
 		} else if(elem.attachEvent) {
@@ -61,7 +69,6 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	
 	//将用户操作保存
 	handlers.push(handlerObj);
-	
 };
 
 kampfer.events.removeEvent = function() {};
@@ -80,21 +87,27 @@ kampfer.events.getProxy = function() {
 };
 
 kampfer.events.proxy = function(event) {
-	//生成一个新的event对象
+	event = event || window.event;
+	//处理event对象
 	var eventObj = new kampfer.events.Event(event);
 	
-	return kampfer.events.fireHandlers.call(this, eventObj);
+	return kampfer.events._fireHandlers.call(this, eventObj);
 };
 
-kampfer.events.fireHandlers = function(eventObj) {
+/*
+ * 找出为对象储存的事件处理函数并执行
+ * @private
+ */
+kampfer.events._fireHandlers = function(eventObj) {
 	var elemData = kampfer.dataManager._data(this) || {},
-		handlerObjs = elemData.events[eventObj.type] || [];
+		handlerObjs = elemData.events[eventObj.type] || [],
+		ret;
 	
 	for(var i = 0, l = handlerObjs.length; i < l; i++) {
-		//如果处理函数返回false，那么禁用默认行为
 		var scope = handlerObjs[i].scope || this;
-		if(handlerObjs[i].handler.call(scope, eventObj) === false) {
-			var ret = false;
+		//如果处理函数返回false，那么禁用默认行为
+		if( handlerObjs[i].handler.call(scope, eventObj) === false ) {
+			ret = false;
 		}
 	}
 	
