@@ -69,9 +69,14 @@ kampfer.events.removeEvent = function() {};
 kampfer.events.fireEvent = function() {};
 
 kampfer.events.getProxy = function() {
-	return function proxy(event) {
+	var proxy = function() {
 		return kampfer.events.proxy.call(proxy.srcElement, event);
 	};
+	return proxy;
+	//使用下面的方式返回proxy，ie6中无法取到proxy.srcElement
+	//return function proxy(event) {
+	//	return kampfer.events.proxy.call(proxy.srcElement, event);
+	//};
 };
 
 kampfer.events.proxy = function(event) {
@@ -84,7 +89,7 @@ kampfer.events.proxy = function(event) {
 kampfer.events.fireHandlers = function(eventObj) {
 	var elemData = kampfer.dataManager._data(this) || {},
 		handlerObjs = elemData.events[eventObj.type] || [];
-		
+	
 	for(var i = 0, l = handlerObjs.length; i < l; i++) {
 		//如果处理函数返回false，那么禁用默认行为
 		var scope = handlerObjs[i].scope || this;
