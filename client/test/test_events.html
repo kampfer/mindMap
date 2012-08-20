@@ -97,15 +97,13 @@
 				kampfer.events.fireEvent(c, 'click');
 			});
 			
-			/*
-			test('使用return false禁用默认行为（ie有效）', function() {
-				kampfer.events.addEvent(a, 'click', function(event) {
-					return false;
+			test('为对象绑定自定义事件', function() {
+				var a = {name:'a'};
+				kampfer.events.addEvent(a, 'sayHi', function(){
+					ok(true, 'object a say : hi!');
 				});
-				a.click();
-				ok(true, '页面未跳转');
+				kampfer.events.fireEvent(a, 'sayHi');
 			});
-			*/
 		</script>
 	</body>
 </html>

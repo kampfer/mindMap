@@ -9,18 +9,90 @@ kampfer.events.Event = function(src) {
 	this.type = src.type;
 	this.propagationStopped = false;
 	this.isDefaultPrevented = false;
+	
+	//跨越浏览器
+	this.fix();
 };
 
 kampfer.events.Event.prototype.stopPropagation = function() {
+	//使用fireEvent触发事件时，需要读取propagationStopped，判断冒泡是否取消。
 	this.propagationStopped = true;
 
 	var e = this.src;
-	if( e.stopPropagation ) {
+	if(e.stopPropagation) {
 		e.stopPropagation();
 	} else {
 		e.cancelBubble = true;
 	}
-}
+};
+
+kampfer.events.Event.prototype.preventDefault = function() {
+	this.isDefaultPrevented = true;
+	
+	var e = this.src;
+	if (e.preventDefault) {
+		e.preventDefault();
+	} else {
+		e.returnValue = false;
+	}
+};
+
+//处理兼容性问题
+kampfer.events.Event.prototype.fix = function() {
+	var src = this.src;
+	
+	this.target = src.target || src.srcElement;
+	//如果target不存在，默认设置为document
+	if(!this.target) {
+		this.target = kampfer.global.document;
+	}
+	
+	//修复键盘事件
+	if( kampfer.events.Event.isKeyEvent(this.type) ) {
+		if ( this.which == null ) {
+			this.which = src.charCode != null ? src.charCode : src.keyCode;
+		}
+	//修复鼠标事件
+	} else if( kampfer.events.Event.isMouseEvent(this.type) ) {
+		var eventDoc = this.target.ownerDocument || document,
+			doc = eventDoc.documentElement,
+			body = eventDoc.body;
+		
+		//修复坐标
+		if ( this.pageX == null && this.clientX != null ) {
+			this.pageX = src.clientX + ( doc && doc.scrollLeft || body && body.scrollLeft || 0 ) - ( doc && doc.clientLeft || body && body.clientLeft || 0 );
+			this.pageY = src.clientY + ( doc && doc.scrollTop  || body && body.scrollTop  || 0 ) - ( doc && doc.clientTop  || body && body.clientTop  || 0 );
+		}
+
+		// Add relatedTarget, if necessary
+		if ( !this.relatedTarget && src.formElement ) {
+			this.relatedTarget = fromElement === this.target ? src.toElement : src.formElement;
+		}
+
+		// Add which for click: 1 === left; 2 === middle; 3 === right
+		// Note: button is not normalized, so don't use it
+		var button = src.button;
+		if ( !this.which && button !== undefined ) {
+			this.which = ( button & 1 ? 1 : ( button & 2 ? 3 : ( button & 4 ? 2 : 0 ) ) );
+		}
+	}
+};
+
+//判断事件是否为键盘事件
+kampfer.events.Event.isKeyEvent = function(type) {
+	if( kampfer.type(type) !== 'string' ) {
+		type = type.type;
+	}
+	return /^key/.test(type);
+};
+
+//判断事件是否为鼠标事件
+kampfer.events.Event.isMouseEvent = function(type) {
+	if( kampfer.type(type) !== 'string' ) {
+		type = type.type;
+	}
+	return /^(?:mouse|contextmenu)|click/.test(type);
+};
 
 /*
  * 生成handler的一个包裹对象，记录一些额外信息，并且生成一个唯一的key值
@@ -97,6 +169,8 @@ kampfer.events.removeEvent = function() {};
  * @param {object}elem
  * @param {type}type
  * @param {object}data
+ * @TODO 使用fireEvent方法是否支持触发浏览器默认事件，比如点击a标签页面会跳转？
+ *		jquery支持，而closure不支持
  */
 kampfer.events.fireEvent = function(elem, type, data) {
 	var elemData, eventObj;
@@ -119,13 +193,16 @@ kampfer.events.fireEvent = function(elem, type, data) {
 	eventObj = new kampfer.events.Event(data);
 	//通过parentNode属性向上冒泡
 	for(var cur = elem; cur; cur = cur.parentNode) {
+		//处理冒泡
 		if(!eventObj.propagationStopped) {
+			//保证target为正确元素
+			eventObj.target = eventObj.target || cur;
 			kampfer.events._fireHandlers.call(cur, eventObj);
 		} else {
 			return;
 		}
 	}
-	
+
 };
 
 kampfer.events.getProxy = function() {
