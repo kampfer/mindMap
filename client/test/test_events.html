@@ -87,11 +87,12 @@
 			test('冒泡', function() {
 				var p = $('parent'),
 					c = $('child');
-				kampfer.events.addEvent(p, 'click', function() {
+				kampfer.events.addEvent(p, 'click', function(e) {
 					ok(true, this.id + '触发');
 				});
-				kampfer.events.addEvent(c, 'click', function() {
+				kampfer.events.addEvent(c, 'click', function(e) {
 					ok(true, this.id + '触发');
+					e.stopPropagation();
 				});
 				kampfer.events.fireEvent(c, 'click');
 			});

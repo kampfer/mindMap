@@ -7,7 +7,20 @@ kampfer.provide('events.Event');
 kampfer.events.Event = function(src) {
 	this.src = src;
 	this.type = src.type;
+	this.propagationStopped = false;
+	this.isDefaultPrevented = false;
 };
+
+kampfer.events.Event.prototype.stopPropagation = function() {
+	this.propagationStopped = true;
+
+	var e = this.src;
+	if( e.stopPropagation ) {
+		e.stopPropagation();
+	} else {
+		e.cancelBubble = true;
+	}
+}
 
 /*
  * 生成handler的一个包裹对象，记录一些额外信息，并且生成一个唯一的key值
@@ -103,10 +116,14 @@ kampfer.events.fireEvent = function(elem, type, data) {
 	data = data || {};
 	data.type = type;
 	
+	eventObj = new kampfer.events.Event(data);
 	//通过parentNode属性向上冒泡
-	for(var cur = elem; cur; cur = cur.parentNode) {	
-		eventObj = new kampfer.events.Event(data);
-		kampfer.events._fireHandlers.call(cur, eventObj);
+	for(var cur = elem; cur; cur = cur.parentNode) {
+		if(!eventObj.propagationStopped) {
+			kampfer.events._fireHandlers.call(cur, eventObj);
+		} else {
+			return;
+		}
 	}
 	
 };
