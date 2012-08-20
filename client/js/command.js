@@ -33,14 +33,12 @@ kampfer.mindMap.commandManager = {
 	addCommand : function(command) {
 		this.commandList.push(command);
 		this.index++;
-		//console.log(this.index);
 	},
 	
 	redo : function(level) {
 		for(var i = 0; i < level; i++) {
 			if(this.index < this.commandList.length) {
 				var command = this.commandList[this.index++];
-				//console.log(this.index);
 				command.execute();
 			} else {
 				return;
@@ -52,7 +50,6 @@ kampfer.mindMap.commandManager = {
 		for(var i = 0; i < level; i++) {
 			if(this.index > 0) {
 				var command = this.commandList[--this.index];
-				//console.log(this.index);
 				command.unExecute();
 			} else {
 				return;
