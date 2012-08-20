@@ -27,6 +27,9 @@
 		<div id="div1">div1</div>
 		<input id="b" />
 		<a href="http://www.baidu.com" id="a">baidu</a>
+		<div id="parent">
+			<div id="child"></div>
+		</div>
 		<script type="text/javascript">
 			function $(id) {
 				return document.getElementById(id);
@@ -40,18 +43,18 @@
 				kampfer.events.addEvent(div1, 'click', function() {
 					ok(true, 'div1成功触发click事件');
 				});
-				div1.click();
+				kampfer.events.fireEvent(div1, 'click');
 			});
 			
 			test('重复绑定事件', function() {
 				kampfer.events.addEvent(div1, 'click', function() {
 					ok(true, 'div1再次触发click事件');
 				});
-				div1.click();
+				kampfer.events.fireEvent(div1, 'click');
 			});
 			
 			test('一次触发所有处理函数', function() {
-				div1.click();
+				kampfer.events.fireEvent(div1, 'click');
 			});
 			
 			test('this被正确绑定', function() {
@@ -61,7 +64,7 @@
 				kampfer.events.addEvent(div1, 'click', function() {
 					deepEqual(this, kampfer, 'this === kampfer');
 				}, kampfer);
-				div1.click();
+				kampfer.events.fireEvent(div1, 'click');
 			});
 			
 			test('event被正确传递', function() {
@@ -71,18 +74,29 @@
 					equal(event.src.type, 'click', 'event.src.type === click');
 					//ok(event.src.target, 'event.src.target存在');
 				});
-				div1.click();
+				kampfer.events.fireEvent(div1, 'click');
 			});
 			
 			test('同时绑定多个事件', function() {
 				kampfer.events.addEvent(b, ['focus', 'blur', 'click'], function(event) {
 					ok(true, event.type + '触发');
 				});
-				b.focus();
-				b.blur();
-				b.click();
+				kampfer.events.fireEvent(b, ['focus', 'blur', 'click']);
 			});
 			
+			test('冒泡', function() {
+				var p = $('parent'),
+					c = $('child');
+				kampfer.events.addEvent(p, 'click', function() {
+					ok(true, this.id + '触发');
+				});
+				kampfer.events.addEvent(c, 'click', function() {
+					ok(true, this.id + '触发');
+				});
+				kampfer.events.fireEvent(c, 'click');
+			});
+			
+			/*
 			test('使用return false禁用默认行为（ie有效）', function() {
 				kampfer.events.addEvent(a, 'click', function(event) {
 					return false;
@@ -90,7 +104,7 @@
 				a.click();
 				ok(true, '页面未跳转');
 			});
-			
+			*/
 		</script>
 	</body>
 </html>

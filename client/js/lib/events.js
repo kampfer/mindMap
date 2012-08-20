@@ -9,6 +9,12 @@ kampfer.events.Event = function(src) {
 	this.type = src.type;
 };
 
+/*
+ * 生成handler的一个包裹对象，记录一些额外信息，并且生成一个唯一的key值
+ * @param {function}handler
+ * @param {string}type
+ * @param {object}scope
+ */
 kampfer.events.HandlerObj = function(handler, type, scope) {
 	this.handler = handler;
 	this.type = type;
@@ -21,7 +27,7 @@ kampfer.events.HandlerObj.key = 0;
 /*
  * 添加事件
  * @param {object}elem
- * @param {string}type
+ * @param {string||array}type
  * @param {function}handler
  * @param {object}scope
  * @TODO 支持捕获?
@@ -73,10 +79,40 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 
 kampfer.events.removeEvent = function() {};
 
-kampfer.events.fireEvent = function() {};
+/*
+ * 触发对象的指定事件
+ * @param {object}elem
+ * @param {type}type
+ * @param {object}data
+ */
+kampfer.events.fireEvent = function(elem, type, data) {
+	var elemData, eventObj;
+	
+	//同时绑定多个事件
+	if( kampfer.type(type) === 'array' ) {
+		for(var i = 0, l = type.length; i < l; i++) {
+			kampfer.events.fireEvent(elem, type[i], data);
+		}
+		return;
+	}
+	
+	if(elem.nodeType === 3 || elem.nodeType === 8 || !type) {
+		return;
+	}
+	
+	data = data || {};
+	data.type = type;
+	
+	//通过parentNode属性向上冒泡
+	for(var cur = elem; cur; cur = cur.parentNode) {	
+		eventObj = new kampfer.events.Event(data);
+		kampfer.events._fireHandlers.call(cur, eventObj);
+	}
+	
+};
 
 kampfer.events.getProxy = function() {
-	var proxy = function() {
+	var proxy = function(event) {
 		return kampfer.events.proxy.call(proxy.srcElement, event);
 	};
 	return proxy;
@@ -99,9 +135,12 @@ kampfer.events.proxy = function(event) {
  * @private
  */
 kampfer.events._fireHandlers = function(eventObj) {
-	var elemData = kampfer.dataManager._data(this) || {},
-		handlerObjs = elemData.events[eventObj.type] || [],
-		ret;
+	var elemData = kampfer.dataManager._data(this);
+	if(!elemData.events) {
+		return;
+	}
+	
+	var handlerObjs = elemData.events[eventObj.type] || [], ret;
 	
 	for(var i = 0, l = handlerObjs.length; i < l; i++) {
 		var scope = handlerObjs[i].scope || this;
