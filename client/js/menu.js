@@ -12,23 +12,37 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	init : function(content, fn) {
 		this._content = content;
 		this._fn = fn;
+		this._disabled = false;
 	},
 	
 	decorate : function() {
 		var that = this;
 		kampfer.dom.addClass(this._element, 'menu-item');
+		if(this._disabled) {
+			kampfer.dom.addClass(this._element, 'disable');
+		}
 		this._element.innerHTML = this._content;
 		
 		kampfer.event.addEvent(this._element, 'click', function() {
-			if(that._fn) {
-				that._fn();
+			if(!this._disabled) {
+				if(that._fn) {
+					that._fn();
+				}
+				that.getParent().hide();
 			}
-			that.getParent().hide();
 		});
 	},
 	
 	enterDocument : function() {
 		this._super( this._parent.getBody() );
+	},
+	
+	disable : function() {
+		this.disabled = true;
+	},
+	
+	enable : function() {
+		this.disabled = false;
 	}
 	
 });
