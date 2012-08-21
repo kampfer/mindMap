@@ -4,6 +4,13 @@ kampfer.require('dataManager');
 kampfer.provide('events');
 kampfer.provide('events.Event');
 
+/*
+ * 包裹浏览器event对象，提供统一的、跨浏览器的接口。
+ * 新的对象将包含以下接口：
+ *	- type	{string}	事件种类
+ * - target		{object}	触发事件的对象
+ * - relatedTarget	{object}	鼠标事件mouseover和mouseout的修正
+ */
 kampfer.events.Event = function(src) {
 	this.src = src;
 	this.type = src.type;
@@ -14,6 +21,7 @@ kampfer.events.Event = function(src) {
 	this.fix();
 };
 
+//停止冒泡
 kampfer.events.Event.prototype.stopPropagation = function() {
 	//使用fireEvent触发事件时，需要读取propagationStopped，判断冒泡是否取消。
 	this.propagationStopped = true;
@@ -26,6 +34,7 @@ kampfer.events.Event.prototype.stopPropagation = function() {
 	}
 };
 
+//阻止默认行为
 kampfer.events.Event.prototype.preventDefault = function() {
 	this.isDefaultPrevented = true;
 	
@@ -46,6 +55,9 @@ kampfer.events.Event.prototype.fix = function() {
 	if(!this.target) {
 		this.target = kampfer.global.document;
 	}
+	
+	//第一次生成event包裹时，初始化currentTarget为target
+	this.currentTarget = this.target;
 	
 	//修复键盘事件
 	if( kampfer.events.Event.isKeyEvent(this.type) ) {
@@ -76,6 +88,13 @@ kampfer.events.Event.prototype.fix = function() {
 			this.which = ( button & 1 ? 1 : ( button & 2 ? 3 : ( button & 4 ? 2 : 0 ) ) );
 		}
 	}
+};
+
+//将event包裹中的对象引用全部清除
+kampfer.events.Event.prototype.dispose = function() {
+	this.src = null;
+	this.target = null;
+	this.relatedTarget = null;
 };
 
 //判断事件是否为键盘事件
