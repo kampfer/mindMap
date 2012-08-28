@@ -170,6 +170,12 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 		var proxy = kampfer.events.getProxy();
 		proxy.srcElement = elem;
 		
+		//储存proxy
+		if(!events.proxy) {
+			events.proxy = {};
+		}
+		events.proxy[type] = proxy;
+		
 		if(elem.addEventListener) {
 			elem.addEventListener(type, proxy, false);
 		} else if(elem.attachEvent) {
@@ -179,9 +185,56 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	
 	//将用户操作保存
 	handlers.push(handlerObj);
+	
+	return handlerObj.key;
 };
 
-kampfer.events.removeEvent = function() {};
+/*
+ *	删除事件
+ *	@param {object}elem
+ * @param {string}type
+ */ 
+kampfer.events.removeEvent = function(elem, type) {
+	
+};
+
+/*
+ *	通过key来删除事件
+ * TODO
+ */
+kampfer.events.removeEventByKey = function(elem, type, key) {
+	var elemData, handlerObjs;
+	
+	if(elem.nodeType === 3 || elem.nodeType === 8) {
+		return;
+	}
+	
+	elemData = kampfer.dataManager._data(elem)
+	if(!elemData || !elemData.events || !elemData.events[type]) {
+		return;
+	}
+	
+	handlerObjs = elemData.events[type];
+	for(var i = 0, l = handlerObjs.length; i < l; i++) {
+		var handlerObj = handlerObjs[i];
+		if(handlerObj && handlerObj.key === key) {
+			handlerObjs.splice(i,1);
+		}
+	}
+	//如果给类事件的所有处理函数都被删除
+	if(handlerObjs.length === 0) {
+		//解绑proxy函数
+		var proxy = elemData.events.proxy[type];
+		if(elem.removeEventListener) {
+			elem.removeEventListener(type, proxy, false);
+		} else if(elem.detachEvent) {
+			elem.detachEvent('on' + type, proxy);
+		}
+		
+		//清空缓存
+		delete elemData.events[type];
+	}
+};
 
 /*
  * 触发对象的指定事件

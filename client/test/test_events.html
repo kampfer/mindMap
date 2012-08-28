@@ -104,6 +104,18 @@
 				});
 				kampfer.events.fireEvent(a, 'sayHi');
 			});
+			
+			test('通过key删除事件', function() {
+				var key = kampfer.events.addEvent(a, 'click', function(){
+					//
+				});
+				ok(key, '绑定事件成功后返回key: ' + key);
+				kampfer.events.removeEventByKey(a, 'click', key);
+				var elemData = kampfer.dataManager._data(a);
+				equal(elemData.events.click, undefined, '事件被取消');
+				console.log(elemData.events.click);
+				kampfer.events.fireEvent(a, 'click');
+			});
 		</script>
 	</body>
 </html>
