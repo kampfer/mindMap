@@ -264,15 +264,9 @@ kampfer.events.fireEvent = function(elem, type, data) {
 	
 	eventObj = new kampfer.events.Event(data);
 	//通过parentNode属性向上冒泡
-	for(var cur = elem; cur; cur = cur.parentNode) {
-		//处理冒泡
-		if(!eventObj.propagationStopped) {
-			//保证target为正确元素
-			eventObj.target = eventObj.target || cur;
-			kampfer.events._fireHandlers.call(cur, eventObj);
-		} else {
-			return;
-		}
+	for(var cur = elem; cur && !eventObj.propagationStopped; cur = cur.parentNode) {
+		eventObj.currentTarget = cur;
+		kampfer.events._fireHandlers.call(cur, eventObj);
 	}
 
 };
