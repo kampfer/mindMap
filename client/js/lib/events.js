@@ -4,12 +4,19 @@ kampfer.require('dataManager');
 kampfer.provide('events');
 kampfer.provide('events.Event');
 
+
 /*
  * 包裹浏览器event对象，提供统一的、跨浏览器的接口。
  * 新的对象将包含以下接口：
- *	- type	{string}	事件种类
+ * - type	{string}	事件种类
  * - target		{object}	触发事件的对象
  * - relatedTarget	{object}	鼠标事件mouseover和mouseout的修正
+ * - currentTarget	{object}	
+ * - stopPropagation	{function}	阻止冒泡
+ * - preventDefault	{function}	阻止默认行为
+ * - dispose	{function}
+ * - which	{number}	
+ * - pageX/pageY	{number}
  */
 kampfer.events.Event = function(src) {
 	this.src = src;
@@ -78,7 +85,7 @@ kampfer.events.Event.prototype.fix = function() {
 
 		// Add relatedTarget, if necessary
 		if ( !this.relatedTarget && src.formElement ) {
-			this.relatedTarget = fromElement === this.target ? src.toElement : src.formElement;
+			this.relatedTarget = src.fromElement === this.target ? src.toElement : src.formElement;
 		}
 
 		// Add which for click: 1 === left; 2 === middle; 3 === right
@@ -102,7 +109,8 @@ kampfer.events.Event.isKeyEvent = function(type) {
 	if( kampfer.type(type) !== 'string' ) {
 		type = type.type;
 	}
-	return /^key/.test(type);
+	var reg = /^key/;
+	return reg.test(type);
 };
 
 //判断事件是否为鼠标事件
@@ -110,8 +118,10 @@ kampfer.events.Event.isMouseEvent = function(type) {
 	if( kampfer.type(type) !== 'string' ) {
 		type = type.type;
 	}
-	return /^(?:mouse|contextmenu)|click/.test(type);
+	var reg = /^(?:mouse|contextmenu)|click/;
+	return reg.test(type);
 };
+
 
 /*
  * 生成handler的一个包裹对象，记录一些额外信息，并且生成一个唯一的key值
@@ -127,6 +137,7 @@ kampfer.events.HandlerObj = function(handler, type, scope) {
 };
 
 kampfer.events.HandlerObj.key = 0;
+
 
 /*
  * 添加事件
@@ -190,6 +201,7 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	return handlerObj.key;
 };
 
+
 /*
  *	删除事件
  *	@param {object}elem
@@ -198,6 +210,7 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 kampfer.events.removeEvent = function(elem, type) {
 	
 };
+
 
 /*
  *	通过key来删除事件
@@ -210,7 +223,7 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
 		return;
 	}
 	
-	elemData = kampfer.dataManager._data(elem)
+	elemData = kampfer.dataManager._data(elem);
 	if(!elemData || !elemData.events || !elemData.events[type]) {
 		return;
 	}
@@ -236,6 +249,7 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
 		delete elemData.events[type];
 	}
 };
+
 
 /*
  * 触发对象的指定事件
@@ -273,6 +287,7 @@ kampfer.events.fireEvent = function(elem, type, data) {
 
 };
 
+
 kampfer.events.getProxy = function() {
 	var proxy = function(event) {
 		return kampfer.events.proxy.call(proxy.srcElement, event);
@@ -284,13 +299,15 @@ kampfer.events.getProxy = function() {
 	//};
 };
 
+
 kampfer.events.proxy = function(event) {
-	event = event || window.event;
+	event = event || kampfer.global.event;
 	//处理event对象
 	var eventObj = new kampfer.events.Event(event);
 	
 	return kampfer.events._fireHandlers.call(this, eventObj);
 };
+
 
 /*
  * 找出为对象储存的事件处理函数并执行

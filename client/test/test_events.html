@@ -27,7 +27,6 @@
 			</div>
 		</div>
 		<!--	共用文件，不要修改	end	-->
-		
 		<script type="text/javascript">
 			function $(id) {
 				return document.getElementById(id);
@@ -43,31 +42,62 @@
 					job : 'Engineer'
 				};
 				
-			var handler = function(event) {
-				ok(true, '对象被点击');
-				ok(this === c, 'this === c');
-				ok(event.type === 'click', 'event.type正确');
-				ok(event.target === c, 'event.target正确');
-				ok(event.currentTarget === c, 'event.currentTarget正确');
-			};
-				
-			var key = kampfer.events.addEvent(c, 'click', handler);
+			test('初始状态，没有为任何对象建立缓存', function() {
+				var data = kampfer.dataManager._data(c);
+				ok(!data.events, 'elemData.events不存在');
+			});
 			
-			test('为对象绑定click事件', function() {
-				ok(key !== undefined, '每次成功执行addEvent都将返回一个key');
+			var clickProxy;
+			test('为DOM绑定click事件', function() {
+				var key = kampfer.events.addEvent(c, 'click', kampfer.emptyFn);
+				
+				ok( key !== undefined, '成功执行addEvent都将返回一个key' );
 				
 				var events = kampfer.dataManager._data(c, 'events');
+				ok( events, 'addEvent生成了events');
+				ok( kampfer.type(events) === 'object', 'events是object' );
 				ok( events.click, 'addEvent生成了events.click' );
-				ok( kampfer.type(events.click) === 'array', 'events.click是一个数组' );
+				ok( kampfer.type(events.click) === 'array', 'events.click是数组' );
+				ok( events.proxy, 'addEvent生成了events.proxy' );
+				ok( kampfer.type(events.proxy) === 'object', 'events.proxy是object' );
+				ok( kampfer.type(events.proxy.click) === 'function', 
+					'第一次为对象绑定click事件，将生成一个proxy函数并通过native方法绑定到对象上，proxy函数被存储到events.proxy对象中');
+				clickProxy = events.proxy.click;
 				
 				var handlerObj = events.click[0];
+				ok( handlerObj, '用户操作被保存在一个handlerObj对象中，该对象储存在events.click中');
 				ok( handlerObj.key === key, 'handlerObj.key正确' );
-				ok( handlerObj.handler === handler, 'handlerObj.handler正确' );
+				ok( handlerObj.handler === kampfer.emptyFn, 'handlerObj.handler正确' );
 				ok( handlerObj.scope === undefined, 'handlerObj.scope正常' );
 				ok( handlerObj.type === 'click', 'handlerObj.type正常' );
 			});
 			
-			test('触发对象的click事件，检查传递的参数', function() {
+			test('为DOM重复绑定click事件', function(){
+				var emptyFn = function() {};
+				var key = kampfer.events.addEvent(c, 'click', emptyFn);
+				var events = kampfer.dataManager._data(c, 'events');
+				var handlerObj = events.click[1];
+				
+				ok( key !== undefined, '每次成功执行addEvent都将返回一个key' );
+				ok( events.proxy.click === clickProxy, '重复绑定相同不会生成新的proxy函数' );
+				ok( handlerObj.handler === emptyFn, '用户操作被成功绑定' );
+
+			});
+			
+			test('检查传递的参数', function() {
+				var handler = function(event) {
+					ok(true, '事件被触发');
+					ok(this === c, 'this === c');
+					ok(event.type === 'click', 'event.type正确');
+					ok(event.target === c, 'event.target正确');
+					ok(event.currentTarget === c, 'event.currentTarget正确');
+					console.log(event.which);
+					console.log(event.pageX);
+					console.log(event.pageY);
+					console.log(event.relatedTarget);
+				};
+				
+				var key = kampfer.events.addEvent(c, 'click', handler);
 				kampfer.events.fireEvent(c, 'click');
 			});
 		</script>
