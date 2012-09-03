@@ -163,6 +163,7 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	var handlerObj = new kampfer.events.HandlerObj(handler, type, scope);
 	
 	handlers = events[type];
+	//如果handlers不存在，可以断定addEvent是第一次在对象上调用
 	if(!handlers) {
 		events[type] = handlers = [];
 	
@@ -261,6 +262,7 @@ kampfer.events.fireEvent = function(elem, type, data) {
 	
 	data = data || {};
 	data.type = type;
+	data.target = elem;
 	
 	eventObj = new kampfer.events.Event(data);
 	//通过parentNode属性向上冒泡

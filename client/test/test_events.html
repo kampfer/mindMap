@@ -22,99 +22,53 @@
 		<ol id="qunit-tests"></ol>
 		<div id="qunit-fixture">
 			test markup, will be hidden
+			<div id="parent">
+				<div id="child"></div>
+			</div>
 		</div>
 		<!--	共用文件，不要修改	end	-->
-		<div id="div1">div1</div>
-		<input id="b" />
-		<a href="http://www.baidu.com" id="a">baidu</a>
-		<div id="parent">
-			<div id="child"></div>
-		</div>
+		
 		<script type="text/javascript">
 			function $(id) {
 				return document.getElementById(id);
 			}
 			
-			var div1 = $('div1'),
-				a = $('a'),
-				b = $('b');
+			var p = $('parent'),
+				c = $('child'),
+				liaowei = {
+					name : 'liaowei',
+					nickName : 'kampfer',
+					sex : 'male',
+					age : '25',
+					job : 'Engineer'
+				};
+				
+			var handler = function(event) {
+				ok(true, '对象被点击');
+				ok(this === c, 'this === c');
+				ok(event.type === 'click', 'event.type正确');
+				ok(event.target === c, 'event.target正确');
+				ok(event.currentTarget === c, 'event.currentTarget正确');
+			};
+				
+			var key = kampfer.events.addEvent(c, 'click', handler);
 			
-			test('成功绑定事件', function() {
-				kampfer.events.addEvent(div1, 'click', function() {
-					ok(true, 'div1成功触发click事件');
-				});
-				kampfer.events.fireEvent(div1, 'click');
+			test('为对象绑定click事件', function() {
+				ok(key !== undefined, '每次成功执行addEvent都将返回一个key');
+				
+				var events = kampfer.dataManager._data(c, 'events');
+				ok( events.click, 'addEvent生成了events.click' );
+				ok( kampfer.type(events.click) === 'array', 'events.click是一个数组' );
+				
+				var handlerObj = events.click[0];
+				ok( handlerObj.key === key, 'handlerObj.key正确' );
+				ok( handlerObj.handler === handler, 'handlerObj.handler正确' );
+				ok( handlerObj.scope === undefined, 'handlerObj.scope正常' );
+				ok( handlerObj.type === 'click', 'handlerObj.type正常' );
 			});
 			
-			test('重复绑定事件', function() {
-				kampfer.events.addEvent(div1, 'click', function() {
-					ok(true, 'div1再次触发click事件');
-				});
-				kampfer.events.fireEvent(div1, 'click');
-			});
-			
-			test('一次触发所有处理函数', function() {
-				kampfer.events.fireEvent(div1, 'click');
-			});
-			
-			test('this被正确绑定', function() {
-				kampfer.events.addEvent(div1, 'click', function() {
-					deepEqual(this, div1, 'this === div1');
-				});
-				kampfer.events.addEvent(div1, 'click', function() {
-					deepEqual(this, kampfer, 'this === kampfer');
-				}, kampfer);
-				kampfer.events.fireEvent(div1, 'click');
-			});
-			
-			test('event被正确传递', function() {
-				kampfer.events.addEvent(div1, 'click', function(event) {
-					equal(event.type, 'click', 'event.type正确');
-					ok(event.src, 'event.src存在'); 
-					equal(event.src.type, 'click', 'event.src.type === click');
-					//ok(event.src.target, 'event.src.target存在');
-				});
-				kampfer.events.fireEvent(div1, 'click');
-			});
-			
-			test('同时绑定多个事件', function() {
-				kampfer.events.addEvent(b, ['focus', 'blur', 'click'], function(event) {
-					ok(true, event.type + '触发');
-				});
-				kampfer.events.fireEvent(b, ['focus', 'blur', 'click']);
-			});
-			
-			test('冒泡', function() {
-				var p = $('parent'),
-					c = $('child');
-				kampfer.events.addEvent(p, 'click', function(e) {
-					ok(true, this.id + '触发');
-				});
-				kampfer.events.addEvent(c, 'click', function(e) {
-					ok(true, this.id + '触发');
-					e.stopPropagation();
-				});
+			test('触发对象的click事件，检查传递的参数', function() {
 				kampfer.events.fireEvent(c, 'click');
-			});
-			
-			test('为对象绑定自定义事件', function() {
-				var a = {name:'a'};
-				kampfer.events.addEvent(a, 'sayHi', function(){
-					ok(true, 'object a say : hi!');
-				});
-				kampfer.events.fireEvent(a, 'sayHi');
-			});
-			
-			test('通过key删除事件', function() {
-				var key = kampfer.events.addEvent(a, 'click', function(){
-					//
-				});
-				ok(key, '绑定事件成功后返回key: ' + key);
-				kampfer.events.removeEventByKey(a, 'click', key);
-				var elemData = kampfer.dataManager._data(a);
-				equal(elemData.events.click, undefined, '事件被取消');
-				console.log(elemData.events.click);
-				kampfer.events.fireEvent(a, 'click');
 			});
 		</script>
 	</body>
