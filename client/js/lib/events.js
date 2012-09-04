@@ -246,7 +246,13 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
 		}
 		
 		//清空缓存
+		elemData.proxy[type] = null;
+		delete elemData.proxy[type];
+		
+		elemData.events[type] = null;
 		delete elemData.events[type];
+		
+		//for()
 	}
 };
 

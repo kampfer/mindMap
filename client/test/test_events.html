@@ -64,7 +64,8 @@
 					'第一次为对象绑定click事件，将生成一个proxy函数并通过native方法绑定到对象上，proxy函数被存储到events.proxy对象中');
 				
 				var handlerObj = events.click[0];
-				ok( handlerObj, '用户操作被保存在一个handlerObj对象中，该对象储存在events.click中');
+				ok( handlerObj instanceof kampfer.events.HandlerObj, 
+					'用户操作被保存在一个handlerObj对象中，该对象储存在events.click中');
 				ok( handlerObj.key === key, 'handlerObj.key正确' );
 				ok( handlerObj.handler === kampfer.emptyFn, 'handlerObj.handler正确' );
 				ok( handlerObj.scope === undefined, 'handlerObj.scope正常' );
@@ -81,27 +82,44 @@
 				var length = events.click.length;
 				
 				var key2 = kampfer.events.addEvent(c, 'click', emptyFn);
-				//events2不必每次都读一遍
-				var events2 = kampfer.dataManager._data(c, 'events');
 				var length2 = events.click.length;
 				
-				var handlerObj = events.click[1];
+				ok( length === 1 && length2 === 2 && 
+					events.click[1].key === key2 && events.click[0].key === key, 
+					'handlerObj被push入events.click数组' );
+				ok( events.proxy.click === events.proxy.click, '重复绑定相同事件(click)不会生成新的proxy函数' );
 				
-				ok( key !== undefined && key2 !== undefined, '每次成功执行addEvent都将返回唯一key' );
-				ok( length === 1 && length2 === 2 && events.click[1].key === key2, 'handlerObj被push入events.click数组' );
-				ok( events.proxy.click === events2.proxy.click, '重复绑定相同事件不会生成新的proxy函数' );
-				
-				ok( !events2.focus, 'events.focus不存在' );
-				ok( !events2.proxy.focus, 'events3.proxy.focus不存在' );
+				ok( !events.focus, 'events.focus不存在' );
+				ok( !events.proxy.focus, 'events3.proxy.focus不存在' );
 				var key3 = kampfer.events.addEvent(c, 'focus', function() {});
-				//var events3 = kampfer.dataManager._data(c, 'events');
-				ok( events2.focus, 'events.focus存在' );
-				ok( events2.focus[0].key === key3, 'events.focus[0]存在' );
-				ok( events2.proxy.focus, 'events3.proxy.focus存在' );
+				ok( events.focus, 'events.focus存在' );
+				ok( events.proxy.focus, 'events3.proxy.focus存在' );
+				ok( events.focus[0] instanceof kampfer.events.HandlerObj &&
+					events.focus[0].key === key3, 'events.focus[0]是一个handlerObj实例' );
 				
 				k.events.removeEventByKey(c, 'click', key);
 				k.events.removeEventByKey(c, 'click', key2);
 				k.events.removeEventByKey(c, 'focus', key3);
+			});
+			
+			test('同时绑定不同事件', function(){
+				var evts = '';
+				var handler = function(event) {
+					evts += event.type;
+				};
+				var events = k.dataManager._data(c, 'events');
+				
+				ok( !events.click && !events.mouseover, '没有存储用户操作' );
+				ok( !events.proxy, '没有生成proxy' );
+				
+				var key = k.events.addEvent(c, ['click', 'mouseover'], handler);
+				k.events.fireEvent(c, ['click', 'mouseover']);
+				
+				ok( evts === 'clickmouseover', '成功绑定不同事件');
+				ok( !key, '同时绑定多个事件无法正确获得key');
+				
+				ok( events.click.length === 1 && events.mouseover.length === 1, '用户操作被存储' );
+				ok( events.proxy.click && events.proxy.mouseover, '成功生成proxy' );
 			});
 			
 			test('触发DOM click事件', function(){
@@ -122,7 +140,8 @@
 			
 			test('检查this与event', function() {
 				var handler = function(event) {
-					ok(this === c, 'this === c');
+					ok(this === c, 'this正常'); 
+					ok(event instanceof kampfer.events.Event, 'event是kampfer.events.Event的实例');
 					ok(event.type === 'click', 'event.type正确');
 					ok(event.target === c, 'event.target正确');
 					ok(event.currentTarget === c, 'event.currentTarget正确');
@@ -138,7 +157,7 @@
 				var handler = function(event) {
 					ok( event.owner, '成功传递了自定义数据' );
 					ok( event.owner.name === 'liaowei', '自定义数据的键值正确' );
-				}
+				};
 				
 				k.events.addEvent(c, 'click', handler);
 				k.events.fireEvent(c, 'click', {owner:liaowei});
