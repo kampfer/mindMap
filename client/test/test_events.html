@@ -47,7 +47,6 @@
 				ok(!data.events, 'elemData.events不存在');
 			});
 			
-			var clickProxy;
 			test('为DOM绑定click事件', function() {
 				var key = kampfer.events.addEvent(c, 'click', kampfer.emptyFn);
 				
@@ -58,11 +57,11 @@
 				ok( kampfer.type(events) === 'object', 'events是object' );
 				ok( events.click, 'addEvent生成了events.click' );
 				ok( kampfer.type(events.click) === 'array', 'events.click是数组' );
+				ok( events.click.length === 1, 'events.click.length = 1' );
 				ok( events.proxy, 'addEvent生成了events.proxy' );
 				ok( kampfer.type(events.proxy) === 'object', 'events.proxy是object' );
 				ok( kampfer.type(events.proxy.click) === 'function', 
 					'第一次为对象绑定click事件，将生成一个proxy函数并通过native方法绑定到对象上，proxy函数被存储到events.proxy对象中');
-				clickProxy = events.proxy.click;
 				
 				var handlerObj = events.click[0];
 				ok( handlerObj, '用户操作被保存在一个handlerObj对象中，该对象储存在events.click中');
@@ -70,35 +69,79 @@
 				ok( handlerObj.handler === kampfer.emptyFn, 'handlerObj.handler正确' );
 				ok( handlerObj.scope === undefined, 'handlerObj.scope正常' );
 				ok( handlerObj.type === 'click', 'handlerObj.type正常' );
+				
+				k.events.removeEventByKey(c, 'click', key);
 			});
 			
-			test('为DOM重复绑定click事件', function(){
+			test('为DOM重复绑定事件', function(){
 				var emptyFn = function() {};
+				
 				var key = kampfer.events.addEvent(c, 'click', emptyFn);
 				var events = kampfer.dataManager._data(c, 'events');
+				var length = events.click.length;
+				
+				var key2 = kampfer.events.addEvent(c, 'click', emptyFn);
+				//events2不必每次都读一遍
+				var events2 = kampfer.dataManager._data(c, 'events');
+				var length2 = events.click.length;
+				
 				var handlerObj = events.click[1];
 				
-				ok( key !== undefined, '每次成功执行addEvent都将返回一个key' );
-				ok( events.proxy.click === clickProxy, '重复绑定相同不会生成新的proxy函数' );
-				ok( handlerObj.handler === emptyFn, '用户操作被成功绑定' );
-
+				ok( key !== undefined && key2 !== undefined, '每次成功执行addEvent都将返回唯一key' );
+				ok( length === 1 && length2 === 2 && events.click[1].key === key2, 'handlerObj被push入events.click数组' );
+				ok( events.proxy.click === events2.proxy.click, '重复绑定相同事件不会生成新的proxy函数' );
+				
+				ok( !events2.focus, 'events.focus不存在' );
+				ok( !events2.proxy.focus, 'events3.proxy.focus不存在' );
+				var key3 = kampfer.events.addEvent(c, 'focus', function() {});
+				//var events3 = kampfer.dataManager._data(c, 'events');
+				ok( events2.focus, 'events.focus存在' );
+				ok( events2.focus[0].key === key3, 'events.focus[0]存在' );
+				ok( events2.proxy.focus, 'events3.proxy.focus存在' );
+				
+				k.events.removeEventByKey(c, 'click', key);
+				k.events.removeEventByKey(c, 'click', key2);
+				k.events.removeEventByKey(c, 'focus', key3);
 			});
 			
-			test('检查传递的参数', function() {
+			test('触发DOM click事件', function(){
+				var handler = function() {
+					ok(true, 'click事件被触发');
+				};
+				
+				var key = kampfer.events.addEvent(c, 'click', handler);
+				var key2 = kampfer.events.addEvent(c, 'click', handler);
+				
+				kampfer.events.fireEvent(c, 'click');
+				
+				ok( key !== key2, '重复绑定相同操作成功');
+				
+				k.events.removeEventByKey(c, 'click', key);
+				k.events.removeEventByKey(c, 'click', key2);
+			});
+			
+			test('检查this与event', function() {
 				var handler = function(event) {
-					ok(true, '事件被触发');
 					ok(this === c, 'this === c');
 					ok(event.type === 'click', 'event.type正确');
 					ok(event.target === c, 'event.target正确');
 					ok(event.currentTarget === c, 'event.currentTarget正确');
-					console.log(event.which);
-					console.log(event.pageX);
-					console.log(event.pageY);
-					console.log(event.relatedTarget);
 				};
 				
 				var key = kampfer.events.addEvent(c, 'click', handler);
 				kampfer.events.fireEvent(c, 'click');
+				
+				k.events.removeEventByKey(c, 'click', key);
+			});
+			
+			test('传递自定义数据', function() {
+				var handler = function(event) {
+					ok( event.owner, '成功传递了自定义数据' );
+					ok( event.owner.name === 'liaowei', '自定义数据的键值正确' );
+				}
+				
+				k.events.addEvent(c, 'click', handler);
+				k.events.fireEvent(c, 'click', {owner:liaowei});
 			});
 		</script>
 	</body>

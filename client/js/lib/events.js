@@ -219,7 +219,7 @@ kampfer.events.removeEvent = function(elem, type) {
 kampfer.events.removeEventByKey = function(elem, type, key) {
 	var elemData, handlerObjs;
 	
-	if(elem.nodeType === 3 || elem.nodeType === 8) {
+	if( arguments.length < 3 ) {
 		return;
 	}
 	
@@ -273,12 +273,24 @@ kampfer.events.fireEvent = function(elem, type, data) {
 	if(elem.nodeType === 3 || elem.nodeType === 8 || !type) {
 		return;
 	}
+
+	if(!data) {
+		eventObj = new kampfer.events.Event({
+			type : type,
+			target : elem
+		});
+	} else if ( !(data instanceof kampfer.events.Event) ) {
+		eventObj = new kampfer.events.Event({
+			type : type,
+			target : elem
+		});
+		kampfer.extend(eventObj, data);
+	} else {
+		eventObj = data;
+		//eventObj.target = elem;
+	}
 	
-	data = data || {};
-	data.type = type;
-	data.target = elem;
 	
-	eventObj = new kampfer.events.Event(data);
 	//通过parentNode属性向上冒泡
 	for(var cur = elem; cur && !eventObj.propagationStopped; cur = cur.parentNode) {
 		eventObj.currentTarget = cur;
