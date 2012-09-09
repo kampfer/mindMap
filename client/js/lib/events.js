@@ -166,7 +166,9 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	
 	//检查并保存events引用
 	if(!elemData.events) {
-		elemData.events = {};
+		elemData.events = {
+			_count : 0
+		};
 	}
 	events = elemData.events;
 	
@@ -177,6 +179,7 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	//如果handlers不存在，可以断定addEvent是第一次在对象上调用
 	if(!handlers) {
 		events[type] = handlers = [];
+		events._count++;
 	
 		//被绑定的操作
 		var proxy = kampfer.events.getProxy();
@@ -184,9 +187,13 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 		
 		//储存proxy
 		if(!events.proxy) {
-			events.proxy = {};
+			events.proxy = {
+				_count : 0
+			};
+			events._count++;
 		}
 		events.proxy[type] = proxy;
+		events.proxy._count++;
 		
 		if(elem.addEventListener) {
 			elem.addEventListener(type, proxy, false);
@@ -246,11 +253,24 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
 		}
 		
 		//清空缓存
-		elemData.proxy[type] = null;
-		delete elemData.proxy[type];
+		elemData.events.proxy[type] = null;
+		delete elemData.events.proxy[type];
+		elemData.events.proxy._count--;
+		if(elemData.events.proxy._count === 0) {
+			delete elemData.events.proxy;
+			elemData.events._count--;
+		}
+		
+		//TODO 检查proxy，未空时应该删除它
 		
 		elemData.events[type] = null;
 		delete elemData.events[type];
+		elemData.events._count--;
+		if( elemData.events._count === 0 ) {
+			kampfer.dataManager._removeData(elem, 'events');
+		}
+		
+		//TODO 检查events对象,为空时应该删除它
 		
 		//for()
 	}

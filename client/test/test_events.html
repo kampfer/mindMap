@@ -28,6 +28,7 @@
 		</div>
 		<!--	共用文件，不要修改	end	-->
 		<script type="text/javascript">
+			QUnit.config.reorder = false;
 			function $(id) {
 				return document.getElementById(id);
 			}
@@ -43,11 +44,13 @@
 				};
 				
 			test('初始状态，没有为任何对象建立缓存', function() {
-				var data = kampfer.dataManager._data(c);
-				ok(!data.events, 'elemData.events不存在');
+				console.log(1);
+				var events = kampfer.dataManager._data(c).events;
+				ok(!events, 'elemData.events不存在');
 			});
 			
 			test('为DOM绑定click事件', function() {
+				console.log(2);
 				var key = kampfer.events.addEvent(c, 'click', kampfer.emptyFn);
 				
 				ok( key !== undefined, '成功执行addEvent都将返回一个key' );
@@ -75,6 +78,7 @@
 			});
 			
 			test('为DOM重复绑定事件', function(){
+				console.log(3);
 				var emptyFn = function() {};
 				
 				var key = kampfer.events.addEvent(c, 'click', emptyFn);
@@ -103,14 +107,14 @@
 			});
 			
 			test('同时绑定不同事件', function(){
+				console.log(4);
 				var evts = '';
 				var handler = function(event) {
 					evts += event.type;
 				};
 				var events = k.dataManager._data(c, 'events');
 				
-				ok( !events.click && !events.mouseover, '没有存储用户操作' );
-				ok( !events.proxy, '没有生成proxy' );
+				ok( !events, '没有存储用户操作' );
 				
 				var key = k.events.addEvent(c, ['click', 'mouseover'], handler);
 				k.events.fireEvent(c, ['click', 'mouseover']);
@@ -118,11 +122,13 @@
 				ok( evts === 'clickmouseover', '成功绑定不同事件');
 				ok( !key, '同时绑定多个事件无法正确获得key');
 				
+				events = k.dataManager._data(c, 'events');
 				ok( events.click.length === 1 && events.mouseover.length === 1, '用户操作被存储' );
 				ok( events.proxy.click && events.proxy.mouseover, '成功生成proxy' );
 			});
 			
 			test('触发DOM click事件', function(){
+				console.log(5);
 				var handler = function() {
 					ok(true, 'click事件被触发');
 				};
@@ -139,6 +145,7 @@
 			});
 			
 			test('检查this与event', function() {
+				console.log(6);
 				var handler = function(event) {
 					ok(this === c, 'this正常'); 
 					ok(event instanceof kampfer.events.Event, 'event是kampfer.events.Event的实例');
@@ -154,6 +161,7 @@
 			});
 			
 			test('传递自定义数据', function() {
+				console.log(7);
 				var handler = function(event) {
 					ok( event.owner, '成功传递了自定义数据' );
 					ok( event.owner.name === 'liaowei', '自定义数据的键值正确' );
