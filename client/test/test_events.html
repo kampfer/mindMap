@@ -30,6 +30,7 @@
 		
 		<!--	共用文件，不要修改	end	-->
 		<script type="text/javascript">
+		/*global kampfer, k, ok, test, QUnit*/
 			QUnit.config.reorder = false;
 			function $(id) {
 				return document.getElementById(id);
@@ -223,7 +224,8 @@
 				var target = {};
 				var key = k.events.addEvent(target, 'cry', function(event) {
 					ok(this === target);
-					console.log(event);
+					ok(event.type === 'cry');
+					ok(event.target === target);
 				});
 				k.events.fireEvent(target, 'cry');
 				k.events.removeEvent(target, 'cry');

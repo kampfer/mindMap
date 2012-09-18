@@ -234,7 +234,7 @@ kampfer.events.removeEvent = function(elem, type) {
 	for(i = 0, l = handlerObjs.length; i < l; i++) {
 		handlerObjs[i].dispose();
 	}
-	handlersObjs = null;
+	handlerObjs = null;
 	elemData.events[type]= null;
 	elemData.events._count--;
 	
