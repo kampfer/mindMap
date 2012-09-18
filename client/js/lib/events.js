@@ -136,6 +136,12 @@ kampfer.events.HandlerObj = function(handler, type, scope) {
 	this.key = kampfer.events.HandlerObj.key++;
 };
 
+//销毁对象中指向其他对象的引用
+kampfer.events.HandlerObj.prototype.dispose = function() {
+	this.handler = null;
+	this.scope = null;
+};
+
 kampfer.events.HandlerObj.key = 0;
 
 
@@ -148,7 +154,7 @@ kampfer.events.HandlerObj.key = 0;
  * @TODO 支持捕获?
  */
 kampfer.events.addEvent = function(elem, type, handler, scope) {
-	var elemData, events, handlers;
+	var elemData, events, handlers, i, l;
 	
 	//过滤异常情况，取得elem原始数据
 	if( elem.nodeType === 3 || elem.nodeType === 8 || !type ||
@@ -158,7 +164,7 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	
 	//同时绑定多个事件
 	if( kampfer.type(type) === 'array' ) {
-		for(var i = 0, l = type.length; i < l; i++) {
+		for(i = 0, l = type.length; i < l; i++) {
 			kampfer.events.addEvent(elem, type[i], handler, scope);
 		}
 		return;
@@ -210,21 +216,57 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 
 
 /*
- *	删除事件
- *	@param {object}elem
+ * 删除事件。此方法用于删除绑定在某类事件下的全部操作。
+ * @param {object}elem
  * @param {string}type
+ * TODO removeEvent/removeEventByKey代码重复比较严重，需要重构
  */ 
 kampfer.events.removeEvent = function(elem, type) {
+	var elemData, handlerObjs, i, l, proxy;
 	
+	elemData = kampfer.dataManager._data(elem);
+	if(!elemData.events || !elemData.events[type]) {
+		return;
+	}
+	
+	//清空所有处理函数
+	handlerObjs = elemData.events[type];
+	for(i = 0, l = handlerObjs.length; i < l; i++) {
+		handlerObjs[i].dispose();
+	}
+	handlersObjs = null;
+	elemData.events[type]= null;
+	elemData.events._count--;
+	
+	//解绑删除proxy
+	proxy = elemData.events.proxy[type];
+	if(proxy) {
+		if(elem.removeEventListener) {
+			elem.removeEventListener(type, proxy, false);
+		} else if(elem.detachEvent) {
+			elem.detachEvent('on' + type, proxy);
+		}
+		
+		elemData.events.proxy[type] = null;
+		delete elemData.events.proxy[type];
+		elemData.events.proxy._count--;
+		if(elemData.events.proxy._count === 0) {
+			delete elemData.events.proxy;
+			elemData.events._count--;
+		}
+	}
+	
+	if( elemData.events._count === 0 ) {
+		kampfer.dataManager._removeData(elem, 'events');
+	}
 };
 
 
 /*
- *	通过key来删除事件
- * TODO
+ * 通过key来删除事件
  */
 kampfer.events.removeEventByKey = function(elem, type, key) {
-	var elemData, handlerObjs;
+	var elemData, handlerObjs, i, l;
 	
 	if( arguments.length < 3 ) {
 		return;
@@ -236,9 +278,10 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
 	}
 	
 	handlerObjs = elemData.events[type];
-	for(var i = 0, l = handlerObjs.length; i < l; i++) {
+	for(i = 0, l = handlerObjs.length; i < l; i++) {
 		var handlerObj = handlerObjs[i];
 		if(handlerObj && handlerObj.key === key) {
+			handlerObj.dispose();
 			handlerObjs.splice(i,1);
 		}
 	}
@@ -252,6 +295,7 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
 			elem.detachEvent('on' + type, proxy);
 		}
 		
+		//TODO 优化删除流程
 		//清空缓存
 		elemData.events.proxy[type] = null;
 		delete elemData.events.proxy[type];
@@ -261,18 +305,12 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
 			elemData.events._count--;
 		}
 		
-		//TODO 检查proxy，未空时应该删除它
-		
 		elemData.events[type] = null;
 		delete elemData.events[type];
 		elemData.events._count--;
 		if( elemData.events._count === 0 ) {
 			kampfer.dataManager._removeData(elem, 'events');
 		}
-		
-		//TODO 检查events对象,为空时应该删除它
-		
-		//for()
 	}
 };
 
@@ -286,11 +324,11 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
  *		jquery支持，而closure不支持
  */
 kampfer.events.fireEvent = function(elem, type, data) {
-	var elemData, eventObj;
+	var elemData, eventObj, i, l, cur;
 	
 	//同时绑定多个事件
 	if( kampfer.type(type) === 'array' ) {
-		for(var i = 0, l = type.length; i < l; i++) {
+		for(i = 0, l = type.length; i < l; i++) {
 			kampfer.events.fireEvent(elem, type[i], data);
 		}
 		return;
@@ -317,12 +355,40 @@ kampfer.events.fireEvent = function(elem, type, data) {
 	}
 	
 	
-	//通过parentNode属性向上冒泡
-	for(var cur = elem; cur && !eventObj.propagationStopped; cur = cur.parentNode) {
+	// 通过parentNode属性向上冒泡
+	// BUG: 被隐藏的元素的parentNode=null, demo: test/test_parentNode_null.html
+	// TODO 这里不再模拟事件在dom中的传播，而专门处理自定义事件的传播逻辑
+	//		DOM中的事件传播准备使用jquery的使用方式
+	for(cur = elem; cur && !eventObj.propagationStopped; cur = cur.parentNode) {
 		eventObj.currentTarget = cur;
 		kampfer.events._fireHandlers.call(cur, eventObj);
 	}
 
+};
+
+
+//取得所有封装后的事件处理对象
+kampfer.events.getHandlerObjs = function(elem, type) {
+	var events = kampfer.dataManager._data(elem, 'events');
+	if(events && events[type]) {
+		return events[type];
+	}
+	return null;
+};
+
+
+//取得单个封装后的事件处理对象
+kampfer.events.getHandlerObj = function(elem, type, handler) {
+	var handlerObjs = kampfer.events.getHandlerObjs(elem, type),
+		i, l;
+	if(handlerObjs) {
+		for(i = 0, l = handlerObjs.length; i < l; i++) {
+			if(handlerObjs[i].handler === handler) {
+				return handlerObjs[i];
+			}
+		}
+	}
+	return null;
 };
 
 
@@ -352,14 +418,16 @@ kampfer.events.proxy = function(event) {
  * @private
  */
 kampfer.events._fireHandlers = function(eventObj) {
-	var elemData = kampfer.dataManager._data(this);
+	var elemData = kampfer.dataManager._data(this),
+		i, l;
+	
 	if(!elemData.events) {
 		return;
 	}
 	
 	var handlerObjs = elemData.events[eventObj.type] || [], ret;
 	
-	for(var i = 0, l = handlerObjs.length; i < l; i++) {
+	for(i = 0, l = handlerObjs.length; i < l; i++) {
 		var scope = handlerObjs[i].scope || this;
 		//如果处理函数返回false，那么禁用默认行为
 		if( handlerObjs[i].handler.call(scope, eventObj) === false ) {

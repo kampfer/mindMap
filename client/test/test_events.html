@@ -10,6 +10,7 @@
 		<script type="text/javascript" src="../js/lib/tools/qunit.js"></script>
 		<!--	共用文件，不要修改	end	-->
 		<script type="text/javascript">
+			/*global ok, console, k, kampfer, test, QUnit*/
 			kampfer.require('events');
 		</script>
 	</head>
@@ -20,12 +21,13 @@
 		<div id="qunit-testrunner-toolbar"></div>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-		<div id="qunit-fixture">
+		<div >
 			test markup, will be hidden
-			<div id="parent">
-				<div id="child"></div>
+			<div id="parent_fix">
+				<div id="child_fix">child</div>
 			</div>
 		</div>
+		
 		<!--	共用文件，不要修改	end	-->
 		<script type="text/javascript">
 			QUnit.config.reorder = false;
@@ -33,8 +35,8 @@
 				return document.getElementById(id);
 			}
 			
-			var p = $('parent'),
-				c = $('child'),
+			var p = $('parent_fix'),
+				c = $('child_fix'),
 				liaowei = {
 					name : 'liaowei',
 					nickName : 'kampfer',
@@ -44,13 +46,11 @@
 				};
 				
 			test('初始状态，没有为任何对象建立缓存', function() {
-				console.log(1);
 				var events = kampfer.dataManager._data(c).events;
 				ok(!events, 'elemData.events不存在');
 			});
 			
 			test('为DOM绑定click事件', function() {
-				console.log(2);
 				var key = kampfer.events.addEvent(c, 'click', kampfer.emptyFn);
 				
 				ok( key !== undefined, '成功执行addEvent都将返回一个key' );
@@ -78,20 +78,21 @@
 			});
 			
 			test('为DOM重复绑定事件', function(){
-				console.log(3);
 				var emptyFn = function() {};
 				
 				var key = kampfer.events.addEvent(c, 'click', emptyFn);
 				var events = kampfer.dataManager._data(c, 'events');
 				var length = events.click.length;
+				var click = events.proxy.click;
 				
 				var key2 = kampfer.events.addEvent(c, 'click', emptyFn);
 				var length2 = events.click.length;
+				var click2 = events.proxy.click;
 				
 				ok( length === 1 && length2 === 2 && 
 					events.click[1].key === key2 && events.click[0].key === key, 
 					'handlerObj被push入events.click数组' );
-				ok( events.proxy.click === events.proxy.click, '重复绑定相同事件(click)不会生成新的proxy函数' );
+				ok( click === click2, '重复绑定相同事件(click)不会生成新的proxy函数' );
 				
 				ok( !events.focus, 'events.focus不存在' );
 				ok( !events.proxy.focus, 'events3.proxy.focus不存在' );
@@ -107,7 +108,6 @@
 			});
 			
 			test('同时绑定不同事件', function(){
-				console.log(4);
 				var evts = '';
 				var handler = function(event) {
 					evts += event.type;
@@ -125,10 +125,12 @@
 				events = k.dataManager._data(c, 'events');
 				ok( events.click.length === 1 && events.mouseover.length === 1, '用户操作被存储' );
 				ok( events.proxy.click && events.proxy.mouseover, '成功生成proxy' );
+				
+				k.events.removeEvent(c, 'click');
+				k.events.removeEvent(c, 'mouseover');
 			});
 			
 			test('触发DOM click事件', function(){
-				console.log(5);
 				var handler = function() {
 					ok(true, 'click事件被触发');
 				};
@@ -145,9 +147,8 @@
 			});
 			
 			test('检查this与event', function() {
-				console.log(6);
 				var handler = function(event) {
-					ok(this === c, 'this正常'); 
+					ok(this === c, 'this正常');
 					ok(event instanceof kampfer.events.Event, 'event是kampfer.events.Event的实例');
 					ok(event.type === 'click', 'event.type正确');
 					ok(event.target === c, 'event.target正确');
@@ -161,14 +162,71 @@
 			});
 			
 			test('传递自定义数据', function() {
-				console.log(7);
 				var handler = function(event) {
 					ok( event.owner, '成功传递了自定义数据' );
 					ok( event.owner.name === 'liaowei', '自定义数据的键值正确' );
 				};
 				
-				k.events.addEvent(c, 'click', handler);
+				var key = k.events.addEvent(c, 'click', handler);
 				k.events.fireEvent(c, 'click', {owner:liaowei});
+				
+				k.events.removeEventByKey(c, 'click', key);
+			});
+			
+			test('取得单个事件的封装函数', function() {
+				var handler = function() {};
+				var key = k.events.addEvent(c, 'click', handler);
+				var handlerObj = k.events.getHandlerObj(c, 'click', handler);
+				ok(key === handlerObj.key, '成功');
+				k.events.removeEvent(c, 'click');
+			});
+			
+			test('冒泡测试', function() {
+				var path = '';
+				k.events.addEvent(c, 'click', function(){
+					path += 'c=>';
+				});
+				k.events.addEvent(p, 'click', function(){
+					path += 'p';
+				});
+				k.events.fireEvent(c, 'click');
+				ok(path === 'c=>p');
+			});
+			
+			test('绑定自定义事件', function() {
+				var target = {};
+				var key = k.events.addEvent(target, 'cry', function(){});
+				var data = k.dataManager._data(target, 'events');
+				ok(data);
+				ok(data._count === 2);
+				ok(data.cry);
+				ok(data.cry.length);
+				ok(data.cry[0].key === key);
+				ok(data.proxy);
+				ok(data.proxy.cry);
+				ok(data.proxy._count === 1);
+				k.events.removeEvent(target, 'cry');
+			});
+			
+			test('触发自定义事件', function() {
+				var target = {};
+				var ret = '';
+				var key = k.events.addEvent(target, 'cry', function() {
+					ret += 'target cry';
+				});
+				k.events.fireEvent(target, 'cry');
+				ok( ret === 'target cry');
+				k.events.removeEvent(target, 'cry');
+			});
+			
+			test('触发自定义事件时的参数检测', function() {
+				var target = {};
+				var key = k.events.addEvent(target, 'cry', function(event) {
+					ok(this === target);
+					console.log(event);
+				});
+				k.events.fireEvent(target, 'cry');
+				k.events.removeEvent(target, 'cry');
 			});
 		</script>
 	</body>
