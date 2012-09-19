@@ -320,7 +320,7 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
  * @param {object}elem
  * @param {type}type
  * @param {object}data
- * @TODO 使用fireEvent方法是否支持触发浏览器默认事件，比如点击a标签页面会跳转？
+ * TODO 使用fireEvent方法是否支持触发浏览器默认事件，比如点击a标签页面会跳转？
  *		jquery支持，而closure不支持
  */
 kampfer.events.fireEvent = function(elem, type, data) {
@@ -357,13 +357,30 @@ kampfer.events.fireEvent = function(elem, type, data) {
 	
 	// 通过parentNode属性向上冒泡
 	// BUG: 被隐藏的元素的parentNode=null, demo: test/test_parentNode_null.html
-	// TODO 这里不再模拟事件在dom中的传播，而专门处理自定义事件的传播逻辑
-	//		DOM中的事件传播准备使用jquery的使用方式
-	for(cur = elem; cur && !eventObj.propagationStopped; cur = cur.parentNode) {
+	//for(cur = elem; cur && !eventObj.propagationStopped; cur = cur.parentNode) {
+	//	eventObj.currentTarget = cur;
+	//	kampfer.events._fireHandlers.call(cur, eventObj);
+	//}
+	
+	cur = elem;
+	while(cur) {
 		eventObj.currentTarget = cur;
 		kampfer.events._fireHandlers.call(cur, eventObj);
+		//向上传播-冒泡
+		if(cur.getParent && !cur.nodeType) {
+		//处理plain object冒泡
+			cur = cur.getParent();
+		}else{
+		//处理DOM冒泡
+		//因为document.parentNode === null，所以当事件冒泡到document时，采取
+		//特殊的处理方式将事件冒泡到window
+			if(cur === elem.ownerDocument) {
+				cur = cur.defaultView || cur.parentWindow || kampfer.global;
+			} else {
+				cur = cur.parentNode;
+			}
+		}
 	}
-
 };
 
 

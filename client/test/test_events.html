@@ -51,7 +51,7 @@
 				ok(!events, 'elemData.events不存在');
 			});
 			
-			test('为DOM绑定click事件', function() {
+			test('为DOM绑定事件', function() {
 				var key = kampfer.events.addEvent(c, 'click', kampfer.emptyFn);
 				
 				ok( key !== undefined, '成功执行addEvent都将返回一个key' );
@@ -131,7 +131,7 @@
 				k.events.removeEvent(c, 'mouseover');
 			});
 			
-			test('触发DOM click事件', function(){
+			test('触发DOM事件', function(){
 				var handler = function() {
 					ok(true, 'click事件被触发');
 				};
@@ -185,27 +185,36 @@
 			test('冒泡测试', function() {
 				var path = '';
 				k.events.addEvent(c, 'click', function(){
-					path += 'c=>';
+					path += 'c';
 				});
 				k.events.addEvent(p, 'click', function(){
-					path += 'p';
+					path += ' p';
+				});
+				k.events.addEvent(document, 'click', function() {
+					path += ' document';
+				});
+				k.events.addEvent(window, 'click', function() {
+					path += ' window';
 				});
 				k.events.fireEvent(c, 'click');
-				ok(path === 'c=>p');
+				ok(path === 'c p document window', 'path : c=>p=>document=>window');
+				k.events.removeEvent(c, 'click');
+				k.events.removeEvent(p, 'click');
+				k.events.removeEvent(document, 'click');
+				k.events.removeEvent(window, 'click');
 			});
 			
 			test('绑定自定义事件', function() {
 				var target = {};
-				var key = k.events.addEvent(target, 'cry', function(){});
 				var data = k.dataManager._data(target, 'events');
-				ok(data);
-				ok(data._count === 2);
-				ok(data.cry);
-				ok(data.cry.length);
-				ok(data.cry[0].key === key);
-				ok(data.proxy);
-				ok(data.proxy.cry);
-				ok(data.proxy._count === 1);
+				ok(!data, '缓存为空');
+				var key = k.events.addEvent(target, 'cry', function(){});
+				data = k.dataManager._data(target, 'events');
+				ok(data, '缓存不再为空');
+				ok(data.cry, '事件属性存在');
+				ok(data.cry.length, '事件属性不为空');
+				ok(data.cry[0].key === key, '缓存中储存了处理函数');
+				ok(data.proxy.cry, 'proxy缓存存在');
 				k.events.removeEvent(target, 'cry');
 			});
 			
@@ -216,20 +225,27 @@
 					ret += 'target cry';
 				});
 				k.events.fireEvent(target, 'cry');
-				ok( ret === 'target cry');
+				ok( ret === 'target cry', '事件被触发');
 				k.events.removeEvent(target, 'cry');
 			});
 			
 			test('触发自定义事件时的参数检测', function() {
 				var target = {};
 				var key = k.events.addEvent(target, 'cry', function(event) {
-					ok(this === target);
-					ok(event.type === 'cry');
-					ok(event.target === target);
+					ok(this === target, 'this正常');
+					ok(event.type === 'cry', 'event.type正常');
+					ok(event.target === target, 'event.target正常');
+					ok(event.fuck === true, '额外参数正常');
 				});
-				k.events.fireEvent(target, 'cry');
+				k.events.fireEvent(target, 'cry', {fuck:true});
 				k.events.removeEvent(target, 'cry');
 			});
+			
+			//test('', function() {});			
+			//test('', function() {});			
+			//test('', function() {});			
+			//test('', function() {});			
+			
 		</script>
 	</body>
 </html>
