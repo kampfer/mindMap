@@ -247,11 +247,11 @@ kampfer.events.removeEvent = function(elem, type) {
 			elem.detachEvent('on' + type, proxy);
 		}
 		
+		elemData.events.proxy[type].src = null;
 		elemData.events.proxy[type] = null;
-		delete elemData.events.proxy[type];
 		elemData.events.proxy._count--;
 		if(elemData.events.proxy._count === 0) {
-			delete elemData.events.proxy;
+			elemData.events.proxy = null;
 			elemData.events._count--;
 		}
 	}
@@ -295,18 +295,17 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
 			elem.detachEvent('on' + type, proxy);
 		}
 		
-		//TODO 优化删除流程
 		//清空缓存
+		//删除 到elem的引用 
+		elemData.events.proxy[type].src = null;
 		elemData.events.proxy[type] = null;
-		delete elemData.events.proxy[type];
 		elemData.events.proxy._count--;
 		if(elemData.events.proxy._count === 0) {
-			delete elemData.events.proxy;
+			elemData.events.proxy = null;
 			elemData.events._count--;
 		}
 		
 		elemData.events[type] = null;
-		delete elemData.events[type];
 		elemData.events._count--;
 		if( elemData.events._count === 0 ) {
 			kampfer.dataManager._removeData(elem, 'events');
