@@ -29,7 +29,7 @@
 		
 		<!--	共用文件，不要修改	end	-->
 		<script type="text/javascript">
-		/*global kampfer, k, ok, test, QUnit*/
+		/*global kampfer, k, ok, test, QUnit, module, window*/
 			QUnit.config.reorder = false;
 			function $(id) {
 				return document.getElementById(id);
@@ -239,8 +239,8 @@
 			});
 			
 			module('自定义事件');
+			var target = {};
 			test('绑定自定义事件', function() {
-				var target = {};
 				var data = k.dataManager._data(target, 'events');
 				ok(!data, '缓存为空');
 				var key = k.events.addEvent(target, 'cry', function(){});
@@ -253,8 +253,7 @@
 				k.events.removeEvent(target, 'cry');
 			});
 			
-			test(' 同时绑定多个事件', function() {
-				var target = {};
+			test('同时绑定多个事件', function() {
 				var events = k.dataManager._data(target, 'events');
 				var handler = function() {};
 				ok(!events, '缓存为空');
@@ -283,7 +282,6 @@
 			});
 			
 			test('触发自定义事件', function() {
-				var target = {};
 				var ret = '';
 				var key = k.events.addEvent(target, 'cry', function() {
 					ret += 'target cry';
@@ -295,7 +293,6 @@
 			
 			test('同时触发多个自定义事件', function() {
 				var ret = [];
-				var target = {};
 				var handler = function(event) {
 					ret.push(event.type);
 				};
@@ -309,7 +306,6 @@
 			});
 			
 			test('触发自定义事件时的参数检测', function() {
-				var target = {};
 				var key = k.events.addEvent(target, 'cry', function(event) {
 					ok(this === target, 'this正常');
 					ok(event.type === 'cry', 'event.type正常');
@@ -318,6 +314,17 @@
 				});
 				k.events.fireEvent(target, 'cry', {fuck:true});
 				k.events.removeEvent(target, 'cry');
+			});
+			
+			test('删除自定义事件', function() {
+				var key = k.events.addEvent(target, 'say', function(){});
+				var data = k.dataManager._data(target, 'events');
+				ok(data.say.length);
+				ok(data.proxy.say);
+				ok(data.proxy._count === 1);
+				k.events.removeEventByKey(target, 'say', key);
+				data = k.dataManager._data(target, 'events');
+				ok(!data);
 			});
 			
 			//test('', function() {});

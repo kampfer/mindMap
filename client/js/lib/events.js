@@ -264,6 +264,7 @@ kampfer.events.removeEvent = function(elem, type) {
 
 /*
  * 通过key来删除事件
+ * TODO 减少需要传递的参数，只需传递key。其他删除方法最终都调用本方法。
  */
 kampfer.events.removeEventByKey = function(elem, type, key) {
 	var elemData, handlerObjs, i, l;
