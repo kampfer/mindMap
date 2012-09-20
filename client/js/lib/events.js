@@ -247,7 +247,7 @@ kampfer.events.removeEvent = function(elem, type) {
 			elem.detachEvent('on' + type, proxy);
 		}
 		
-		elemData.events.proxy[type].src = null;
+		elemData.events.proxy[type].srcElement = null;
 		elemData.events.proxy[type] = null;
 		elemData.events.proxy._count--;
 		if(elemData.events.proxy._count === 0) {
@@ -297,7 +297,7 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
 		
 		//清空缓存
 		//删除 到elem的引用 
-		elemData.events.proxy[type].src = null;
+		elemData.events.proxy[type].srcElement = null;
 		elemData.events.proxy[type] = null;
 		elemData.events.proxy._count--;
 		if(elemData.events.proxy._count === 0) {

@@ -21,8 +21,7 @@
 		<div id="qunit-testrunner-toolbar"></div>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-		<div >
-			test markup, will be hidden
+		<div style="display:none;">
 			<div id="parent_fix">
 				<div id="child_fix">child</div>
 			</div>
@@ -46,11 +45,12 @@
 					job : 'Engineer'
 				};
 				
-			test('初始状态，没有为任何对象建立缓存', function() {
+			test('初始状态，缓存为空', function() {
 				var events = kampfer.dataManager._data(c).events;
 				ok(!events, 'elemData.events不存在');
 			});
 			
+			module('DOM事件');
 			test('为DOM绑定事件', function() {
 				var key = kampfer.events.addEvent(c, 'click', kampfer.emptyFn);
 				
@@ -184,26 +184,61 @@
 			
 			test('冒泡测试', function() {
 				var path = '';
-				k.events.addEvent(c, 'click', function(){
+				var type = 'click';
+				var isThisCorrect = [];
+				var isEventCorrect = [];
+				
+				function checkThis(objThis, obj) {
+					if(objThis !== obj) {
+						isThisCorrect.push(0);
+					} else {
+						isThisCorrect.push(1);
+					}
+				}
+				
+				function checkEvent(event, thisObj) {
+					if( event.type === type && 
+						event.currentTarget === thisObj &&
+						event.target === c ) {
+						isEventCorrect.push(1);
+					} else {
+						isEventCorrect.push(0);
+					}
+				}
+				
+				k.events.addEvent(c, type, function(event) {
+					checkThis(this, c);
+					checkEvent(event, this);
 					path += 'c';
 				});
-				k.events.addEvent(p, 'click', function(){
+				k.events.addEvent(p, type, function(event) {
+					checkThis(this, p);
+					checkEvent(event, this);
 					path += ' p';
 				});
-				k.events.addEvent(document, 'click', function() {
+				k.events.addEvent(document, type, function(event) {
+					checkThis(this, document);
+					checkEvent(event, this);
 					path += ' document';
 				});
-				k.events.addEvent(window, 'click', function() {
+				k.events.addEvent(window, type, function(event) {
+					checkThis(this, window);
+					checkEvent(event, this);
 					path += ' window';
 				});
-				k.events.fireEvent(c, 'click');
+				
+				k.events.fireEvent(c, type);
 				ok(path === 'c p document window', 'path : c=>p=>document=>window');
+				ok(isThisCorrect.join('') === '1111', '冒泡过程中this正确');
+				ok(isEventCorrect.join('') === '1111', '冒泡过程中event正确');
+				
 				k.events.removeEvent(c, 'click');
 				k.events.removeEvent(p, 'click');
 				k.events.removeEvent(document, 'click');
 				k.events.removeEvent(window, 'click');
 			});
 			
+			module('自定义事件');
 			test('绑定自定义事件', function() {
 				var target = {};
 				var data = k.dataManager._data(target, 'events');
@@ -218,6 +253,35 @@
 				k.events.removeEvent(target, 'cry');
 			});
 			
+			test(' 同时绑定多个事件', function() {
+				var target = {};
+				var events = k.dataManager._data(target, 'events');
+				var handler = function() {};
+				ok(!events, '缓存为空');
+				k.events.addEvent(target, ['say','cry','talk'], handler);
+				
+				data = k.dataManager._data(target, 'events');
+				events = k.dataManager._data(target, 'events');
+				ok('say' in events, '');
+				ok(events.say[0].handler === handler);
+				ok('cry' in events, '');
+				ok(events.cry[0].handler === handler);
+				ok('talk' in events, '');
+				ok(events.talk[0].handler === handler);
+				ok(events._count === 4, '');
+				ok('say' in events.proxy, '');
+				ok(events.proxy.say.srcElement === target);
+				ok('cry' in events.proxy, '');
+				ok(events.proxy.cry.srcElement === target);
+				ok('talk' in events.proxy, '');
+				ok(events.proxy.talk.srcElement === target);
+				ok(events.proxy._count === 3, '');
+				
+				k.events.removeEvent(target, 'cry');
+				k.events.removeEvent(target, 'say');
+				k.events.removeEvent(target, 'talk');
+			});
+			
 			test('触发自定义事件', function() {
 				var target = {};
 				var ret = '';
@@ -227,6 +291,21 @@
 				k.events.fireEvent(target, 'cry');
 				ok( ret === 'target cry', '事件被触发');
 				k.events.removeEvent(target, 'cry');
+			});
+			
+			test('同时触发多个自定义事件', function() {
+				var ret = [];
+				var target = {};
+				var handler = function(event) {
+					ret.push(event.type);
+				};
+				k.events.addEvent(target, ['say','cry','talk'], handler);
+				k.events.fireEvent(target, ['say','cry','talk']);
+				ok(ret.join(' ') === 'say cry talk');
+				
+				k.events.removeEvent(target, 'cry');
+				k.events.removeEvent(target, 'say');
+				k.events.removeEvent(target, 'talk');
 			});
 			
 			test('触发自定义事件时的参数检测', function() {
@@ -241,11 +320,10 @@
 				k.events.removeEvent(target, 'cry');
 			});
 			
-			//test('', function() {});			
-			//test('', function() {});			
-			//test('', function() {});			
-			//test('', function() {});			
-			
+			//test('', function() {});
+			//test('', function() {});
+			//test('', function() {});
+			//test('', function() {});
 		</script>
 	</body>
 </html>
