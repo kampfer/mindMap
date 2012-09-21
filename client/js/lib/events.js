@@ -151,7 +151,7 @@ kampfer.events.HandlerObj.key = 0;
  * @param {string||array}type
  * @param {function}handler
  * @param {object}scope
- * @TODO 支持捕获?
+ * TODO 支持捕获?
  */
 kampfer.events.addEvent = function(elem, type, handler, scope) {
 	var elemData, events, handlers, i, l;
@@ -219,10 +219,10 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
  * 删除事件。此方法用于删除绑定在某类事件下的全部操作。
  * @param {object}elem
  * @param {string}type
- * TODO removeEvent/removeEventByKey代码重复比较严重，需要重构
+ * TODO 重复调用_data，需要优化
  */ 
 kampfer.events.removeEvent = function(elem, type) {
-	var elemData, handlerObjs, i, l, proxy;
+	var elemData, handlerObjs;
 	
 	elemData = kampfer.dataManager._data(elem);
 	if(!elemData.events || !elemData.events[type]) {
@@ -231,34 +231,14 @@ kampfer.events.removeEvent = function(elem, type) {
 	
 	//清空所有处理函数
 	handlerObjs = elemData.events[type];
-	for(i = 0, l = handlerObjs.length; i < l; i++) {
-		handlerObjs[i].dispose();
+	//由于removeEventByKey会改变handlerObjs的长度，所以每次读取第一项。
+	//避免读取到undefined的情况
+	while(handlerObjs[0]) {
+		kampfer.events.removeEventByKey(elem, type, handlerObjs[0].key);
 	}
-	handlerObjs = null;
-	elemData.events[type]= null;
-	elemData.events._count--;
-	
-	//解绑删除proxy
-	proxy = elemData.events.proxy[type];
-	if(proxy) {
-		if(elem.removeEventListener) {
-			elem.removeEventListener(type, proxy, false);
-		} else if(elem.detachEvent) {
-			elem.detachEvent('on' + type, proxy);
-		}
-		
-		elemData.events.proxy[type].srcElement = null;
-		elemData.events.proxy[type] = null;
-		elemData.events.proxy._count--;
-		if(elemData.events.proxy._count === 0) {
-			elemData.events.proxy = null;
-			elemData.events._count--;
-		}
-	}
-	
-	if( elemData.events._count === 0 ) {
-		kampfer.dataManager._removeData(elem, 'events');
-	}
+	//for(i = 0, l = handlerObjs.length; i < l; i++) {
+	//	kampfer.events.removeEventByKey(elem, type, handlerObjs[i].key);
+	//}
 };
 
 
@@ -283,6 +263,10 @@ kampfer.events.removeEventByKey = function(elem, type, key) {
 		var handlerObj = handlerObjs[i];
 		if(handlerObj && handlerObj.key === key) {
 			handlerObj.dispose();
+			//每次删除操作后缓存数组的长度都会-1，而i会+1。由于removeEventByKey方法
+			//实际只会执行一次删除操作，所以不会出现handlerObjs[i]不存在的情况。但是
+			//当多次重复调用removeEventByKey删除统一对象的相同事件时，就会可能出现
+			//handlerObjs[i] === undefined的情况
 			handlerObjs.splice(i,1);
 		}
 	}

@@ -189,7 +189,8 @@
 				var isEventCorrect = [];
 				
 				function checkThis(objThis, obj) {
-					if(objThis !== obj) {
+					//if(objThis !== obj) {
+					if( QUnit.equal(objThis, obj) ) {
 						isThisCorrect.push(0);
 					} else {
 						isThisCorrect.push(1);
@@ -316,21 +317,41 @@
 				k.events.removeEvent(target, 'cry');
 			});
 			
-			test('删除自定义事件', function() {
+			test('通过removeEventByKey删除自定义事件', function() {
 				var key = k.events.addEvent(target, 'say', function(){});
+				var key2 = k.events.addEvent(target, 'say', function(){});
 				var data = k.dataManager._data(target, 'events');
-				ok(data.say.length);
+				ok(data.say.length === 2);
 				ok(data.proxy.say);
 				ok(data.proxy._count === 1);
 				k.events.removeEventByKey(target, 'say', key);
+				ok(data.say.length === 1);
+				ok(data.say[0].key === key2);
+				ok(data.proxy.say);
+				ok(data.proxy._count === 1);
+				//传递并不存在key
+				k.events.removeEventByKey(target, 'say', 999999);
+				ok(data.say.length === 1);
+				ok(data.say[0].key === key2);
+				ok(data.proxy.say);
+				ok(data.proxy._count === 1);
+				k.events.removeEventByKey(target, 'say', key2);
 				data = k.dataManager._data(target, 'events');
 				ok(!data);
 			});
 			
-			//test('', function() {});
-			//test('', function() {});
-			//test('', function() {});
-			//test('', function() {});
+			test('通过removeEvent删除自定义事件', function() {
+				var data = k.dataManager._data(target, 'events');
+				ok(!data);
+				k.events.addEvent(target, ['say', 'say'], function() {});
+				data = k.dataManager._data(target, 'events');
+				ok(data.say.length === 2);
+				ok(data.proxy.say);
+				ok(data.proxy._count === 1);
+				k.events.removeEvent(target, 'say');
+				data = k.dataManager._data(target, 'events');
+				ok(!data);
+			});			
 		</script>
 	</body>
 </html>
