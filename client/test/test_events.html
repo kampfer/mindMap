@@ -96,10 +96,10 @@
 				ok( click === click2, '重复绑定相同事件(click)不会生成新的proxy函数' );
 				
 				ok( !events.focus, 'events.focus不存在' );
-				ok( !events.proxy.focus, 'events3.proxy.focus不存在' );
+				ok( !events.proxy.focus, 'events.proxy.focus不存在' );
 				var key3 = kampfer.events.addEvent(c, 'focus', function() {});
 				ok( events.focus, 'events.focus存在' );
-				ok( events.proxy.focus, 'events3.proxy.focus存在' );
+				ok( events.proxy.focus, 'events.proxy.focus存在' );
 				ok( events.focus[0] instanceof kampfer.events.HandlerObj &&
 					events.focus[0].key === key3, 'events.focus[0]是一个handlerObj实例' );
 				
@@ -188,12 +188,13 @@
 				var isThisCorrect = [];
 				var isEventCorrect = [];
 				
-				function checkThis(objThis, obj) {
-					//if(objThis !== obj) {
-					if( QUnit.equal(objThis, obj) ) {
-						isThisCorrect.push(0);
-					} else {
+				function checkThis(objThis, obj, msg) {
+					if( (kampfer.isWindow(objThis) && 
+						kampfer.isWindow(obj)) ||
+						objThis === obj) {
 						isThisCorrect.push(1);
+					} else {
+						isThisCorrect.push(0);
 					}
 				}
 				
@@ -241,16 +242,30 @@
 			
 			module('自定义事件');
 			var target = {};
+			//TODO 	1.可以重复绑定同一函数
 			test('绑定自定义事件', function() {
 				var data = k.dataManager._data(target, 'events');
 				ok(!data, '缓存为空');
+				
 				var key = k.events.addEvent(target, 'cry', function(){});
 				data = k.dataManager._data(target, 'events');
 				ok(data, '缓存不再为空');
-				ok(data.cry, '事件属性存在');
-				ok(data.cry.length, '事件属性不为空');
-				ok(data.cry[0].key === key, '缓存中储存了处理函数');
+				ok(kampfer.type(data.cry) === 'array', 'events[type]是数组');
+				ok(data.cry[0] instanceof kampfer.events.HandlerObj, 'events[type]的项是kampfer.events.HandlerObj的实例');
 				ok(data.proxy.cry, 'proxy缓存存在');
+				var length = data.cry.length;
+				var proxy = data.proxy.cry;
+				var cry = data.cry[0];
+				
+				var fn = function() {};
+				var key2 = k.events.addEvent(target, 'cry', fn);
+				var length2 = data.cry.length;
+				var proxy2 = data.proxy.cry;
+				ok( length2 === length + 1 && 
+					data.cry[0] === cry && 
+					data.cry[1].handler === fn, '重复绑定事件会向events[type]中push项目')
+				ok(proxy === proxy2, '重复绑定不改变proxy');
+				
 				k.events.removeEvent(target, 'cry');
 			});
 			
@@ -299,11 +314,16 @@
 				};
 				k.events.addEvent(target, ['say','cry','talk'], handler);
 				k.events.fireEvent(target, ['say','cry','talk']);
-				ok(ret.join(' ') === 'say cry talk');
+				ok(ret.join(' ') === 'say cry talk', '事件按绑定顺序触发');
 				
 				k.events.removeEvent(target, 'cry');
 				k.events.removeEvent(target, 'say');
 				k.events.removeEvent(target, 'talk');
+			});
+			
+			test('触发不存在的事件', function() {
+				k.events.fireEvent(target, 'cry');
+				ok(true, '触发不存在的事件不报错');
 			});
 			
 			test('触发自定义事件时的参数检测', function() {
@@ -351,7 +371,24 @@
 				k.events.removeEvent(target, 'say');
 				data = k.dataManager._data(target, 'events');
 				ok(!data);
-			});			
+			});
+			
+			test('plain object的自定义事件冒泡', function(){
+				var child = {
+					getParent : function() {
+						return target;
+					}
+				};
+				var ret = [];
+				k.events.addEvent(child, 'say', function() {
+					ret.push('child say');
+				});
+				k.events.addEvent(target, 'say', function() {
+					ret.push('target say');
+				});
+				k.events.fireEvent(child, 'say');
+				ok( ret.join('=>') === 'child say=>target say' );
+			});		
 		</script>
 	</body>
 </html>

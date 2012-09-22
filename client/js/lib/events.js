@@ -353,11 +353,13 @@ kampfer.events.fireEvent = function(elem, type, data) {
 		//向上传播-冒泡
 		if(cur.getParent && !cur.nodeType) {
 		//处理plain object冒泡
+		//plain object事件的冒泡需要plain object实现一个借口getParent，
+		//这个借口返回plain object的父辈plain object
 			cur = cur.getParent();
 		}else{
 		//处理DOM冒泡
-		//因为document.parentNode === null，所以当事件冒泡到document时，采取
-		//特殊的处理方式将事件冒泡到window
+		//因为document.parentNode === null，所以当事件冒泡到document时，
+		//采取特殊的处理方式将事件冒泡到window
 			if(cur === elem.ownerDocument) {
 				cur = cur.defaultView || cur.parentWindow || kampfer.global;
 			} else {
