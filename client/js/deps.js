@@ -8,6 +8,7 @@ kampfer.addDependency('config.js', ['mindMap','mindMap.config'], []);
 kampfer.addDependency('lib/data.js', ['dataManager'], ['browser.support']);
 kampfer.addDependency('lib/dom.js', ['dom'], ['string']);
 kampfer.addDependency('lib/event.js', ['event'], ['dataManager']);
+kampfer.addDependency('lib/events.js', ['events','events.Event'], ['dataManager']);
 kampfer.addDependency('lib/string.js', ['string'], []);
 kampfer.addDependency('lib/style.js', ['style'], []);
 kampfer.addDependency('lib/support.js', ['browser.support'], []);
@@ -20,4 +21,5 @@ kampfer.addDependency('mapController.js', ['mindMap.MapController'], ['Class','e
 kampfer.addDependency('MapManager.js', ['mindMap.MapManager'], ['Class']);
 kampfer.addDependency('MapsManager.js', ['mindMap.MapsManager'], ['Class']);
 kampfer.addDependency('menu.js', ['mindMap.Menu','mindMap.MenuItem'], ['mindMap.Component','dom','event']);
+kampfer.addDependency('menuController.js', ['mindMap.MenuController'], ['Class','event','mindMap.Menu','mindMap.commandManager']);
 kampfer.addDependency('node.js', ['mindMap.Node'], ['style','event','dom','mindMap.Component','mindMap.Branch','mindMap.Caption']);
