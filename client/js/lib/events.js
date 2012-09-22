@@ -219,7 +219,8 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
  * 删除事件。此方法用于删除绑定在某类事件下的全部操作。
  * @param {object}elem
  * @param {string}type
- * TODO 重复调用_data，需要优化
+ * TODO 1.重复调用_data，需要优化
+ * 		2.不传递type，就删除所有事件
  */ 
 kampfer.events.removeEvent = function(elem, type) {
 	var elemData, handlerObjs;
@@ -353,9 +354,9 @@ kampfer.events.fireEvent = function(elem, type, data) {
 		//向上传播-冒泡
 		if(cur.getParent && !cur.nodeType) {
 		//处理plain object冒泡
-		//plain object事件的冒泡需要plain object实现一个借口getParent，
+		//plain object事件的冒泡需要plain object实现一个借口getParentEventTarget，
 		//这个借口返回plain object的父辈plain object
-			cur = cur.getParent();
+			cur = cur.getParentEventTarget();
 		}else{
 		//处理DOM冒泡
 		//因为document.parentNode === null，所以当事件冒泡到document时，
