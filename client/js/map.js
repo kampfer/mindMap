@@ -1,5 +1,5 @@
 /*global kampfer console*/
-kampfer.require('event');
+kampfer.require('events');
 kampfer.require('mindMap.Component');
 kampfer.require('mindMap.Node');
 

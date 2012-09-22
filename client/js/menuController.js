@@ -3,7 +3,7 @@
 kampfer.provide('mindMap.MenuController');
 
 kampfer.require('Class');
-kampfer.require('event');
+kampfer.require('events');
 kampfer.require('mindMap.Menu');
 kampfer.require('mindMap.commandManager');
 
@@ -36,7 +36,7 @@ kampfer.mindMap.MenuController = kampfer.Class.extend({
 			
 		}
 		
-		kampfer.addEvent(mapController, 'showMenu', handleEvent);
+		kampfer.events.addEvent(mapController, 'showMenu', handleEvent);
 	},
 	
 	addItems : function(list) {

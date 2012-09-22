@@ -1,7 +1,7 @@
 /*global kampfer console*/
 kampfer.require('mindMap.Component');
 kampfer.require('style');
-kampfer.require('event');
+kampfer.require('events');
 
 kampfer.provide('mindMap.Caption');
 

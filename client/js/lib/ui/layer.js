@@ -2,7 +2,7 @@
 kampfer.require('Class');
 kampfer.require('dom');
 kampfer.require('style');
-kampfer.require('event');
+kampfer.require('events');
 
 kampfer.provide('ui.Layer');
 

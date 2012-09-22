@@ -1,6 +1,6 @@
 /*global kampfer console*/
 kampfer.require('style');
-kampfer.require('event');
+kampfer.require('events');
 kampfer.require('dom');
 kampfer.require('mindMap.Component');
 kampfer.require('mindMap.Branch');

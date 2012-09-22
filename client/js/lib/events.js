@@ -78,7 +78,7 @@ kampfer.events.Event.prototype.fix = function() {
 			body = eventDoc.body;
 		
 		//修复坐标
-		if ( this.pageX == null && this.clientX != null ) {
+		if ( this.pageX == null && src.clientX != null ) {
 			this.pageX = src.clientX + ( doc && doc.scrollLeft || body && body.scrollLeft || 0 ) - ( doc && doc.clientLeft || body && body.clientLeft || 0 );
 			this.pageY = src.clientY + ( doc && doc.scrollTop  || body && body.scrollTop  || 0 ) - ( doc && doc.clientTop  || body && body.clientTop  || 0 );
 		}

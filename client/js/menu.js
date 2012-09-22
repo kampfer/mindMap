@@ -1,7 +1,7 @@
 /*global kampfer console*/
 kampfer.require('mindMap.Component');
 kampfer.require('dom');
-kampfer.require('event');
+kampfer.require('events');
 
 kampfer.provide('mindMap.Menu');
 kampfer.provide('mindMap.MenuItem');
@@ -23,7 +23,7 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 		}
 		this._element.innerHTML = this._content;
 		
-		kampfer.event.addEvent(this._element, 'click', function() {
+		kampfer.events.addEvent(this._element, 'click', function() {
 			if(!this._disabled) {
 				if(that._fn) {
 					that._fn();

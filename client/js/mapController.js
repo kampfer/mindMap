@@ -1,6 +1,6 @@
 /*global window kampfer console localStorage*/
 kampfer.require('Class');
-kampfer.require('event');
+kampfer.require('events');
 kampfer.require('mindMap.Map');
 kampfer.require('mindMap.Node');
 kampfer.require('mindMap.Menu');
@@ -90,12 +90,13 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 
 	monitorEvents : function() {
 		
-		var that = this,
-			element = this.map.getElement();
+		var element = this.map.getElement();
 		
 		function handleEvent(event) {
-			var controller = that;
+			var controller = this;
 			
+			//console.log( controller.action2Function[controller.currentState] );
+			//console.log( event.type );
 			var func = controller.action2Function[controller.currentState][event.type];
 			if(!func) {
 				func = controller.action2Function.unexceptedEvent;
@@ -104,11 +105,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			controller.currentState = func.call(controller, event);
 		}
 		
-		kampfer.addEvent(element, 'mousedown', handleEvent);
-		kampfer.addEvent(element, 'mousemove', handleEvent);
-		kampfer.addEvent(element, 'mouseup', handleEvent);
-		kampfer.addEvent(element, 'mouseover', handleEvent);
-		kampfer.addEvent(element, 'mouseout', handleEvent);
+		kampfer.events.addEvent(element, ['mousedown', 'mousemove', 'mouseup', 
+			'mouseover', 'mouseout'], handleEvent, this);
 		
 	},
 	
@@ -128,13 +126,13 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			mousedown : function(event) {
 				this.menuForNode.hide();
 				
-				if(event.button === 0) {
+				if(event.which === 0) {
 					this.menuForMap.hide();
 					this.saveCursorPosition(event);
 					return 'mapFocus';
 				}
 				
-				if(event.button === 2) {
+				if(event.which === 3) {
 					this.menuForMap.setPosition(event.pageX, event.pageY);
 					this.menuForMap.show();
 				}
@@ -176,13 +174,13 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				this.menuForNode.hide();
 				this.menuForMap.hide();
 				
-				if(event.button === 2) {	
+				if(event.which === 3) {	
 					this.menuForNode.setPosition(event.pageX, event.pageY);
 					this.menuForNode.show();
 					return 'nodeActivated';
 				}
 				
-				if(event.button === 0) {
+				if(event.which === 0) {
 					this.saveCursorPosition(event);
 					return 'nodefocus';
 				}
