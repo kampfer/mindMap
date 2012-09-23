@@ -1,23 +1,108 @@
 /*global kampfer*/
 kampfer.require('Class');
+kampfer.require('store');
 
 kampfer.provide('mindMap.MapManager');
 
+/*
+ * MapManager类为mindmap提供数据支持。
+ * 注意：MapManager依赖的第三方组件store.js依赖JSON，当浏览器不原生支持JSON时，
+ * 需要额外引入JSON.js实现兼容。
+ */
+
 kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
-	init : function(data) {
-		this.data = data;
+	/**
+	 * 实例化一个MapManager对象。当传递给构建函数的参数是一个对象，那么这个对象被用作mindmap数据来源，
+	 * 如果传递的参数是一个字符串，那么构建函数将试图从localstore中读取以参数为键名的本地数据作为mindmap的数据来源，
+	 * 如果没有传递任何参数，那么构建函数将先尝试从localstore中随机取出一份本地数据作为mindmap的数据来源，
+	 * 如果以上的尝试全部失败，那么将使用默认的数据来源。
+	 * @param	name{string|object|null}
+	 * TODO 将localstore的操作抽离到mapsManager类中
+	 */
+	init : function(name) {
+		var data;
+		if( kampfer.type(name) === 'object' ) {
+			data = name;
+		} else {
+			data = this.getLocalMapData(name);
+		}
+		if(!data) {
+			data = kampfer.extend(true, {}, this.mapTemplate);
+		}
+		this._mapName = data.name;
+		this._mapData = data;
 	},
 	
-	getData : function() {
-		return this.data;
+	mapTemplate : {
+		nodes : {
+			root : {
+				id : 'root',
+				parent : '',
+				children : [],
+				content : 'root',
+				offset : {
+					x : '1000',
+					y : '1000'
+				},
+				style : 'root'
+			}
+		},
+		name : 'template',
+		config : {}
+	},
+	
+	_mapName : null,
+	
+	getMapData : function() {
+		return this._mapData;
+	},
+	
+	getLocalStore : function() {
+		var localStore = kampfer.store.get('mindMap');
+		if(!localStore) {
+			localStore = {};
+			kampfer.store.set('mindMap', localStore);
+		}
+		return localStore;
+	},
+	
+	getLocalMapData : function(name) {
+		var localStore = this.getLocalStore(), map;
+		if(name) {
+			return localStore.maps[name];
+		} else {
+			for(map in localStore.maps) {
+				return localStore.maps[map];
+			}
+		}
+	},
+	
+	saveMindMapToLocalStore : function() {
+		if(this._mapName) {
+			var localStore = this.getLocalStore();
+			if(!localStore.maps) {
+				localStore.maps = {};
+				localStore.maps.count = 0;
+			}
+			if( !(this._mapName in localStore.maps) ) {
+				localStore.maps.count++;
+			}
+			localStore.maps[this._mapName] = this._mapData;
+			kampfer.store.set('mindMap', localStore);
+		}
+	},
+	
+	dataToJSON : function() {
+		return JSON.stringify(this._mapData);
+	},
+	
+	getMapName : function() {
+		return this._mapName;
 	},
 	
 	getNode : function(id) {
-		var node = this.data.nodes[id];
-		if(node) {
-			return node;
-		}
+		return this._mapData.nodes[id];
 	},
 	
 	getRootNode : function() {
@@ -25,7 +110,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	},
 	
 	getChildren : function(id) {
-		var node = this.data.nodes[id], 
+		var node = this._mapData.nodes[id], 
 			nodes = [];
 		if(node && node.children.length > 0) {
 			for(var i = 0, l = node.children.length; i < l; i++) {
@@ -39,7 +124,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		var type = kampfer.type(parent), node;
 		if(type === 'string') {
 			var id = this.generateUniqueId();
-			node = this.data.nodes[id] = {
+			node = this._mapData.nodes[id] = {
 				id : id,
 				parent : parent,
 				children : [],
@@ -49,25 +134,25 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 					y : 100
 				}
 			};
-			this.data.nodes[parent].children.push(id);
+			this._mapData.nodes[parent].children.push(id);
 		} else if(type === 'object') {
 			node = parent;
-			if(!this.data.nodes[node.id]) {
-				this.data.nodes[node.id] = node;
-				this.data.nodes[node.parent].children.push(node.id);
+			if(!this._mapData.nodes[node.id]) {
+				this._mapData.nodes[node.id] = node;
+				this._mapData.nodes[node.parent].children.push(node.id);
 			}
 		}
 		return node;
 	},
 	
 	deleteNode : function(id) {
-		var node = this.data.nodes[id],
-			parent = this.data.nodes[node.parent],
+		var node = this._mapData.nodes[id],
+			parent = this._mapData.nodes[node.parent],
 			i, l;
 		for(i = 0, l = node.children.length; i < l; i++) {
 			this.deleteNode(node.children[i]);
 		}
-		delete this.data.nodes[id];
+		delete this._mapData.nodes[id];
 		for(i = 0, l = parent.children.length; i < l; i++) {
 			if(parent.children[i] === id) {
 				parent.children.splice(i, 1);
@@ -76,12 +161,12 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	},
 	
 	setNodeContent : function(id, text) {
-		this.data.nodes[id].content = text;
+		this._mapData.nodes[id].content = text;
 	},
 	
 	setNodePosition : function(id, x, y) {
-		this.data.nodes[id].offset.x = x;
-		this.data.nodes[id].offset.y = y;
+		this._mapData.nodes[id].offset.x = x;
+		this._mapData.nodes[id].offset.y = y;
 	},
 	
 	/*

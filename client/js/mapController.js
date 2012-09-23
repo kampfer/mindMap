@@ -57,9 +57,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		
 		this.menuForMap = new kampfer.mindMap.Menu();
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('保存', function(){
-			var data = JSON.stringify( that.currentMapManager.getData() );
-			console.log(data);
-			localStorage.aMap = data;
+			that.currentMapManager.saveMindMapToLocalStore();
 		}) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('撤消', function(){
 			console.log(kampfer.mindMap.commandManager.commandList.length);
