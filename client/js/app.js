@@ -6,7 +6,9 @@ kampfer.provide('mindMap.app');
 
 (function(kampfer) {
 	
-	var manager = new kampfer.mindMap.MapManager();
+	var mapName = 'test';
+	var manager = new kampfer.mindMap.MapManager(mapName);
+	document.title = manager.getMapName();
 	var controller = new kampfer.mindMap.MapController(manager);
 	controller.render();
 	controller.monitorEvents();

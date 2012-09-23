@@ -6,8 +6,10 @@ kampfer.provide('mindMap.MapManager');
 
 /*
  * MapManager类为mindmap提供数据支持。
- * 注意：MapManager依赖的第三方组件store.js依赖JSON，当浏览器不原生支持JSON时，
- * 需要额外引入JSON.js实现兼容。
+ * 注意：	1.MapManager依赖的第三方组件store.js依赖JSON，当浏览器不原生支持JSON时，
+ * 		需要额外引入JSON.js实现兼容。
+ *		2.MapManager提供的查询方法返回的都是对数据的引用，因此它们都是只读的，绝对不要直接
+ * 		对它们进行写操作。
  */
 
 kampfer.mindMap.MapManager = kampfer.Class.extend({
@@ -18,7 +20,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	 * 如果没有传递任何参数，那么构建函数将先尝试从localstore中随机取出一份本地数据作为mindmap的数据来源，
 	 * 如果以上的尝试全部失败，那么将使用默认的数据来源。
 	 * @param	name{string|object|null}
-	 * TODO 将localstore的操作抽离到mapsManager类中
+	 * TODO 将localstore的操作抽离到mapsManager类中,在mapsManager中实现多任务的管理
 	 */
 	init : function(name) {
 		var data;
@@ -29,6 +31,9 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		}
 		if(!data) {
 			data = kampfer.extend(true, {}, this.mapTemplate);
+		}
+		if( kampfer.type(name) === 'string' ) {
+			data.name = name;
 		}
 		this._mapName = data.name;
 		this._mapData = data;
@@ -54,14 +59,19 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
 	_mapName : null,
 	
+	_mapData : null,
+	
 	getMapData : function() {
 		return this._mapData;
 	},
 	
+	//读取mindMap的localstore，如果不存在，就创建一个空的。
 	getLocalStore : function() {
 		var localStore = kampfer.store.get('mindMap');
 		if(!localStore) {
 			localStore = {};
+			localStore.maps = {};
+			localStore.maps.count = 0;
 			kampfer.store.set('mindMap', localStore);
 		}
 		return localStore;
@@ -81,10 +91,6 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	saveMindMapToLocalStore : function() {
 		if(this._mapName) {
 			var localStore = this.getLocalStore();
-			if(!localStore.maps) {
-				localStore.maps = {};
-				localStore.maps.count = 0;
-			}
 			if( !(this._mapName in localStore.maps) ) {
 				localStore.maps.count++;
 			}
@@ -169,6 +175,11 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		this._mapData.nodes[id].offset.y = y;
 	},
 	
+	renameMap : function(name) {
+		this._mapName = name;
+		this._mapData.name = name;
+	},
+	
 	/*
 	 * 生成唯一id
 	 * 直接使用时间戳不可行
@@ -186,6 +197,8 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		return guid;
 	},
 	
-	getOptions : function() {}
+	dispose : function() {
+		this._mapData = null;
+	}
 	
 });
