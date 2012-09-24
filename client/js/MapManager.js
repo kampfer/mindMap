@@ -20,7 +20,6 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	 * 如果传递的参数是一个字符串，那么会以字符串作为name，创建一个新的数据对象，
 	 * 如果以上两种情况都不符合，将使用模板对象
 	 * @param	name{string|object|null}
-	 * TODO 将localstore的操作抽离到mapsManager类中,在mapsManager中实现多任务的管理
 	 */
 	init : function(data) {
 		var type = kampfer.type(data), name;

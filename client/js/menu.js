@@ -24,7 +24,7 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 		this._element.innerHTML = this._content;
 		
 		kampfer.events.addEvent(this._element, 'click', function() {
-			if(!this._disabled) {
+			if(!that._disabled) {
 				if(that._fn) {
 					that._fn();
 				}
@@ -38,11 +38,11 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	},
 	
 	disable : function() {
-		this.disabled = true;
+		this._disabled = true;
 	},
 	
 	enable : function() {
-		this.disabled = false;
+		this._disabled = false;
 	}
 	
 });
