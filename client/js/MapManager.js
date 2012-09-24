@@ -6,7 +6,7 @@ kampfer.provide('mindMap.MapManager');
 
 /*
  * MapManager类为mindmap提供数据支持。
- * 注意：	1.MapManager依赖的第三方组件store.js依赖JSON，当浏览器不原生支持JSON时，
+ * 注意:1.MapManager依赖的第三方组件store.js依赖JSON，当浏览器不原生支持JSON时，
  * 		需要额外引入JSON.js实现兼容。
  *		2.MapManager提供的查询方法返回的都是对数据的引用，因此它们都是只读的，绝对不要直接
  * 		对它们进行写操作。
@@ -15,25 +15,23 @@ kampfer.provide('mindMap.MapManager');
 kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
 	/**
-	 * 实例化一个MapManager对象。当传递给构建函数的参数是一个对象，那么这个对象被用作mindmap数据来源，
-	 * 如果传递的参数是一个字符串，那么构建函数将试图从localstore中读取以参数为键名的本地数据作为mindmap的数据来源，
-	 * 如果没有传递任何参数，那么构建函数将先尝试从localstore中随机取出一份本地数据作为mindmap的数据来源，
-	 * 如果以上的尝试全部失败，那么将使用默认的数据来源。
+	 * 实例化一个MapManager对象。
+	 * 当传递给构建函数的参数是一个对象，那么这个对象被用作mindmap数据来源，
+	 * 如果传递的参数是一个字符串，那么会以字符串作为name，创建一个新的数据对象，
+	 * 如果以上两种情况都不符合，将使用模板对象
 	 * @param	name{string|object|null}
 	 * TODO 将localstore的操作抽离到mapsManager类中,在mapsManager中实现多任务的管理
 	 */
-	init : function(name) {
-		var data;
-		if( kampfer.type(name) === 'object' ) {
-			data = name;
-		} else {
-			data = this.getLocalMapData(name);
-		}
-		if(!data) {
+	init : function(data) {
+		var type = kampfer.type(data), name;
+		if( type !== 'object' ) {
+			if( type === 'string' ) {
+				name = data;
+			}
 			data = kampfer.extend(true, {}, this.mapTemplate);
-		}
-		if( kampfer.type(name) === 'string' ) {
-			data.name = name;
+			if( name ) {
+				data.name = name;
+			}
 		}
 		this._mapName = data.name;
 		this._mapData = data;
@@ -63,40 +61,6 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
 	getMapData : function() {
 		return this._mapData;
-	},
-	
-	//读取mindMap的localstore，如果不存在，就创建一个空的。
-	getLocalStore : function() {
-		var localStore = kampfer.store.get('mindMap');
-		if(!localStore) {
-			localStore = {};
-			localStore.maps = {};
-			localStore.maps.count = 0;
-			kampfer.store.set('mindMap', localStore);
-		}
-		return localStore;
-	},
-	
-	getLocalMapData : function(name) {
-		var localStore = this.getLocalStore(), map;
-		if(name) {
-			return localStore.maps[name];
-		} else {
-			for(map in localStore.maps) {
-				return localStore.maps[map];
-			}
-		}
-	},
-	
-	saveMindMapToLocalStore : function() {
-		if(this._mapName) {
-			var localStore = this.getLocalStore();
-			if( !(this._mapName in localStore.maps) ) {
-				localStore.maps.count++;
-			}
-			localStore.maps[this._mapName] = this._mapData;
-			kampfer.store.set('mindMap', localStore);
-		}
 	},
 	
 	dataToJSON : function() {

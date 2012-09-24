@@ -14,7 +14,7 @@ kampfer.provide('mindMap.MapController');
  */
 kampfer.mindMap.MapController = kampfer.Class.extend({
 	
-	init : function(currentMapManager) {
+	init : function(currentMapManager, localStore) {
 		
 		this.currentMapManager = currentMapManager;
 		
@@ -57,7 +57,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		
 		this.menuForMap = new kampfer.mindMap.Menu();
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('保存', function(){
-			that.currentMapManager.saveMindMapToLocalStore();
+			//that.currentMapManager.saveMindMapToLocalStore();
+			localStore.saveMapToLocalStorage(that.currentMapManager.getMapData());
 		}) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('撤消', function(){
 			console.log(kampfer.mindMap.commandManager.commandList.length);
