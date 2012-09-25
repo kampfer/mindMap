@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>test Composition</title>
+		<!--	共用文件，不要修改	start	-->
+		<link href="../css/qunit.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="../js/base.js"></script>
+		<script type="text/javascript" src="../js/lib/tools/qunit.js"></script>
+		<!--	共用文件，不要修改	end	-->
+		<script type="text/javascript">
+			/*global ok, console, k, kampfer, test, QUnit*/
+			kampfer.require('mindMap.Composition');
+		</script>
+	</head>
+	<body>
+		<!--	共用文件，不要修改	start	-->
+		<h1 id="qunit-header">QUnit for Composition</h1>
+		<h2 id="qunit-banner"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">
+			test markup, will be hidden
+		</div>
+		<!--	共用文件，不要修改	end	-->
+		<script type="text/javascript">
+			test('实例化Composition对象', function(){
+				var obj = new kampfer.mindMap.Composition();
+				ok(obj, '成功实例化Composition对象');
+				ok(obj.constructor === kampfer.mindMap.Composition, 'constructor正确');
+				ok(obj instanceof kampfer.mindMap.Composition, 'instanceof Composition : true');
+				ok(obj instanceof kampfer.events.EventTarget, 'instanceof EventTarget : true');
+				ok(obj instanceof kampfer.Class, 'instanceof Class : true');
+				ok('_parent' in obj, '_parent属性存在');
+				ok('_id' in obj, '_id属性存在');
+				ok('_children' in obj, '_children属性存在');
+			});
+			
+			//未测试有parent的情况
+			test('Composition.setId', function(){
+				var obj = new kampfer.mindMap.Composition();
+				ok(!obj._id, '实例化Composition时未设置id');
+				obj.setId('kampfer');
+				ok(obj._id === 'kampfer', '可以通过setId方法设置id');
+			});
+			
+			test('Composition.getId', function(){
+				var obj = new kampfer.mindMap.Composition();
+				obj.setId('kampfer');
+				ok(obj.getId() === 'kampfer', '可以通过getId方法获得id');
+			});
+			
+			test('Composition.setParent', function(){
+				var obj = new kampfer.mindMap.Composition();
+				var p = {name:'parent'};
+				
+				ok(!obj._parent, '实例化Composition时未设置parent');
+				
+				obj.setParent(obj);
+				ok(!obj._parent, '无法将composition对象的parent设为它自己');
+				
+				obj.setParent(p);
+				ok(obj._parent = p, '可以通过setParent方法设置parent');
+				ok(obj._parentEventTarget = p, 'setParent方法会设置_parentEventTarget');
+			});
+		</script>
+	</body>
+</html>
