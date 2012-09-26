@@ -26,17 +26,28 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 	},
 	
 	getId : function() {
-		return this._id;
+		return this._id || ( this._id = this.generateUniqueId() );
 	},
 	
 	/**
-	 * 设置父对象。
+	 * 设置父对象。不能将parent设置为composition自己。
+	 * 当composition已经拥有parent时，调用setParent会报错。
+	 * composition通过addChild维护父子关系，不能在setParent中也处理父子关系，这样会导致无限循环。
 	 * @param	{kampfer.mindMap.Composition}parent
 	 */
 	setParent : function(parent) {
-		if(parent === this) {
-			return;
+		if( !(parent instanceof kampfer.mindMap.Composition) ) {
+			throw('parent is not instanceof composition');
 		}
+		
+		if(parent === this) {
+			throw('parent cant be composition itself');
+		}
+		
+		if(this._parent) {
+			throw('parent already exist');
+		}
+		
 		this.setParentEventTarget(parent);
 		this._parent = parent;
 	},
@@ -46,10 +57,15 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 	},
 	
 	/**
-	 * 添加子对象
+	 * 添加子对象。
  	 * @param {kampfer.mindMap.Composition} child
 	 */
 	addChild : function(child) {
+		
+		if( !(child instanceof kampfer.mindMap.Composition) ) {
+			throw('wrong type param');
+		}
+		
 		var id = child.getId();
 	
 		if(!this._children) {
@@ -95,6 +111,23 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 				}
 			}
 		}
+	},
+	
+	/*
+	 * 生成唯一id
+	 * 直接使用时间戳不可行
+	 * 以下方法摘自http://www.cnblogs.com/NoRoad/archive/2010/03/12/1684759.html
+	 */
+	generateUniqueId : function() {
+		var guid = "";
+		for(var i = 1; i <= 32; i++) {
+			var n = Math.floor(Math.random() * 16.0).toString(16);
+			guid += n;
+			if((i == 8) || (i == 12) || (i == 16) || (i == 20)) {
+				guid += "-";
+			}
+		}
+		return guid;
 	},
 	
 	dispose : function() {

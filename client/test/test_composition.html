@@ -33,9 +33,74 @@
 				ok(obj instanceof kampfer.mindMap.Composition, 'instanceof Composition : true');
 				ok(obj instanceof kampfer.events.EventTarget, 'instanceof EventTarget : true');
 				ok(obj instanceof kampfer.Class, 'instanceof Class : true');
-				ok('_parent' in obj, '_parent属性存在');
-				ok('_id' in obj, '_id属性存在');
-				ok('_children' in obj, '_children属性存在');
+				ok(('_parent' in obj) && !obj._parent, '_parent属性存在,但未初始化');
+				ok(('_id' in obj) && !obj._id, '_id属性存在,但未初始化');
+				ok(('_children' in obj) && !obj._children, '_children属性存在,但未初始化');
+			});
+			
+			test('Composition.setParent', function(){
+				var obj = new kampfer.mindMap.Composition();
+				var p = {name:'parent'};
+				var parent = new kampfer.mindMap.Composition(); 
+				
+				try{
+					obj.setParent(obj);
+				}catch(e) {
+					ok(!obj._parent, '无法将composition对象的parent设为它自己');
+				}
+				
+				try{
+					obj.setParent(p);
+				}catch(e) {
+					ok(!obj._parent, 'composition对象的parent不能是非composition对象');
+				}
+				
+				obj.setParent(parent);
+				ok(obj._parent === parent, '可以通过setParent方法设置parent');
+				ok(obj._parentEventTarget === parent, 'setParent方法会设置_parentEventTarget');
+			});
+			
+			test('Composition.getParent', function(){
+				var obj = new kampfer.mindMap.Composition();
+				var p = new kampfer.mindMap.Composition();
+				obj.setParent(p);
+				ok(obj.getParent() === p, '可以通过getParent方法获得_parent');
+			});
+			
+			test('Composition.addChlid', function(){
+				var obj = new kampfer.mindMap.Composition();
+				var c = new kampfer.mindMap.Composition();
+				var o = {};
+				
+				try{
+					obj.addChild(o);
+				} catch(e) {
+					ok(true, 'addChild方法只接受composition对象作为参数');
+				}
+				
+				obj.addChild(c);
+				
+				ok(c._parent === obj, 'addChild设置child的_parent属性');
+				
+				function getId() {
+					for(var id in obj._children) {
+						return id;
+					}
+				}
+				ok(obj._children[getId()] === c, 'addChild设置parent的_children属性');
+				
+			});
+			
+			test('Composition.getChild', function() {
+				ok(true);
+			});
+			
+			test('Composition.eachChild', function() {
+				ok(true);
+			});
+			
+			test('Composition.removeChlid', function() {
+				ok(true);
 			});
 			
 			//未测试有parent的情况
@@ -46,24 +111,15 @@
 				ok(obj._id === 'kampfer', '可以通过setId方法设置id');
 			});
 			
+			//会生成id
 			test('Composition.getId', function(){
 				var obj = new kampfer.mindMap.Composition();
 				obj.setId('kampfer');
 				ok(obj.getId() === 'kampfer', '可以通过getId方法获得id');
 			});
 			
-			test('Composition.setParent', function(){
-				var obj = new kampfer.mindMap.Composition();
-				var p = {name:'parent'};
-				
-				ok(!obj._parent, '实例化Composition时未设置parent');
-				
-				obj.setParent(obj);
-				ok(!obj._parent, '无法将composition对象的parent设为它自己');
-				
-				obj.setParent(p);
-				ok(obj._parent = p, '可以通过setParent方法设置parent');
-				ok(obj._parentEventTarget = p, 'setParent方法会设置_parentEventTarget');
+			test('Composition.dispose', function() {
+				ok(true);
 			});
 		</script>
 	</body>
