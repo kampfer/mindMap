@@ -2,6 +2,11 @@ kampfer.require('events.EventTarget');
 
 kampfer.provide('mindMap.Composition');
 
+/**
+ * 实现一个composition模式的类，用于组织对象，协调对象的关系。
+ * 涉及parent的方法(get,set)只会影响到实例对象本身，而涉及child的方法不仅会影响对象自己，
+ * 还会影响child实例对象。所以请使用child相关方法维护对象间的组织关系。
+ */
 kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 	
 	//init : function() {},
@@ -31,20 +36,23 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 	
 	/**
 	 * 设置父对象。不能将parent设置为composition自己。
-	 * 当composition已经拥有parent时，调用setParent会报错。
-	 * composition通过addChild维护父子关系，不能在setParent中也处理父子关系，这样会导致无限循环。
+	 * 以下情况setParent将抛出异常：
+	 * 1. parent非null但不是一个composition实例
+	 * 2. 尝试将parent设置为composition自己
+	 * 3. parent非null且composition已经拥有了一个_parent且_parent!=parent
 	 * @param	{kampfer.mindMap.Composition}parent
 	 */
 	setParent : function(parent) {
-		if( !(parent instanceof kampfer.mindMap.Composition) ) {
+		if( parent && !(parent instanceof kampfer.mindMap.Composition) ) {
 			throw('parent is not instanceof composition');
 		}
 		
-		if(parent === this) {
+		if( parent === this ) {
 			throw('parent cant be composition itself');
 		}
 		
-		if(this._parent) {
+		//如果parent已经存在
+		if( parent && this._parent && this._parent !== parent ) {
 			throw('parent already exist');
 		}
 		
@@ -87,9 +95,22 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 	 */
 	removeChild : function(child) {
 		if(child) {
-			var id = kampfer.type(child) === 'string' ? child : child.getId();
-			delete this._children[id];
-			child.setParent(null);
+			var id, type = kampfer.type(child);
+			
+			if(type === 'string') {
+				id = child;
+				child = this.getChild(id);
+			} else if(type === 'object') {
+				if( !(child instanceof kampfer.mindMap.Composition) ) {
+					throw('wrong type param');
+				}
+				id = child.getId();
+			}
+			
+			if(id && (id in this._children)) {
+				delete this._children[id];
+				child.setParent(null);
+			}
 		}
 		
 		return child;
@@ -102,7 +123,7 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 		}
 	},
 	
-	//fn(value, key)
+	//fn(child, id)
 	eachChild : function(fn, context) {
 		if(this._children) {
 			for(var id in this._children) {
