@@ -1,3 +1,4 @@
+/*global kampfer*/
 kampfer.require('events.EventTarget');
 
 kampfer.provide('mindMap.Composition');

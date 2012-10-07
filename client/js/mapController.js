@@ -71,6 +71,20 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			kampfer.mindMap.commandManager.redo(1);
 		}) );
 		
+		this.menuForNode.monitorEvents();
+		kampfer.events.addEvent(this.menuForNode, 'clickitem', function(event){
+			var item = event.currentItem,
+				role = item.innerHTML;
+			if(role === '添加新节点') {
+				var command = new kampfer.mindMap.commandManager.createNodeCommand(
+				this.currentNode.getId(), that);
+				kampfer.mindMap.commandManager.addCommand(command);
+				command.execute();
+			}
+		}, this);
+		
+		this.menuForMap = new kampfer.mindMap.Menu();
+		this.menuForNode = new kampfer.mindMap.Menu();
 	},
 	
 	render : function() {
@@ -233,7 +247,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	initialState : 'mapActivated',
 	
 	saveCursorPosition : function(event) {
-		var position = this.currentNode.getPosition();
+		var cur = this.currentNode || this.map;
+		var position = cur.getPosition();
 		this.lastPageX = event.pageX;
 		this.lastPageY = event.pageY;
 		this.lastCursorX = event.pageX - position.left;

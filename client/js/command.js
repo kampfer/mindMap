@@ -15,6 +15,7 @@ kampfer.mindMap.Command = kampfer.Class.extend({
 	
 	execute : function() {
 		console.log(kampfer.mindMap.commandManager.index);
+		kampfer.mindMap.commandManager.addCommand(this);
 	},
 	
 	unExecute : function() {

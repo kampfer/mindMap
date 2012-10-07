@@ -1,20 +1,10 @@
-/*global kampfer console*/
-kampfer.require('Class');
+/*global kampfer*/
+kampfer.require('mindMap.Composition');
 kampfer.require('style');
 
 kampfer.provide('mindMap.Component');
 
-kampfer.mindMap.Component = kampfer.Class.extend({
-	
-	init : function() {},
-	
-	//父component
-	_parent : null,
-	
-	//hash
-	_children : null,
-	
-	_id : null,
+kampfer.mindMap.Component = kampfer.mindMap.Composition.extend({
 	
 	_element : null,
 	
@@ -24,64 +14,8 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 	
 	_inDocument : false,
 	
-	setId : function(id) {
-		if(this._parent && this._parent._children) {
-			delete this._parent._children[this._id];
-			this._parent.addChild(id, this);
-		}
-		
-		this._id = id;
-	},
-	
-	getId : function() {
-		return this._id ? this._id : 
-			( this._id = this.generateUniqueId() );
-	},
-	
-	/*
-	 * 生成唯一id
-	 * 直接使用时间戳不可行
-	 * 以下方法摘自http://www.cnblogs.com/NoRoad/archive/2010/03/12/1684759.html
-	 */
-	generateUniqueId : function() {
-		var guid = "";
-		for(var i = 1; i <= 32; i++) {
-			var n = Math.floor(Math.random() * 16.0).toString(16);
-			guid += n;
-			if((i == 8) || (i == 12) || (i == 16) || (i == 20)) {
-				guid += "-";
-			}
-		}
-		return guid;
-	},
-	
-	setParent : function(parent) {
-		if(this._parent || parent === this) {
-			return;
-		}
-		this._parent = parent;
-	},
-	
-	//第三方不应该直接访问parent，而应该使用此方法
-	getParent : function() {
-		return this._parent;
-	},
-	
 	addChild : function(child, render) {
-		var id = child.getId();
-	
-		if(!this._children) {
-			this._children = {};
-		}
-		
-		if(!this._children[id]) {
-			this._children[id] = child;
-		}else{
-			throw('can not add child');
-		}
-		
-		child.setParent(this);
-		
+		this._super(child);
 		if(child._inDocument && this._inDocument) {
 		//如果父子component都在文档流中，那么将子component剪切到父component
 			this._element.appendChild( child.getElement() );
@@ -102,38 +36,12 @@ kampfer.mindMap.Component = kampfer.Class.extend({
 	},
 	
 	removeChild : function(child, unrender) {
-		if(child) {
-			var id = kampfer.type(child) === 'string' ? child : child.getId();
-			delete this._children[id];
-			
-			if(unrender) {
-				child.exitDocument();
-				var childElement = child.getElement();
-				if(child.childElement) {
-					child.childElement.parentNode.removeChild(child.childElement);
-				}
-			}
-			
-			child.setParent(null);
-		}
-		
-		return child;
-	},
-	
-	//composition只负责子component
-	getChild : function(id) {
-		if(this._children) {
-			return this._children[id];
-		}
-	},
-	
-	//TODO kampfer提供迭代对象的方法
-	eachChild : function(fn, context) {
-		if(this._children) {
-			for(var id in this._children) {
-				if( fn.call(context, this._children[id], id) === false ) {
-					return;
-				}
+		this._super(child);
+		if(unrender) {
+			child.exitDocument();
+			var childElement = child.getElement();
+			if(child.childElement) {
+				child.childElement.parentNode.removeChild(child.childElement);
 			}
 		}
 	},

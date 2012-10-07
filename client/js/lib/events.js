@@ -336,7 +336,8 @@ kampfer.events.fireEvent = function(elem, type, data) {
 		kampfer.extend(eventObj, data);
 	} else {
 		eventObj = data;
-		//eventObj.target = elem;
+		eventObj.type = type;
+		eventObj.target = elem;
 	}
 	
 	
@@ -352,7 +353,7 @@ kampfer.events.fireEvent = function(elem, type, data) {
 		eventObj.currentTarget = cur;
 		kampfer.events._fireHandlers.call(cur, eventObj);
 		//向上传播-冒泡
-		if(cur.getParent && !cur.nodeType) {
+		if(cur.getParentEventTarget && !cur.nodeType) {
 		//处理plain object冒泡
 		//plain object事件的冒泡需要plain object实现一个借口getParentEventTarget，
 		//这个借口返回plain object的父辈plain object

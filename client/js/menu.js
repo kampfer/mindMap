@@ -6,33 +6,26 @@ kampfer.require('events');
 kampfer.provide('mindMap.Menu');
 kampfer.provide('mindMap.MenuItem');
 
-//暂时不使用composition模式和command模式，在未来重构时再引入
 kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	
-	init : function(content, fn) {
+	init : function(content) {
 		this._content = content;
-		this._fn = fn;
 		this._disabled = false;
 	},
 	
 	decorate : function() {
-		var that = this;
 		kampfer.dom.addClass(this._element, 'menu-item');
 		if(this._disabled) {
 			kampfer.dom.addClass(this._element, 'disable');
 		}
-		this._element.innerHTML = this._content;
 		
-		kampfer.events.addEvent(this._element, 'click', function() {
-			if(!that._disabled) {
-				if(that._fn) {
-					that._fn();
-				}
-				that.getParent().hide();
-			}
-		});
+		this._element.setAttribute('role', 'menuItem');
+		
+		this._element.id = this.getId();
+		
+		this._element.innerHTML = this._content;
 	},
-	
+		
 	enterDocument : function() {
 		this._super( this._parent.getBody() );
 	},
@@ -43,14 +36,15 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	
 	enable : function() {
 		this._disabled = false;
+	},
+	
+	isDisabled : function() {
+		return this._disabled;
 	}
 	
 });
 
 kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
-	
-	init : function() {
-	},
 	
 	createDom : function() {
 		this._super();
@@ -103,6 +97,51 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	
 	setLabelVisible : function(visible) {
 		this.setVisible(this._label, visible);
+	},
+	
+	action2Function : {
+		
+		mouseover : function(event) {
+			if( this.isMenuItem(event.target) ) {
+				event.currentItem = event.target;
+				this.fireEvent('initem', event);
+			}
+		},
+		
+		mouseout : function(event) {
+			if( this.isMenuItem(event.target) ) {
+				event.currentItem = event.target;
+				this.fireEvent('outitem', event);
+			}
+		},
+		
+		click : function(event) {
+			if( this.isMenuItem(event.target) ) {
+				event.currentItem = event.target;
+				this.fireEvent('clickitem', event);
+			}
+		}
+		
+	},
+	
+	monitorEvents : function() {
+		kampfer.events.addEvent(this._element, 'mouseover mouseout click'.split(' '), 
+			this._handleEvents, this);
+	},
+	
+	_handleEvents : function(event) {
+		var handler = this.action2Function[event.type];
+		if(!handler) {
+			handler = this.action2Function.unexceptedEvent;
+		}
+		handler.call(this, event);
+	},
+	
+	isMenuItem : function(elem) {
+		if( elem.getAttribute('role') === 'menuItem' ) {
+			return true;
+		}
+		return false;
 	}
 	
 });

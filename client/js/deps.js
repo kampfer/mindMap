@@ -3,7 +3,7 @@ kampfer.addDependency('base.js', [], []);
 kampfer.addDependency('branch.js', ['mindMap.Branch'], ['mindMap.Component','style','events']);
 kampfer.addDependency('caption.js', ['mindMap.Caption'], ['mindMap.Component','style','events']);
 kampfer.addDependency('command.js', ['mindMap.Command','mindMap.commandManager'], ['Class','mindMap.Node']);
-kampfer.addDependency('component.js', ['mindMap.Component'], ['Class','style']);
+kampfer.addDependency('component.js', ['mindMap.Component'], ['mindMap.Composition','style']);
 kampfer.addDependency('composition.js', ['mindMap.Composition'], ['events.EventTarget']);
 kampfer.addDependency('config.js', ['mindMap','mindMap.config'], []);
 kampfer.addDependency('lib/data.js', ['dataManager'], ['browser.support']);
