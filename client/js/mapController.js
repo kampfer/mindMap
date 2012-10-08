@@ -18,20 +18,14 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		
 		this.currentMapManager = currentMapManager;
 		
-		//保存一个map视图的引用
-		this.map = null;
-		
 		this.currentState = this.initialState;
 		
-		this.currentNode = null;
+		this.map = new kampfer.mindMap.Map(this, this.currentMapManager);
 		
-		if(!this.map) {
-			this.map = new kampfer.mindMap.Map(this, this.currentMapManager);
-		}
-		
-		var that = this;
-		
+		this.currentNode = this.map;
+				
 		//TODO 将menu与mapController解耦
+		/*
 		this.menuForNode = new kampfer.mindMap.Menu();
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('添加新节点', function() {
 			var command = new kampfer.mindMap.commandManager.createNodeCommand(
@@ -82,8 +76,18 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				command.execute();
 			}
 		}, this);
+		*/
 		
-		this.menuForMap = new kampfer.mindMap.Menu();
+		this.menuForMap = new kampfer.mindMap.Menu(this, currentMapManager);
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('create node') );
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('save') );
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('redo') );
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('undo') );
+		var createNewNodeCommand = new kampfer.mindMap.command.createNewNode(this.menuForMap);
+		//var saveDocumentCommand = new kampfer.mindMap.command.saveMap(this.menuForMap);
+		//var redoCommand = new kampfer.mindMap.command.redo(this.menuForMap);
+		//var undoCommand = new kampfer.mindMap.command.undo(this.menuForMap);
+		
 		this.menuForNode = new kampfer.mindMap.Menu();
 	},
 	
@@ -108,8 +112,6 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		function handleEvent(event) {
 			var controller = this;
 			
-			//console.log( controller.action2Function[controller.currentState] );
-			//console.log( event.type );
 			var func = controller.action2Function[controller.currentState][event.type];
 			if(!func) {
 				func = controller.action2Function.unexceptedEvent;

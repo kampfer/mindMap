@@ -46,6 +46,12 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 
 kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	
+	init : function(mapController, mapManager) {
+		this.mapController = mapController;
+		this.mapManager = mapManager;
+		this.monitorEvents();
+	},
+	
 	createDom : function() {
 		this._super();
 		
@@ -125,6 +131,10 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	},
 	
 	monitorEvents : function() {
+		if(!this._element) {
+			this.createDom();
+		}
+		
 		kampfer.events.addEvent(this._element, 'mouseover mouseout click'.split(' '), 
 			this._handleEvents, this);
 	},

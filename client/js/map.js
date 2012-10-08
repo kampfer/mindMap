@@ -14,6 +14,10 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 		this.addRootNode();
 	},
 	
+	getId : function() {
+		return 'map';
+	},
+	
 	addRootNode : function() {
 		var rootNode = this.manager.getRootNode();
 		
@@ -33,6 +37,7 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 			left : winSize.width / 2 - 1000 + 'px',
 			top : winSize.height / 2 - 1000 + 'px'
 		});
+		this.manager.setMapPosition(winSize.width / 2 - 1000, winSize.height / 2 - 1000);
 	},
 	
 	getNode : function(id) {

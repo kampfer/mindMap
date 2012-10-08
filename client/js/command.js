@@ -2,76 +2,96 @@
 kampfer.require('Class');
 kampfer.require('mindMap.Node');
 
-kampfer.provide('mindMap.Command');
-kampfer.provide('mindMap.commandManager');
+kampfer.provide('mindMap.command');
 
 
-kampfer.mindMap.Command = kampfer.Class.extend({
-	
-	init : function(mapController, mapManager) {
-		this.mapController = mapController;
-		this.mapManager = mapManager;
+kampfer.mindMap.command.Base = kampfer.Class.extend({
+
+	//init : function(mapController, mapManager) {
+	//	this.mapController = mapController;
+	//	this.mapManager = mapManager;
+	//},
+	init : function() {
+		
 	},
 	
 	execute : function() {
-		console.log(kampfer.mindMap.commandManager.index);
-		kampfer.mindMap.commandManager.addCommand(this);
+		//console.log(kampfer.mindMap.commandManager.index);
+		kampfer.mindMap.command.addCommand(this);
 	},
 	
 	unExecute : function() {
-		console.log(kampfer.mindMap.commandManager.index);
-	}
+		//console.log(kampfer.mindMap.commandManager.index);
+	},
+	
+	bind : function() {},
+	
+	dispose : function() {}
 	
 });
 
 
-kampfer.mindMap.commandManager = {
-	
-	index : 0,
-	
-	commandList : [],
-	
-	addCommand : function(command) {
-		this.commandList.push(command);
-		this.index++;
-	},
-	
-	redo : function(level) {
-		for(var i = 0; i < level; i++) {
-			if(this.index < this.commandList.length) {
-				var command = this.commandList[this.index++];
-				command.execute();
-			} else {
-				return;
-			}
-		}
-	},
-	
-	undo : function(level) {
-		for(var i = 0; i < level; i++) {
-			if(this.index > 0) {
-				var command = this.commandList[--this.index];
-				command.unExecute();
-			} else {
-				return;
-			}
-		}
-	}
-	
+kampfer.mindMap.command.commandList = [];
+
+
+kampfer.mindMap.command.index = 0;
+
+
+kampfer.mindMap.command.addCommand = function(command) {
+	this.commandList.push(command);
+	this.index++;
 };
 
 
-kampfer.mindMap.commandManager.createNodeCommand = 
-	kampfer.mindMap.Command.extend({
-		init : function(pid, controller) {
-			this.pid = pid;
-			this.controller = controller;
+kampfer.mindMap.command.redo = function(level) {
+	for(var i = 0; i < level; i++) {
+		if(this.index < this.commandList.length) {
+			var command = this.commandList[this.index++];
+			command.execute();
+		} else {
+			return;
+		}
+	}
+};
+
+
+kampfer.mindMap.command.undo = function(level) {
+	for(var i = 0; i < level; i++) {
+		if(this.index > 0) {
+			var command = this.commandList[--this.index];
+			command.unExecute();
+		} else {
+			return;
+		}
+	}
+};
+
+
+kampfer.mindMap.command.createNewNode = 
+	kampfer.mindMap.command.Base.extend({
+		init : function(menu) {
+			kampfer.events.addEvent(menu, 'clickitem', this.execute, this);
 		},
 		
-		execute : function() {
+		execute : function(event) {
 			this._super();
-			var data = this.nodeData || this.pid;
-			this.nodeData = this.controller.createNode(data);
+			var controller = event.target.mapController,
+				manager = event.target.mapManager,
+				newNode, pid, pOffset;
+			pid = controller.currentNode.getId();
+			pOffset = manager.getMapPosition();
+			//console.log(pid);
+			if(pid === 'map') {
+				pid = '';
+			}
+			newNode = manager.createNode(pid);
+			manager.setNodePosition(newNode, event.pageX + pOffset.left, event.pageY + pOffset.top);
+			newNode = new kampfer.mindMap.Node(newNode, 
+				controller, manager);
+			controller.currentNode.addChild(newNode, true);
+			//var newNode = new kampfer.mindMap.Node();
+			//var data = this.nodeData || this.pid;
+			//this.nodeData = this.controller.createNode(data);
 		},
 		
 		unExecute : function() {
@@ -82,8 +102,8 @@ kampfer.mindMap.commandManager.createNodeCommand =
 });
 
 
-kampfer.mindMap.commandManager.deleteNodeCommand = 
-	kampfer.mindMap.Command.extend({
+kampfer.mindMap.command.deleteNodeCommand = 
+	kampfer.mindMap.command.Base.extend({
 		init : function(nodeId, controller) {
 			this.nodeId = nodeId;
 			this.controller = controller;
@@ -102,8 +122,8 @@ kampfer.mindMap.commandManager.deleteNodeCommand =
 });
 
 
-kampfer.mindMap.commandManager.saveNodeContentCommand = 
-	kampfer.mindMap.Command.extend({
+kampfer.mindMap.command.saveNodeContentCommand = 
+	kampfer.mindMap.command.Base.extend({
 		init : function(nodeId, content, controller) {
 			this.nodeId = nodeId;
 			this.content = content;
@@ -123,8 +143,8 @@ kampfer.mindMap.commandManager.saveNodeContentCommand =
 });
 
 
-kampfer.mindMap.commandManager.saveNodePositionCommand = 
-	kampfer.mindMap.Command.extend({
+kampfer.mindMap.command.saveNodePositionCommand = 
+	kampfer.mindMap.command.Base.extend({
 		init : function(nodeId, position, controller) {
 			this.nodeId = nodeId;
 			this.controller = controller;

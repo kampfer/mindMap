@@ -58,6 +58,10 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
 	_mapData : null,
 	
+	_left : null,
+	
+	_top: null,
+	
 	getMapData : function() {
 		return this._mapData;
 	},
@@ -103,13 +107,19 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 					y : 100
 				}
 			};
-			this._mapData.nodes[parent].children.push(id);
+			if(parent !== '') {
+				this._mapData.nodes[parent].children.push(id);
+			}
 		} else if(type === 'object') {
 			node = parent;
 			if(!this._mapData.nodes[node.id]) {
 				this._mapData.nodes[node.id] = node;
+			}
+			if(node.parent) {
 				this._mapData.nodes[node.parent].children.push(node.id);
 			}
+		} else {
+			
 		}
 		return node;
 	},
@@ -134,6 +144,9 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	},
 	
 	setNodePosition : function(id, x, y) {
+		if(kampfer.type(id) === 'object') {
+			id = id.id;
+		}
 		this._mapData.nodes[id].offset.x = x;
 		this._mapData.nodes[id].offset.y = y;
 	},
@@ -141,6 +154,18 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	renameMap : function(name) {
 		this._mapName = name;
 		this._mapData.name = name;
+	},
+	
+	setMapPosition : function(left, top) {
+		this._left = left;
+		this._top = top;
+	},
+	
+	getMapPosition : function() {
+		return {
+			left : this._left,
+			top : this._top
+		};
 	},
 	
 	/*
