@@ -46,9 +46,7 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 
 kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	
-	init : function(mapController, mapManager) {
-		this.mapController = mapController;
-		this.mapManager = mapManager;
+	init : function() {
 		this.monitorEvents();
 	},
 	

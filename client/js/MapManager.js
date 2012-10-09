@@ -146,13 +146,17 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		var node = this._mapData.nodes[id],
 			parent = this._mapData.nodes[node.parent],
 			i, l;
-		for(i = 0, l = node.children.length; i < l; i++) {
-			this.deleteNode(node.children[i]);
+		if(node && node.children) {
+			for(i = 0, l = node.children.length; i < l; i++) {
+				this.deleteNode(node.children[i]);
+			}
 		}
 		delete this._mapData.nodes[id];
-		for(i = 0, l = parent.children.length; i < l; i++) {
-			if(parent.children[i] === id) {
-				parent.children.splice(i, 1);
+		if(parent && parent.children) {
+			for(i = 0, l = parent.children.length; i < l; i++) {
+				if(parent.children[i] === id) {
+					parent.children.splice(i, 1);
+				}
 			}
 		}
 	},

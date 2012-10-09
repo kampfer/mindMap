@@ -29,10 +29,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('save') );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('redo') );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('undo') );
-		var createNewNodeCommand = new kampfer.mindMap.command.createNewNode(this.menuForMap);
+		var createNewNodeCommand = new kampfer.mindMap.command.CreateNewNode(this, this.menuForMap, 'create node');
 		//var saveDocumentCommand = new kampfer.mindMap.command.saveMap(this.menuForMap);
-		//var redoCommand = new kampfer.mindMap.command.redo(this.menuForMap);
-		//var undoCommand = new kampfer.mindMap.command.undo(this.menuForMap);
+		var redoCommand = new kampfer.mindMap.command.Redo(this, this.menuForMap, 'redo');
+		var undoCommand = new kampfer.mindMap.command.Undo(this, this.menuForMap, 'undo');
 		
 		this.menuForNode = new kampfer.mindMap.Menu();
 	},
@@ -55,29 +55,22 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		}
 		return this.map.getNode(id);
 	},
-	
-	getNodeData : function(id) {
-		return this.currentMapManager.getNode(id);
-	},
 
 	monitorEvents : function() {
-		
 		var element = this.map.getElement();
 		
-		function handleEvent(event) {
-			var controller = this;
-			
-			var func = controller.action2Function[controller.currentState][event.type];
-			if(!func) {
-				func = controller.action2Function.unexceptedEvent;
-			}
-			
-			controller.currentState = func.call(controller, event);
+		kampfer.events.addEvent(element, ['mousedown', 'mousemove', 'mouseup', 
+			'mouseover', 'mouseout'], this._handleEvent, this);
+		
+	},
+
+	_handleEvent : function(event) {
+		var func = this.action2Function[this.currentState][event.type];
+		if(!func) {
+			func = this.action2Function.unexceptedEvent;
 		}
 		
-		kampfer.events.addEvent(element, ['mousedown', 'mousemove', 'mouseup', 
-			'mouseover', 'mouseout'], handleEvent, this);
-		
+		this.currentState = func.call(this, event);
 	},
 	
 	action2Function : {
@@ -85,8 +78,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		mapActivated : {
 			
 			mouseover : function(event) {
-				var node = this.getNodeFromElement(event.target);
-				if( node ) {
+				var isNode = this.isNodeElement(event.target);
+				if( isNode ) {
 					return 'nodeActivated';
 				}
 				return 'mapActivated';
@@ -175,10 +168,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			
 			mouseup : function() {
 				var position = this.currentNode.getPosition();
-				var command = new kampfer.mindMap.commandManager.saveNodePositionCommand(
-					this.currentNode.getId(), position, this);
-				kampfer.mindMap.commandManager.addCommand(command);
-				command.execute();
+				//var command = new kampfer.mindMap.commandManager.saveNodePositionCommand(
+				//	this.currentNode.getId(), position, this);
+				//kampfer.mindMap.commandManager.addCommand(command);
+				//command.execute();
 				return 'nodeActivated';
 			}
 			
@@ -205,21 +198,16 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	
 	initialState : 'mapActivated',
 	
+	//储存鼠标坐标,实现拖拽
 	saveCursorPosition : function(event) {
 		var cur = this.currentNode || this.map;
 		var position = cur.getPosition();
+		//map拖拽
 		this.lastPageX = event.pageX;
 		this.lastPageY = event.pageY;
+		//node拖拽
 		this.lastCursorX = event.pageX - position.left;
 		this.lastCursorY = event.pageY - position.top;
-	},
-	
-	//TODO 删除
-	getCurrentNodeId : function(event) {
-		var nodeElement = this.getNodeFromElement(event.target),
-			id = nodeElement.id;
-		
-		return id;
 	},
 	
 	getNodeFromElement : function(element) {
@@ -256,7 +244,6 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		return false;
 	},
 	
-	//TODO 删除
 	isMapElement : function(element) {
 		var attr = element.getAttribute('node-type');
 		if(attr && attr === 'map') {
@@ -272,17 +259,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		}
 		return false;
 	},
-	
-	saveNodeContent : function(id, content) {
-		this.getNode(id).getCaption().setContent(content);
-		this.currentMapManager.setNodeContent(id, content);
-	},
-	
-	saveNodePosition : function(id, left, top) {
-		this.getNode(id).moveTo(left, top);
-		this.currentMapManager.setNodePosition(id, left, top);
-	},
-	
+
 	/**
 	 * 安全的创建新节点。本方法会同时处理model和view，保持两者同步。
 	 * 用户创建新节点时都应该调用本方法,而不应该直接调用manager中的createNode方法,
@@ -306,6 +283,16 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		return data;
 	},
 	
+	saveNodeContent : function(id, content) {
+		this.getNode(id).getCaption().setContent(content);
+		this.currentMapManager.setNodeContent(id, content);
+	},
+	
+	saveNodePosition : function(id, left, top) {
+		this.getNode(id).moveTo(left, top);
+		this.currentMapManager.setNodePosition(id, left, top);
+	},
+	
 	deleteNode : function(id) {
 		if( kampfer.type(id) === 'object' ) {
 			id = id.id;
@@ -313,7 +300,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		var node = this.getNode(id),
 			parent = node.getParent();
 		this.currentMapManager.deleteNode(id);
-		parent.removeChild(node);
+		parent.removeChild(node, true);
 	}
 	
 });

@@ -7,12 +7,12 @@ kampfer.provide('mindMap.command');
 
 kampfer.mindMap.command.Base = kampfer.Class.extend({
 
-	//init : function(mapController, mapManager) {
-	//	this.mapController = mapController;
-	//	this.mapManager = mapManager;
-	//},
-	init : function() {
-	
+	init : function(controller, menu, tag) {
+		kampfer.events.addEvent(menu, 'clickitem', this._handleEvent, this);
+
+		this.controller = controller;
+
+		this.tag = tag;
 	},
 	
 	execute : function() {
@@ -23,8 +23,12 @@ kampfer.mindMap.command.Base = kampfer.Class.extend({
 	unExecute : function() {
 		//console.log(kampfer.mindMap.commandManager.index);
 	},
-	
-	bind : function() {},
+
+	_handleEvent : function(event) {
+		if(event.currentItem.innerHTML === this.tag) {
+			this.execute(event);
+		}
+	},
 	
 	dispose : function() {}
 	
@@ -67,24 +71,19 @@ kampfer.mindMap.command.undo = function(level) {
 };
 
 
-kampfer.mindMap.command.createNewNode = 
+kampfer.mindMap.command.CreateNewNode = 
 	kampfer.mindMap.command.Base.extend({
-		init : function(menu) {
-			kampfer.events.addEvent(menu, 'clickitem', this.execute, this);
-		},
-		
 		execute : function(event) {
-			var controller = event.target.mapController, 
-				currentNode = controller.currentNode.getId(),
-				newNode;
+			var controller = this.controller,
+				currentNode = controller.currentNode.getId();
 			
 			this._super();
 			
-			newNode = controller.createNode(currentNode);
+			this.newNode = controller.createNode(currentNode);
 			
 			if(currentNode === 'map') {
 				var mapPosition = controller.map.getPosition();
-				controller.saveNodePosition( newNode.id, 
+				controller.saveNodePosition( this.newNode.id,
 					Math.abs(mapPosition.left) + event.pageX,
 					Math.abs(mapPosition.top) + event.pageY );
 			}
@@ -92,8 +91,7 @@ kampfer.mindMap.command.createNewNode =
 		
 		unExecute : function() {
 			this._super();
-			var id = this.nodeData.id;
-			this.controller.deleteNode(id);
+			this.controller.deleteNode(this.newNode.id);
 		}
 });
 
@@ -166,4 +164,24 @@ kampfer.mindMap.command.saveNodePositionCommand =
 			this.controller.saveNodePosition(this.nodeId,
 				this.lastPosition.left, this.lastPosition.top);
 		}
+});
+
+kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
+	execute : function() {
+		kampfer.mindMap.command.undo(1);
+	},
+
+	unExecute : function() {
+		kampfer.mindMap.command.redo(1);
+	}
+});
+
+kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
+	execute : function() {
+		kampfer.mindMap.command.redo(1);
+	},
+
+	unExecute : function() {
+		kampfer.mindMap.command.undo(1);
+	}
 });

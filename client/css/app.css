@@ -19,7 +19,8 @@ body{
 }
 
 div.node {
-    position: absolute;    
+    position: absolute;
+    cursor: default; 
 }
 
 div.node-caption {
