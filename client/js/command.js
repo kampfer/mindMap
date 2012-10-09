@@ -12,7 +12,7 @@ kampfer.mindMap.command.Base = kampfer.Class.extend({
 	//	this.mapManager = mapManager;
 	//},
 	init : function() {
-		
+	
 	},
 	
 	execute : function() {
@@ -74,24 +74,20 @@ kampfer.mindMap.command.createNewNode =
 		},
 		
 		execute : function(event) {
+			var controller = event.target.mapController, 
+				currentNode = controller.currentNode.getId(),
+				newNode;
+			
 			this._super();
-			var controller = event.target.mapController,
-				manager = event.target.mapManager,
-				newNode, pid, pOffset;
-			pid = controller.currentNode.getId();
-			pOffset = manager.getMapPosition();
-			//console.log(pid);
-			if(pid === 'map') {
-				pid = '';
+			
+			newNode = controller.createNode(currentNode);
+			
+			if(currentNode === 'map') {
+				var mapPosition = controller.map.getPosition();
+				controller.saveNodePosition( newNode.id, 
+					Math.abs(mapPosition.left) + event.pageX,
+					Math.abs(mapPosition.top) + event.pageY );
 			}
-			newNode = manager.createNode(pid);
-			manager.setNodePosition(newNode, event.pageX + pOffset.left, event.pageY + pOffset.top);
-			newNode = new kampfer.mindMap.Node(newNode, 
-				controller, manager);
-			controller.currentNode.addChild(newNode, true);
-			//var newNode = new kampfer.mindMap.Node();
-			//var data = this.nodeData || this.pid;
-			//this.nodeData = this.controller.createNode(data);
 		},
 		
 		unExecute : function() {

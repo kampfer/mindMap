@@ -27,7 +27,11 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 			if( type === 'string' ) {
 				name = data;
 			}
-			data = kampfer.extend(true, {}, this.mapTemplate);
+			//data = kampfer.extend(true, {}, this.mapTemplate);
+			data = {
+				nodes : {},
+				name : {}
+			};
 			if( name ) {
 				data.name = name;
 			}
@@ -85,7 +89,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	getChildren : function(id) {
 		var node = this._mapData.nodes[id], 
 			nodes = [];
-		if(node && node.children.length > 0) {
+		if(node && node.children && node.children.length > 0) {
 			for(var i = 0, l = node.children.length; i < l; i++) {
 				nodes.push( this.getNode(node.children[i]) );
 			}
@@ -93,33 +97,47 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		return nodes;
 	},
 	
-	createNode : function(parent) {
-		var type = kampfer.type(parent), node;
-		if(type === 'string') {
-			var id = this.generateUniqueId();
-			node = this._mapData.nodes[id] = {
-				id : id,
-				parent : parent,
-				children : [],
-				content : 'new node',
-				offset : {
-					x : 0,
-					y : 100
+	addNode : function(node) {
+		if( kampfer.type(node) === 'object' ) {
+			var pid = node.parent,
+				id = node.id;
+			if(id) {
+				this._mapData.nodes[id] = node;
+			}
+			if(pid && pid !== 'map') {
+				this._mapData.nodes[pid].children.push(id);
+			}
+		}
+	},
+	
+	createNode : function(data) {
+		var node = {
+			id : null,
+			parent : null,
+			children : null,
+			content : 'node',
+			offset : {
+				x : 0,
+				y : 0
+			},
+			style : null
+		}, type = kampfer.type(data);
+		if( type === 'object' ) {
+			for(var attr in node) {
+				if(attr in data) {
+					if(attr === 'offset') {
+						node[attr].x = data[attr].x;
+						node[attr].y = data[attr].y;
+					} else {
+						node[attr] = data[attr];
+					}
 				}
-			};
-			if(parent !== '') {
-				this._mapData.nodes[parent].children.push(id);
 			}
-		} else if(type === 'object') {
-			node = parent;
-			if(!this._mapData.nodes[node.id]) {
-				this._mapData.nodes[node.id] = node;
-			}
-			if(node.parent) {
-				this._mapData.nodes[node.parent].children.push(node.id);
-			}
-		} else {
-			
+		} else if( type === 'string' ) {
+			node.parent = data;
+		}
+		if(!node.id) {
+			node.id = this.generateUniqueId();
 		}
 		return node;
 	},

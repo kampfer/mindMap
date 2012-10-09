@@ -20,7 +20,7 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		this.offsetY = data.offset.y;
 		
 		this.addCaption();
-		if(this._id !== 'root') {
+		if(this.data.parent && this.data.parent !== 'map') {
 			this.addBranch();
 		}
 		this.addChildren();
@@ -126,7 +126,7 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		this.offsetY = y;
 	
 		this.setPosition(x, y);
-		if(this._id !== 'root') {
+		if(this.data.parent && this.data.parent !== 'map') {
 			this.getBranch().decorate();
 		}
 	}

@@ -18,6 +18,8 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 	//对象，每一项都应该是Composition实例
 	_children : null,
 	
+	_childrenCount : 0,
+	
 	_id : null,
 	
 	setId : function(id) {
@@ -83,6 +85,7 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 		
 		if(!this._children[id]) {
 			this._children[id] = child;
+			this._childrenCount++;
 		}else{
 			throw('can not add child');
 		}
@@ -109,8 +112,13 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 			}
 			
 			if(id && (id in this._children)) {
-				delete this._children[id];
+				this._children[id] = null;
+				this._childrenCount--;
 				child.setParent(null);
+			}
+			
+			if( this.hasNoChild() ) {
+				this._children = null;
 			}
 		}
 		
@@ -133,6 +141,17 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 				}
 			}
 		}
+	},
+	
+	getChildrenCount : function() {
+		return this._childrenCount;
+	},
+	
+	hasNoChild : function() {
+		if(this._childrenCount === 0) {
+			return true;
+		}
+		return false;
 	},
 	
 	/*

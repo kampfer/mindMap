@@ -126,6 +126,7 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 				event.currentItem = event.target;
 				this.fireEvent('clickitem', event);
 			}
+			this.hide();
 		}
 		
 	},

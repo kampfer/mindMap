@@ -10,26 +10,17 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 	init : function(controller, manager) {
 		this.controller = controller;
 		this.manager = manager;
-		
-		this.addRootNode();
 	},
 	
 	getId : function() {
 		return 'map';
 	},
 	
-	addRootNode : function() {
-		var rootNode = this.manager.getRootNode();
-		
-		rootNode = new kampfer.mindMap.Node(rootNode, this.controller, this.manager);
-		
-		this.addChild(rootNode);
-	},
-	
 	decorate : function() {
 		var winSize = this.getWindowRect();
 		
 		this._element.id = 'map';
+		this._element.setAttribute('node-type', 'map');
 		kampfer.dom.addClass(this._element, 'map');
 		kampfer.style.setStyle(this._element, {
 			width : '2000px',
