@@ -5,6 +5,7 @@ kampfer.require('mindMap.Node');
 kampfer.provide('mindMap.command');
 
 
+//TODO 每个命令对象都监听menu的click事件
 kampfer.mindMap.command.Listener = kampfer.Class.extend({
 
 	init : function(controller, menu) {
@@ -47,6 +48,7 @@ kampfer.mindMap.command.Listener = kampfer.Class.extend({
 		if(command) {
 			command = new command(event, this.controller);
 			command.execute(true);
+			console.log(kampfer.mindMap.command.index);
 		}
 	}
 	
@@ -55,8 +57,10 @@ kampfer.mindMap.command.Listener = kampfer.Class.extend({
 
 kampfer.mindMap.command.Base = kampfer.Class.extend({
 	init : function() {},
-	execute : function() {
-		kampfer.mindMap.command.addCommand(this);
+	execute : function(needPush) {
+		if(needPush) {
+			kampfer.mindMap.command.addCommand(this);
+		}
 	},
 	unExecute : function() {},
 	dispose : function() {}
@@ -114,9 +118,7 @@ kampfer.mindMap.command.CreateNewNode =
 			var controller = this.controller,
 				pid = this.pid;
 
-			if(needPush) {
-				this._super();
-			}
+			this._super(needPush);
 
 			if(this.newNode) {
 				controller.createNode(this.newNode);
@@ -144,15 +146,16 @@ kampfer.mindMap.command.CreateNewNode =
 
 kampfer.mindMap.command.DeleteNode = 
 	kampfer.mindMap.command.Base.extend({
-		init : function(nodeId, controller) {
-			this.nodeId = nodeId;
-			this.controller = controller;
-			this.oldNodeData = controller.getNodeData(nodeId);
+		init : function() {
+			var nodeId;
+			this.controller = arguments[1];
+			nodeId = this.controller.currentNode.getId();
+			this.oldNodeData = this.controller.currentMapManager.getNode(nodeId);
 		},
 		
-		execute : function() {
-			this._super();
-			this.controller.deleteNode(this.nodeId);
+		execute : function(needPush) {
+			this._super(needPush);
+			this.controller.deleteNode(this.oldNodeData.id);
 		},
 		
 		unExecute : function() {
@@ -162,23 +165,23 @@ kampfer.mindMap.command.DeleteNode =
 });
 
 
-kampfer.mindMap.command.saveNodeContent = 
+kampfer.mindMap.command.SaveNodeContent = 
 	kampfer.mindMap.command.Base.extend({
 		init : function(nodeId, content, controller) {
 			this.nodeId = nodeId;
 			this.content = content;
 			this.controller = controller;
-			this.oriContent = controller.getNodeData(nodeId).content;
+			this.oriContent = controller.currentMapManager.getNode(nodeId).content;
 		},
 		
 		execute : function(needPush) {
-			this._super();
-			this.controller.saveNodeContent(this.nodeId, this.content);
+			this._super(needPush);
+			this.controller.setNodeContent(this.nodeId, this.content);
 		},
 		
 		unExecute : function() {
 			this._super();
-			this.controller.saveNodeContent(this.nodeId, this.oriContent);
+			this.controller.setNodeContent(this.nodeId, this.oriContent);
 		}
 });
 
@@ -200,18 +203,26 @@ kampfer.mindMap.command.SaveNodePosition =
 		},
 		
 		execute : function(needPush) {
-			if(needPush) {
-				this._super();
-			}
+			if(!this.isPositionNotChange) {
+				this._super(needPush);
 
-			this.controller.setNodePosition(this.nodeId, 
-				this.newPosition.left, this.newPosition.top);
+				this.controller.setNodePosition(this.nodeId, 
+					this.newPosition.left, this.newPosition.top);
+			}
 		},
 		
 		unExecute : function() {
 			this._super();
 			this.controller.setNodePosition(this.nodeId,
 				this.lastPosition.left, this.lastPosition.top);
+		},
+
+		isPositionNotChange : function() {
+			if( this.lastPosition.left === this.newPosition.left &&
+				this.lastPosition.top === this.newPosition.top ) {
+				return true;
+			}
+			return false;
 		}
 });
 

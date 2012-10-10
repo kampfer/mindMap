@@ -37,10 +37,11 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		this.menuForNode = new kampfer.mindMap.Menu();
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('create child') );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('edit text') );
-		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('...') );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('delete') );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('...') );
 		var ListenMenuNode = new kampfer.mindMap.command.Listener(this, this.menuForNode);
 		ListenMenuNode.addTag('create child', kampfer.mindMap.command.CreateNewNode);
+		ListenMenuNode.addTag('delete', kampfer.mindMap.command.DeleteNode);
 	},
 	
 	render : function() {
@@ -177,8 +178,11 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				var currentNodeId = this.currentNode.getId(),
 					position = this.currentNode.getPosition();
 
+				//鼠标在node上点击时也会触发SaveNodePosition
+				//所以execute需要判断位置是否发生变化
 				var command = new kampfer.mindMap.command.SaveNodePosition(currentNodeId, position, this);
 				command.execute(true);
+				console.log(kampfer.mindMap.command.index);
 
 				return 'nodeActivated';
 			}
@@ -189,9 +193,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			mousedown : function(event) {
 				if( !this.isTextEditor(event.target) ) {
 					var text = this.currentNode.getCaption().insertText();
-					//var command = new kampfer.mindMap.command.saveNodeContentCommand(
-					//	this.currentNode.getId(), this.currentNode.getCaption().insertText(), this);
-					//command.execute(true);
+					var command = new kampfer.mindMap.command.SaveNodeContent(
+						this.currentNode.getId(), text, this);
+					command.execute(true);
+					console.log(kampfer.mindMap.command.index);
 					return 'mapActivated';
 				}
 				return 'nodeEditing';
@@ -288,6 +293,11 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		this.currentMapManager.addNode(data);
 		this.getNode(pid).addChild(
 			new kampfer.mindMap.Node(data, this, this.currentMapManager), true );
+		//if(data.children) {
+		//	for(var n in data.children) {
+		//		this.createNode(data.children[n]);
+	//		}
+		//}
 		return data;
 	},
 	
