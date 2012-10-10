@@ -5,33 +5,61 @@ kampfer.require('mindMap.Node');
 kampfer.provide('mindMap.command');
 
 
-kampfer.mindMap.command.Base = kampfer.Class.extend({
+kampfer.mindMap.command.Listener = kampfer.Class.extend({
 
-	init : function(controller, menu, tag) {
+	init : function(controller, menu) {
 		kampfer.events.addEvent(menu, 'clickitem', this._handleEvent, this);
 
 		this.controller = controller;
 
-		this.tag = tag;
+		this._tagList = {};
 	},
-	
-	execute : function() {
-		//console.log(kampfer.mindMap.commandManager.index);
-		kampfer.mindMap.command.addCommand(this);
+
+	_tagList : null,
+
+	controller : null,
+
+	addTag : function(tag, command) {
+		if(tag in this._tagList) {
+			return;
+		}
+
+		this._tagList[tag] = command;
 	},
-	
-	unExecute : function() {
-		//console.log(kampfer.mindMap.commandManager.index);
+
+	delTag : function(tag) {
+		if(tag in this._tagList) {
+			this._tagList[tag] = null;
+		}
+	},
+
+	getCommand : function(tag) {
+		if(tag in this._tagList) {
+			return this._tagList[tag];
+		}
 	},
 
 	_handleEvent : function(event) {
-		if(event.currentItem.innerHTML === this.tag) {
-			this.execute(event);
+		var command = event.currentItem.innerHTML;
+
+		command = this.getCommand(command);
+
+		if(command) {
+			command = new command(event, this.controller);
+			command.execute(true);
 		}
+	}
+	
+});
+
+
+kampfer.mindMap.command.Base = kampfer.Class.extend({
+	init : function() {},
+	execute : function() {
+		kampfer.mindMap.command.addCommand(this);
 	},
-	
+	unExecute : function() {},
 	dispose : function() {}
-	
 });
 
 
@@ -42,11 +70,11 @@ kampfer.mindMap.command.index = 0;
 
 
 kampfer.mindMap.command.addCommand = function(command) {
-	this.commandList.push(command);
-	this.index++;
+	this.commandList.splice(this.index++, 0, command);
 };
 
 
+//TODO 目前撤销恢复功能是线性的,需要作成一个循环
 kampfer.mindMap.command.redo = function(level) {
 	for(var i = 0; i < level; i++) {
 		if(this.index < this.commandList.length) {
@@ -56,6 +84,7 @@ kampfer.mindMap.command.redo = function(level) {
 			return;
 		}
 	}
+	console.log(kampfer.mindMap.command.index);
 };
 
 
@@ -68,24 +97,41 @@ kampfer.mindMap.command.undo = function(level) {
 			return;
 		}
 	}
+	console.log(kampfer.mindMap.command.index);
 };
 
 
 kampfer.mindMap.command.CreateNewNode = 
 	kampfer.mindMap.command.Base.extend({
-		execute : function(event) {
+		init : function(data, controller) {
+			this.controller = controller;
+			this.pid = controller.currentNode.getId();
+			this.offsetX = data.pageX;
+			this.offsetY = data.pageY;
+		},
+
+		execute : function(needPush) {
 			var controller = this.controller,
-				currentNode = controller.currentNode.getId();
+				pid = this.pid;
+
+			if(needPush) {
+				this._super();
+			}
+
+			if(this.newNode) {
+				controller.createNode(this.newNode);
+
+				controller.setNodePosition( this.newNode.id, this.newNode.offset.x, 
+					this.newNode.offset.y );
+			} else {
+				this.newNode = controller.createNode(pid);
 			
-			this._super();
-			
-			this.newNode = controller.createNode(currentNode);
-			
-			if(currentNode === 'map') {
-				var mapPosition = controller.map.getPosition();
-				controller.saveNodePosition( this.newNode.id,
-					Math.abs(mapPosition.left) + event.pageX,
-					Math.abs(mapPosition.top) + event.pageY );
+				if(pid === 'map') {
+					var mapPosition = controller.map.getPosition();
+					controller.setNodePosition( this.newNode.id,
+						Math.abs(mapPosition.left) + this.offsetX,
+						Math.abs(mapPosition.top) + this.offsetY );
+				}
 			}
 		},
 		
@@ -96,7 +142,7 @@ kampfer.mindMap.command.CreateNewNode =
 });
 
 
-kampfer.mindMap.command.deleteNodeCommand = 
+kampfer.mindMap.command.DeleteNode = 
 	kampfer.mindMap.command.Base.extend({
 		init : function(nodeId, controller) {
 			this.nodeId = nodeId;
@@ -116,7 +162,7 @@ kampfer.mindMap.command.deleteNodeCommand =
 });
 
 
-kampfer.mindMap.command.saveNodeContentCommand = 
+kampfer.mindMap.command.saveNodeContent = 
 	kampfer.mindMap.command.Base.extend({
 		init : function(nodeId, content, controller) {
 			this.nodeId = nodeId;
@@ -125,7 +171,7 @@ kampfer.mindMap.command.saveNodeContentCommand =
 			this.oriContent = controller.getNodeData(nodeId).content;
 		},
 		
-		execute : function() {
+		execute : function(needPush) {
 			this._super();
 			this.controller.saveNodeContent(this.nodeId, this.content);
 		},
@@ -137,15 +183,15 @@ kampfer.mindMap.command.saveNodeContentCommand =
 });
 
 
-kampfer.mindMap.command.saveNodePositionCommand = 
+kampfer.mindMap.command.SaveNodePosition = 
 	kampfer.mindMap.command.Base.extend({
-		init : function(nodeId, position, controller) {
-			this.nodeId = nodeId;
+		init : function(id, position, controller) {
+			this.nodeId = id;
 			this.controller = controller;
 			this.newPosition = position;
 			
 			//保存旧位置
-			var nodeData = controller.getNodeData(nodeId);
+			var nodeData = controller.currentMapManager.getNode(id);
 			//保存值而不是引用
 			this.lastPosition = {
 				left : nodeData.offset.x,
@@ -153,18 +199,22 @@ kampfer.mindMap.command.saveNodePositionCommand =
 			};
 		},
 		
-		execute : function() {
-			this._super();
-			this.controller.saveNodePosition(this.nodeId, 
+		execute : function(needPush) {
+			if(needPush) {
+				this._super();
+			}
+
+			this.controller.setNodePosition(this.nodeId, 
 				this.newPosition.left, this.newPosition.top);
 		},
 		
 		unExecute : function() {
 			this._super();
-			this.controller.saveNodePosition(this.nodeId,
+			this.controller.setNodePosition(this.nodeId,
 				this.lastPosition.left, this.lastPosition.top);
 		}
 });
+
 
 kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
 	execute : function() {
@@ -176,6 +226,7 @@ kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
 	}
 });
 
+
 kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 	execute : function() {
 		kampfer.mindMap.command.redo(1);
@@ -184,4 +235,9 @@ kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 	unExecute : function() {
 		kampfer.mindMap.command.undo(1);
 	}
+});
+
+
+kampfer.mindMap.command.Save = kampfer.mindMap.command.Base.extend({
+
 });

@@ -24,29 +24,29 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		
 		this.currentNode = this.map;
 		
-		this.menuForMap = new kampfer.mindMap.Menu(this, currentMapManager);
+		this.menuForMap = new kampfer.mindMap.Menu();
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('create node') );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('save') );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('redo') );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('undo') );
-		var createNewNodeCommand = new kampfer.mindMap.command.CreateNewNode(this, this.menuForMap, 'create node');
-		//var saveDocumentCommand = new kampfer.mindMap.command.saveMap(this.menuForMap);
-		var redoCommand = new kampfer.mindMap.command.Redo(this, this.menuForMap, 'redo');
-		var undoCommand = new kampfer.mindMap.command.Undo(this, this.menuForMap, 'undo');
+		var ListenMenuMap = new kampfer.mindMap.command.Listener(this, this.menuForMap);
+		ListenMenuMap.addTag('create node', kampfer.mindMap.command.CreateNewNode);
+		ListenMenuMap.addTag('redo', kampfer.mindMap.command.Redo);
+		ListenMenuMap.addTag('undo', kampfer.mindMap.command.Undo);
 		
 		this.menuForNode = new kampfer.mindMap.Menu();
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('create child') );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('edit text') );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('...') );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('...') );
+		var ListenMenuNode = new kampfer.mindMap.command.Listener(this, this.menuForNode);
+		ListenMenuNode.addTag('create child', kampfer.mindMap.command.CreateNewNode);
 	},
 	
 	render : function() {
 		this.map.render();
 		this.menuForNode.render();
 		this.menuForMap.render();
-		
-		if( this.map.hasNoChild() ) {
-			var newNode = this.createNode(),
-				rect = this.map.getChild(newNode.id).getSize();
-			this.saveNodePosition(newNode.id, 1000 - rect.width / 2, 1000 - rect.height / 2);
-		}
 	},
 	
 	getNode : function(id) {
@@ -60,7 +60,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		var element = this.map.getElement();
 		
 		kampfer.events.addEvent(element, ['mousedown', 'mousemove', 'mouseup', 
-			'mouseover', 'mouseout'], this._handleEvent, this);
+			'mouseover', 'mouseout', 'dblclick'], this._handleEvent, this);
 		
 	},
 
@@ -87,6 +87,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			
 			mousedown : function(event) {
 				this.menuForNode.hide();
+
+				this.currentNode = this.map;
 				
 				if(event.which === 0) {
 					this.menuForMap.hide();
@@ -149,6 +151,11 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 					this.saveCursorPosition(event);
 					return 'nodefocus';
 				}
+			},
+
+			dblclick : function() {
+				this.currentNode.getCaption().insertTextarea();
+				return 'nodeEditing';
 			}
 			
 		},
@@ -167,11 +174,12 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			},
 			
 			mouseup : function() {
-				var position = this.currentNode.getPosition();
-				//var command = new kampfer.mindMap.commandManager.saveNodePositionCommand(
-				//	this.currentNode.getId(), position, this);
-				//kampfer.mindMap.commandManager.addCommand(command);
-				//command.execute();
+				var currentNodeId = this.currentNode.getId(),
+					position = this.currentNode.getPosition();
+
+				var command = new kampfer.mindMap.command.SaveNodePosition(currentNodeId, position, this);
+				command.execute(true);
+
 				return 'nodeActivated';
 			}
 			
@@ -180,10 +188,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		nodeEditing : {
 			mousedown : function(event) {
 				if( !this.isTextEditor(event.target) ) {
-					var command = new kampfer.mindMap.commandManager.saveNodeContentCommand(
-						this.currentNode.getId(), this.currentNode.getCaption().insertText(), this);
-					kampfer.mindMap.commandManager.addCommand(command);
-					command.execute();
+					var text = this.currentNode.getCaption().insertText();
+					//var command = new kampfer.mindMap.command.saveNodeContentCommand(
+					//	this.currentNode.getId(), this.currentNode.getCaption().insertText(), this);
+					//command.execute(true);
 					return 'mapActivated';
 				}
 				return 'nodeEditing';
@@ -283,12 +291,12 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		return data;
 	},
 	
-	saveNodeContent : function(id, content) {
+	setNodeContent : function(id, content) {
 		this.getNode(id).getCaption().setContent(content);
 		this.currentMapManager.setNodeContent(id, content);
 	},
 	
-	saveNodePosition : function(id, left, top) {
+	setNodePosition : function(id, left, top) {
 		this.getNode(id).moveTo(left, top);
 		this.currentMapManager.setNodePosition(id, left, top);
 	},

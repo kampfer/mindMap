@@ -105,6 +105,9 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 				this._mapData.nodes[id] = node;
 			}
 			if(pid && pid !== 'map') {
+				if(!this._mapData.nodes[pid].children) {
+					this._mapData.nodes[pid].children = [];
+				}
 				this._mapData.nodes[pid].children.push(id);
 			}
 		}
@@ -117,8 +120,8 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 			children : null,
 			content : 'node',
 			offset : {
-				x : 0,
-				y : 0
+				x : 100,
+				y : 100
 			},
 			style : null
 		}, type = kampfer.type(data);
