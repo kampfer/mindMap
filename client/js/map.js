@@ -10,6 +10,8 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 	init : function(controller, manager) {
 		this.controller = controller;
 		this.manager = manager;
+
+		this.addChildren();
 	},
 	
 	getId : function() {
@@ -62,6 +64,14 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 		y += oriPosition.top;
 			
 		this.setPosition(x, y);
-	}
+	},
+
+	addChildren : function() {
+		var children = this.manager.getChildren( this.getId() );
+		for(var i = 0, l = children.length; i < l; i++) {
+			var child = children[i];
+			this.addChild( new kampfer.mindMap.Node(child, this.controller, this.manager) );
+		}
+	},
 	
 });

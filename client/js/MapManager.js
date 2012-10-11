@@ -29,7 +29,12 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 			}
 			//data = kampfer.extend(true, {}, this.mapTemplate);
 			data = {
-				nodes : {},
+				nodes : {
+					map : {
+						id : 'map',
+						children : null
+					}
+				},
 				name : {}
 			};
 			if( name ) {
@@ -82,10 +87,6 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		return this._mapData.nodes[id];
 	},
 	
-	getRootNode : function() {
-		return this.getNode('root');
-	},
-	
 	getChildren : function(id) {
 		var node = this._mapData.nodes[id], 
 			nodes = [];
@@ -104,7 +105,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 			if(id) {
 				this._mapData.nodes[id] = node;
 			}
-			if(pid && pid !== 'map') {
+			if(pid && this._mapData.nodes[pid]) {
 				if(!this._mapData.nodes[pid].children) {
 					this._mapData.nodes[pid].children = [];
 				}

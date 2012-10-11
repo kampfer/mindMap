@@ -17,6 +17,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	init : function(currentMapManager, localStore) {
 		
 		this.currentMapManager = currentMapManager;
+		this.localStoreManager = localStore;
 		
 		this.currentState = this.initialState;
 		
@@ -33,6 +34,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		ListenMenuMap.addTag('create node', kampfer.mindMap.command.CreateNewNode);
 		ListenMenuMap.addTag('redo', kampfer.mindMap.command.Redo);
 		ListenMenuMap.addTag('undo', kampfer.mindMap.command.Undo);
+		ListenMenuMap.addTag('save', kampfer.mindMap.command.Save);
 		
 		this.menuForNode = new kampfer.mindMap.Menu();
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('create child') );
@@ -319,6 +321,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			parent = node.getParent();
 		this.currentMapManager.deleteNode(id);
 		parent.removeChild(node, true);
+	},
+
+	saveMap : function() {
+		this.localStoreManager.saveMapToLocalStorage( this.currentMapManager.getMapData() );
 	}
 	
 });

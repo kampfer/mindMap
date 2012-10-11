@@ -5,7 +5,9 @@ kampfer.require('mindMap.Node');
 kampfer.provide('mindMap.command');
 
 
+//失败的尝试,实例command对象时无法随意的传递参数
 //TODO 每个命令对象都监听menu的click事件
+//TODO 将mapController中的命令操作移动到本文件
 kampfer.mindMap.command.Listener = kampfer.Class.extend({
 
 	init : function(controller, menu) {
@@ -203,7 +205,7 @@ kampfer.mindMap.command.SaveNodePosition =
 		},
 		
 		execute : function(needPush) {
-			if(!this.isPositionNotChange) {
+			if( !this.isPositionNotChange() ) {
 				this._super(needPush);
 
 				this.controller.setNodePosition(this.nodeId, 
@@ -250,5 +252,10 @@ kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.Save = kampfer.mindMap.command.Base.extend({
-
+	init : function() {
+		this.controller = arguments[1];
+	},
+	execute : function() {
+		this.controller.saveMap();
+	}
 });
