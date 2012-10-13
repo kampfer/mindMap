@@ -123,6 +123,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			
 			mouseup : function() {
 				return 'mapActivated';
+			},
+
+			mouseout : function() {
+				return 'mapActivated';
 			}
 			
 		},
@@ -273,6 +277,15 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			return true;
 		}
 		return false;
+	},
+
+	getWindowRect : function() {
+		return {
+			width : Math.max(document.documentElement.clientWidth,
+				document.documentElement.clientWidth),
+			height : Math.max(document.documentElement.clientHeight,
+				document.documentElement.clientHeight)
+		};
 	},
 
 	/**

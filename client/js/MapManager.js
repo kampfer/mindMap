@@ -84,11 +84,18 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	},
 	
 	getNode : function(id) {
-		return this._mapData.nodes[id];
+		var node = this._mapData.nodes[id];
+		if(arguments[1]) {
+			var nodes = this.getChildren(id);
+			nodes.unshift(node);
+			return nodes;
+		} else {
+			return node;
+		}
 	},
 	
 	getChildren : function(id) {
-		var node = this._mapData.nodes[id], 
+		var node = this._mapData.nodes[id],
 			nodes = [];
 		if(node && node.children && node.children.length > 0) {
 			for(var i = 0, l = node.children.length; i < l; i++) {
@@ -164,6 +171,12 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 			}
 		}
 	},
+
+	/**
+	 * 克隆节点. 此方法会同时返回子节点的拷贝. 此方法属于深克隆, 
+	 * 所有的节点副本都是全新生成的.
+	 */
+	cloneNode : function(id) {},
 	
 	setNodeContent : function(id, text) {
 		this._mapData.nodes[id].content = text;

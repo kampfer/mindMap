@@ -152,17 +152,29 @@ kampfer.mindMap.command.DeleteNode =
 			var nodeId;
 			this.controller = arguments[1];
 			nodeId = this.controller.currentNode.getId();
-			this.oldNodeData = this.controller.currentMapManager.getNode(nodeId);
+			this.oldNodeData = this.controller.currentMapManager.getNode(nodeId, true);
 		},
 		
 		execute : function(needPush) {
 			this._super(needPush);
-			this.controller.deleteNode(this.oldNodeData.id);
+			var id;
+			if(this.oldNodeData.length) {
+				id = this.oldNodeData[0].id;
+			} else {
+				id = this.oldNodeData.id;
+			}
+			this.controller.deleteNode(id);
 		},
 		
 		unExecute : function() {
 			this._super();
-			this.controller.createNode(this.oldNodeData);
+			if(this.oldNodeData.length) {
+				for(var i = 0, l = this.oldNodeData.length; i < l; i++) {
+					this.controller.createNode(this.oldNodeData[i]);
+				}
+			} else {
+				this.controller.createNode(this.oldNodeData);
+			}
 		}
 });
 
