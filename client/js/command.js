@@ -8,49 +8,75 @@ kampfer.provide('mindMap.command');
 //失败的尝试,实例command对象时无法随意的传递参数
 //TODO 每个命令对象都监听menu的click事件
 //TODO 将mapController中的命令操作移动到本文件
-kampfer.mindMap.command.Listener = kampfer.Class.extend({
+kampfer.mindMap.command.CommandController = kampfer.Class.extend({
 
-	init : function(controller, menu) {
+	init : function(menu, controller) {
+		this.menu = menu;
+
+		this.mapController = controller;
+
+		this._commandList = {};
+
 		kampfer.events.addEvent(menu, 'clickitem', this._handleEvent, this);
-
-		this.controller = controller;
-
-		this._tagList = {};
 	},
 
-	_tagList : null,
+	_commandMap : null,
 
-	controller : null,
+	_commandList : null,
 
-	addTag : function(tag, command) {
-		if(tag in this._tagList) {
-			return;
-		}
+	_nextCommandIndex : 0,
 
-		this._tagList[tag] = command;
-	},
+	menu : null,
 
-	delTag : function(tag) {
-		if(tag in this._tagList) {
-			this._tagList[tag] = null;
+	map : null,
+
+	mapManager : null,
+
+	registerCommand : function(name, command) {
+		if( !(name in this._commandMap) ) {
+			this._commandMap[name] = command;
 		}
 	},
 
-	getCommand : function(tag) {
-		if(tag in this._tagList) {
-			return this._tagList[tag];
+	unregisterCommand : function(name) {
+		if(name in this._commandMap) {
+			this._commandMap[name] = null;
 		}
+	},
+
+	pushCommand : function(command) {
+		this.commandList.splice(this._nextCommandIndex++, 0, command);
 	},
 
 	_handleEvent : function(event) {
 		var command = event.currentItem.innerHTML;
 
 		command = this.getCommand(command);
-
 		if(command) {
-			command = new command(event, this.controller);
+			command = new command(this.mapController, event);
 			command.execute(true);
-			console.log(kampfer.mindMap.command.index);
+		}
+	},
+
+	undo : function(level) {
+		for(var i = 0; i < level; i++) {
+			if(this._nextCommandIndex < this._commandList.length) {
+				var command = this._commandList[this._nextCommandIndex++];
+				command.execute();
+			} else {
+				return;
+			}
+		}
+	},
+
+	redo : function(level) {
+		for(var i = 0; i < level; i++) {
+			if(this._nextCommandIndex > 0) {
+				var command = this._commandList[--this._nextCommandIndex];
+				command.unExecute();
+			} else {
+				return;
+			}
 		}
 	}
 	
@@ -58,7 +84,10 @@ kampfer.mindMap.command.Listener = kampfer.Class.extend({
 
 
 kampfer.mindMap.command.Base = kampfer.Class.extend({
-	init : function() {},
+	init : function(controller, extraData) {
+		this.controller = controller;
+		document.title = this.mapManager.getMapName() + '*';
+	},
 	execute : function(needPush) {
 		if(needPush) {
 			kampfer.mindMap.command.addCommand(this);
@@ -67,44 +96,6 @@ kampfer.mindMap.command.Base = kampfer.Class.extend({
 	unExecute : function() {},
 	dispose : function() {}
 });
-
-
-kampfer.mindMap.command.commandList = [];
-
-
-kampfer.mindMap.command.index = 0;
-
-
-kampfer.mindMap.command.addCommand = function(command) {
-	this.commandList.splice(this.index++, 0, command);
-};
-
-
-//TODO 目前撤销恢复功能是线性的,需要作成一个循环
-kampfer.mindMap.command.redo = function(level) {
-	for(var i = 0; i < level; i++) {
-		if(this.index < this.commandList.length) {
-			var command = this.commandList[this.index++];
-			command.execute();
-		} else {
-			return;
-		}
-	}
-	console.log(kampfer.mindMap.command.index);
-};
-
-
-kampfer.mindMap.command.undo = function(level) {
-	for(var i = 0; i < level; i++) {
-		if(this.index > 0) {
-			var command = this.commandList[--this.index];
-			command.unExecute();
-		} else {
-			return;
-		}
-	}
-	console.log(kampfer.mindMap.command.index);
-};
 
 
 kampfer.mindMap.command.CreateNewNode = 
@@ -269,5 +260,6 @@ kampfer.mindMap.command.Save = kampfer.mindMap.command.Base.extend({
 	},
 	execute : function() {
 		this.controller.saveMap();
+		document.title = this.mapManager.getMapName();
 	}
 });
