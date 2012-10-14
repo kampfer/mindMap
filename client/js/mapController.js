@@ -21,10 +21,12 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		
 		this.currentState = this.initialState;
 		
+		//TODO 搬到app.js
 		this.map = new kampfer.mindMap.Map(this, this.currentMapManager);
 		
 		this.currentNode = this.map;
 		
+		//TODO 搬到app.js
 		this.menuForMap = new kampfer.mindMap.Menu();
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('create node') );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('save') );
@@ -288,6 +290,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		};
 	},
 
+
+	//TODO 搬到command.js
 	/**
 	 * 安全的创建新节点。本方法会同时处理model和view，保持两者同步。
 	 * 用户创建新节点时都应该调用本方法,而不应该直接调用manager中的createNode方法,

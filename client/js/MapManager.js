@@ -35,7 +35,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 						children : null
 					}
 				},
-				name : {}
+				name : 'defaultMap'
 			};
 			if( name ) {
 				data.name = name;
