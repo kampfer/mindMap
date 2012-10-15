@@ -7,9 +7,9 @@ kampfer.provide('mindMap.Caption');
 
 kampfer.mindMap.Caption = kampfer.mindMap.Component.extend({
 	
-	init : function(node, controller, manager) {
-		this.controller = controller;
-		this.manager = manager;
+	init : function(node) {
+		//this.controller = controller;
+		//this.manager = manager;
 		this.node = node;
 		this._id = this.prefix + this.node.getId();
 	},

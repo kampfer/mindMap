@@ -7,21 +7,32 @@ kampfer.provide('mindMap.Map');
 
 kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 	
-	init : function(controller, manager) {
-		this.controller = controller;
+	init : function(manager) {
+		//this.controller = controller;
 		this.manager = manager;
+		this._currentNode = this;
+
+		this.setId('map');
 
 		this.addChildren();
+
+		this.render();
 	},
-	
-	getId : function() {
-		return 'map';
+
+	_currentNode : null,
+
+	getCurrentNode : function() {
+		return this._currentNode;
+	},
+
+	setCurrentNode : function(node) {
+		this._currentNode = node;
 	},
 	
 	decorate : function() {
 		var winSize = this.getWindowRect();
 		
-		this._element.id = 'map';
+		this._element.id = this.getId();
 		this._element.setAttribute('node-type', 'map');
 		kampfer.dom.addClass(this._element, 'map');
 		kampfer.style.setStyle(this._element, {
@@ -82,8 +93,8 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 		var children = this.manager.getChildren( this.getId() );
 		for(var i = 0, l = children.length; i < l; i++) {
 			var child = children[i];
-			this.addChild( new kampfer.mindMap.Node(child, this.controller, this.manager) );
+			this.addChild( new kampfer.mindMap.Node(child, this.manager) );
 		}
-	},
+	}
 	
 });
