@@ -12,8 +12,11 @@ kampfer.mindMap.command.Listener = kampfer.Class.extend({
 
 	init : function(controller, menu) {
 		kampfer.events.addEvent(menu, 'clickitem', this._handleEvent, this);
+		kampfer.events.addEvent(menu, 'show', this._checkCommand, this);
 
 		this.controller = controller;
+
+		this.menu = menu;
 
 		this._tagList = {};
 	},
@@ -52,6 +55,19 @@ kampfer.mindMap.command.Listener = kampfer.Class.extend({
 			command.execute(true);
 			console.log(kampfer.mindMap.command.index);
 		}
+	},
+
+	_checkCommand : function(event) {
+		for(var name in this._tagList) {
+			var command = this._tagList[name];
+			if( command && command.isAvailable) {
+				if( command.isAvailable() ) {
+					this.menu.getChild(name).enable();
+				} else {
+					this.menu.getChild(name).disable();
+				}
+			}
+		}
 	}
 	
 });
@@ -76,7 +92,9 @@ kampfer.mindMap.command.index = 0;
 
 
 kampfer.mindMap.command.addCommand = function(command) {
-	this.commandList.splice(this.index++, 0, command);
+	var length = this.commandList.length;
+	length -= this.index;
+	this.commandList.splice(this.index++, length, command);
 };
 
 
@@ -251,6 +269,14 @@ kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
 	}
 });
 
+kampfer.mindMap.command.Undo.isAvailable = function() {
+	if(kampfer.mindMap.command.index <= 0) {
+		return false;
+	}
+	return true;
+}
+
+
 
 kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 	execute : function() {
@@ -261,6 +287,14 @@ kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 		kampfer.mindMap.command.undo(1);
 	}
 });
+
+kampfer.mindMap.command.Redo.isAvailable = function() {
+	if(kampfer.mindMap.command.index >= 
+		kampfer.mindMap.command.commandList.length) {
+		return false;
+	} 
+	return true;
+}
 
 
 kampfer.mindMap.command.Save = kampfer.mindMap.command.Base.extend({

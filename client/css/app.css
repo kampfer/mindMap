@@ -79,6 +79,9 @@ div.node canvas{
     padding-bottom: 3px;
     padding-top: 3px;
 }
+.menu-item.disabled{
+    color: #ccc;
+}
 
 textarea.node-editor{
     width:100px;

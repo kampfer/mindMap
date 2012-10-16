@@ -313,17 +313,20 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		//		this.createNode(data.children[n]);
 	//		}
 		//}
+		document.title = this.currentMapManager.getMapName() + '*';
 		return data;
 	},
 	
 	setNodeContent : function(id, content) {
 		this.getNode(id).getCaption().setContent(content);
 		this.currentMapManager.setNodeContent(id, content);
+		document.title = this.currentMapManager.getMapName() + '*';
 	},
 	
 	setNodePosition : function(id, left, top) {
 		this.getNode(id).moveTo(left, top);
 		this.currentMapManager.setNodePosition(id, left, top);
+		document.title = this.currentMapManager.getMapName() + '*';
 	},
 	
 	deleteNode : function(id) {
@@ -334,10 +337,12 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			parent = node.getParent();
 		this.currentMapManager.deleteNode(id);
 		parent.removeChild(node, true);
+		document.title = this.currentMapManager.getMapName() + '*';
 	},
 
 	saveMap : function() {
 		this.localStoreManager.saveMapToLocalStorage( this.currentMapManager.getMapData() );
+		document.title = this.currentMapManager.getMapName();
 	}
 	
 });
