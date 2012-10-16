@@ -20,8 +20,7 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	decorate : function() {
 		kampfer.dom.addClass(this._element, 'menu-item');
 		if(this._disabled) {
-			kampfer.dom.addClass(this._element, 'disabled');
-			this._element.setAttribute('disabled', 'true');
+			this.disable();
 		}
 		
 		this._element.setAttribute('role', 'menuItem');
@@ -38,11 +37,13 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	disable : function() {
 		this._disabled = true;
 		kampfer.dom.addClass(this._element, 'disabled');
+		this._element.setAttribute('disabled', 'true');
 	},
 	
 	enable : function() {
 		this._disabled = false;
 		kampfer.dom.removeClass(this._element, 'disabled');
+		this._element.setAttribute('disabled', 'false');
 	},
 	
 	isDisabled : function() {

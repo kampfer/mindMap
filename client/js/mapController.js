@@ -44,6 +44,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		var ListenMenuNode = new kampfer.mindMap.command.Listener(this, this.menuForNode);
 		ListenMenuNode.addTag('create child', kampfer.mindMap.command.CreateNewNode);
 		ListenMenuNode.addTag('delete', kampfer.mindMap.command.DeleteNode);
+		kampfer.events.addEvent(this.menuForNode, 'edit text', function() {
+			this.currentNode.getCaption().insertTextarea();
+			this.currentState = 'nodeEditing';
+		}, this);
 	},
 	
 	render : function() {
@@ -63,7 +67,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		var element = this.map.getElement();
 		
 		kampfer.events.addEvent(element, ['mousedown', 'mousemove', 'mouseup', 
-			'mouseover', 'mouseout', 'dblclick'], this._handleEvent, this);
+			'mouseover', 'mouseout'], this._handleEvent, this);
 		
 	},
 
@@ -158,11 +162,6 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 					this.saveCursorPosition(event);
 					return 'nodefocus';
 				}
-			},
-
-			dblclick : function() {
-				this.currentNode.getCaption().insertTextarea();
-				return 'nodeEditing';
 			}
 			
 		},

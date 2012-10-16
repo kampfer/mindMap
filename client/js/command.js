@@ -108,7 +108,6 @@ kampfer.mindMap.command.redo = function(level) {
 			return;
 		}
 	}
-	console.log(kampfer.mindMap.command.index);
 };
 
 
@@ -121,7 +120,6 @@ kampfer.mindMap.command.undo = function(level) {
 			return;
 		}
 	}
-	console.log(kampfer.mindMap.command.index);
 };
 
 

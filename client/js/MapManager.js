@@ -85,8 +85,8 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
 	getNode : function(id) {
 		var node = this._mapData.nodes[id];
-		if(arguments[1]) {
-			var nodes = this.getChildren(id);
+		if(arguments[1] === true) {
+			var nodes = this.getChildren(id, true);
 			nodes.unshift(node);
 			return nodes;
 		} else {
@@ -100,6 +100,9 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		if(node && node.children && node.children.length > 0) {
 			for(var i = 0, l = node.children.length; i < l; i++) {
 				nodes.push( this.getNode(node.children[i]) );
+				if(arguments[1] === true) {
+					nodes.push.apply(nodes, this.getChildren(node.children[i], true) );
+				}
 			}
 		}
 		return nodes;
