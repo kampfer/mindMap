@@ -51,9 +51,11 @@ kampfer.mindMap.command.Listener = kampfer.Class.extend({
 		command = this.getCommand(command);
 
 		if(command) {
-			command = new command(event, this.controller);
-			command.execute(true);
-			console.log(kampfer.mindMap.command.index);
+			if( !command.isAvailable || command.isAvailable() ) {
+				command = new command(event, this.controller);
+				command.execute(true);
+				console.log(kampfer.mindMap.command.index + ': ' + event.currentItem.innerHTML);
+			}
 		}
 	},
 

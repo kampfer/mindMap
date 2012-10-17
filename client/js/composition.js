@@ -28,7 +28,8 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 		this._id = id;
 		
 		if(this._parent && this._parent._children) {
-			this._parent._children[oldId] = null;
+			//this._parent._children[oldId] = null;
+			delete _parent._children[oldId];
 			this._parent.addChild(this);
 		}
 	},
@@ -112,13 +113,15 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 			}
 			
 			if(id && (id in this._children)) {
-				this._children[id] = null;
+				//this._children[id] = null;
+				delete this._children[id];
 				this._childrenCount--;
 				child.setParent(null);
 			}
 			
 			if( this.hasNoChild() ) {
-				this._children = null;
+				//this._children = null;
+				delete this._children[id];
 			}
 		}
 		
@@ -136,7 +139,7 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 	eachChild : function(fn, context) {
 		if(this._children) {
 			for(var id in this._children) {
-				if( fn.call(context, this._children[id], id) === false ) {
+				if( this._children[id] && fn.call( context, this._children[id], id ) === false ) {
 					return;
 				}
 			}

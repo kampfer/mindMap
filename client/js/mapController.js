@@ -187,7 +187,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				//所以execute需要判断位置是否发生变化
 				var command = new kampfer.mindMap.command.SaveNodePosition(currentNodeId, position, this);
 				command.execute(true);
-				console.log(kampfer.mindMap.command.index);
+				console.log(kampfer.mindMap.command.index + ': savePosition');
 
 				return 'nodeActivated';
 			}
@@ -201,7 +201,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 					var command = new kampfer.mindMap.command.SaveNodeContent(
 						this.currentNode.getId(), text, this);
 					command.execute(true);
-					console.log(kampfer.mindMap.command.index);
+					console.log(kampfer.mindMap.command.index + ': SaveNodeContent');
 					return 'mapActivated';
 				}
 				return 'nodeEditing';

@@ -35,8 +35,8 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 	getNode : function(id) {
 		var node;
 		
-		this.eachChild(function(child) {
-			if(child.getId() === id) {
+		this.eachChild(function(child, cid) {
+			if(cid === id) {
 				node = child;
 				return false;
 			}else {
