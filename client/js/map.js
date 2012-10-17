@@ -7,8 +7,7 @@ kampfer.provide('mindMap.Map');
 
 kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 	
-	init : function(controller, manager) {
-		this.controller = controller;
+	init : function(manager) {
 		this.manager = manager;
 
 		this.addChildren();
@@ -82,7 +81,7 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 		var children = this.manager.getChildren( this.getId() );
 		for(var i = 0, l = children.length; i < l; i++) {
 			var child = children[i];
-			this.addChild( new kampfer.mindMap.Node(child, this.controller, this.manager) );
+			this.addChild( new kampfer.mindMap.Node(child, this.manager) );
 		}
 	},
 	

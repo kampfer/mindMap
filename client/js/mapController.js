@@ -21,7 +21,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		
 		this.currentState = this.initialState;
 		
-		this.map = new kampfer.mindMap.Map(this, this.currentMapManager);
+		this.map = new kampfer.mindMap.Map(this.currentMapManager);
 		
 		this.currentNode = this.map;
 		
@@ -306,7 +306,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		data = this.currentMapManager.createNode(data);
 		this.currentMapManager.addNode(data);
 		this.getNode(pid).addChild(
-			new kampfer.mindMap.Node(data, this, this.currentMapManager), true );
+			new kampfer.mindMap.Node(data, this.currentMapManager), true );
 		//if(data.children) {
 		//	for(var n in data.children) {
 		//		this.createNode(data.children[n]);

@@ -10,9 +10,8 @@ kampfer.provide('mindMap.Node');
 
 kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 	
-	init : function(data, controller, manager) {
+	init : function(data, manager) {
 		this.data = data;
-		this.controller = controller;
 		this.manager = manager;
 		
 		this._id = this.data.id;
@@ -27,12 +26,12 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 	},
 	
 	addCaption : function() {
-		var caption = new kampfer.mindMap.Caption(this, this.controller, this.manager);
+		var caption = new kampfer.mindMap.Caption(this, this.manager);
 		this.addChild(caption);
 	},
 	
 	addBranch : function() {
-		var branch = new kampfer.mindMap.Branch(this, this.controller, this.manager);
+		var branch = new kampfer.mindMap.Branch(this, this.manager);
 		this.addChild(branch);
 	},
 	
@@ -40,7 +39,7 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		var children = this.manager.getChildren(this.data.id);
 		for(var i = 0, l = children.length; i < l; i++) {
 			var child = children[i];
-			this.addChild( new kampfer.mindMap.Node(child, this.controller, this.manager) );
+			this.addChild( new kampfer.mindMap.Node(child, this.manager) );
 		}
 	},
 	
