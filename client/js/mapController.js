@@ -1,6 +1,10 @@
 /*global window kampfer console localStorage*/
 kampfer.require('Class');
 kampfer.require('events');
+kampfer.require('mindMap.Map');
+kampfer.require('mindMap.Node');
+kampfer.require('mindMap.Menu');
+kampfer.require('mindMap.commandManager');
 
 kampfer.provide('mindMap.MapController');
 
@@ -10,20 +14,57 @@ kampfer.provide('mindMap.MapController');
  */
 kampfer.mindMap.MapController = kampfer.Class.extend({
 	
-	init : function(map, mapMenu, nodeMenu) {
+	init : function(currentMapManager, localStore) {
+		
+		this.currentMapManager = currentMapManager;
+		this.localStoreManager = localStore;
+		
 		this.currentState = this.initialState;
 		
-		this.currentNode = this.map;
-
-		this.mapMenu = mapMenu;
-
-		this.nodeMenu = nodeMenu;
+		this.map = new kampfer.mindMap.Map(this.currentMapManager);
 		
-		this.listen(map);
+		this.currentNode = this.map;
+		
+		this.menuForMap = new kampfer.mindMap.Menu();
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('create node') );
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('save') );
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('redo') );
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('undo') );
+		var ListenMenuMap = new kampfer.mindMap.command.Listener(this, this.menuForMap);
+		ListenMenuMap.addTag('create node', kampfer.mindMap.command.CreateNewNode);
+		ListenMenuMap.addTag('redo', kampfer.mindMap.command.Redo);
+		ListenMenuMap.addTag('undo', kampfer.mindMap.command.Undo);
+		ListenMenuMap.addTag('save', kampfer.mindMap.command.Save);
+		
+		this.menuForNode = new kampfer.mindMap.Menu();
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('create child') );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('edit text') );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('delete') );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('...') );
+		var ListenMenuNode = new kampfer.mindMap.command.Listener(this, this.menuForNode);
+		ListenMenuNode.addTag('create child', kampfer.mindMap.command.CreateNewNode);
+		ListenMenuNode.addTag('delete', kampfer.mindMap.command.DeleteNode);
+		kampfer.events.addEvent(this.menuForNode, 'edit text', function() {
+			this.currentNode.getCaption().insertTextarea();
+			this.currentState = 'nodeEditing';
+		}, this);
+	},
+	
+	render : function() {
+		this.map.render();
+		this.menuForNode.render();
+		this.menuForMap.render();
+	},
+	
+	getNode : function(id) {
+		if(id === 'map') {
+			return this.map;
+		}
+		return this.map.getNode(id);
 	},
 
-	listen : function(map) {
-		var element = map.getElement();
+	monitorEvents : function() {
+		var element = this.map.getElement();
 		
 		kampfer.events.addEvent(element, ['mousedown', 'mousemove', 'mouseup', 
 			'mouseover', 'mouseout'], this._handleEvent, this);
@@ -52,20 +93,19 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			},
 			
 			mousedown : function(event) {
-				this.nodeMenu.hide();
+				this.menuForNode.hide();
 
-				//this.currentNode = this.map;
-				this.map.setCurrentNode(this.map);
+				this.currentNode = this.map;
 				
 				if(event.which === 0) {
-					this.mapMenu.hide();
+					this.menuForMap.hide();
 					this.saveCursorPosition(event);
 					return 'mapFocus';
 				}
 				
 				if(event.which === 3) {
-					this.mapMenu.setPosition(event.pageX, event.pageY);
-					this.mapMenu.show();
+					this.menuForMap.setPosition(event.pageX, event.pageY);
+					this.menuForMap.show();
 				}
 				
 				return 'mapActivated';
@@ -106,16 +146,15 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			},
 			
 			mousedown : function(event) {
-				this.nodeMenu.hide();
-				this.mapMenu.hide();
+				this.menuForNode.hide();
+				this.menuForMap.hide();
 				
 				var node = this.getNodeFromElement(event.target);
-				//this.currentNode = node;
-				this.map.setCurrentNode(node);
+				this.currentNode = node;
 				
 				if(event.which === 3) {	
-					this.nodeMenu.setPosition(event.pageX, event.pageY);
-					this.nodeMenu.show();
+					this.menuForNode.setPosition(event.pageX, event.pageY);
+					this.menuForNode.show();
 					return 'nodeActivated';
 				}
 				
@@ -123,12 +162,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 					this.saveCursorPosition(event);
 					return 'nodefocus';
 				}
-			}/*,
-
-			dblclick : function() {
-				this.currentNode.getCaption().insertTextarea();
-				return 'nodeEditing';
-			}*/
+			}
 			
 		},
 		
@@ -153,7 +187,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 				//所以execute需要判断位置是否发生变化
 				var command = new kampfer.mindMap.command.SaveNodePosition(currentNodeId, position, this);
 				command.execute(true);
-				console.log(kampfer.mindMap.command.index);
+				console.log(kampfer.mindMap.command.index + ': savePosition');
 
 				return 'nodeActivated';
 			}
@@ -167,7 +201,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 					var command = new kampfer.mindMap.command.SaveNodeContent(
 						this.currentNode.getId(), text, this);
 					command.execute(true);
-					console.log(kampfer.mindMap.command.index);
+					console.log(kampfer.mindMap.command.index + ': SaveNodeContent');
 					return 'mapActivated';
 				}
 				return 'nodeEditing';
@@ -253,8 +287,6 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		};
 	},
 
-
-	//TODO 搬到command.js
 	/**
 	 * 安全的创建新节点。本方法会同时处理model和view，保持两者同步。
 	 * 用户创建新节点时都应该调用本方法,而不应该直接调用manager中的createNode方法,
@@ -274,23 +306,26 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		data = this.currentMapManager.createNode(data);
 		this.currentMapManager.addNode(data);
 		this.getNode(pid).addChild(
-			new kampfer.mindMap.Node(data, this, this.currentMapManager), true );
+			new kampfer.mindMap.Node(data, this.currentMapManager), true );
 		//if(data.children) {
 		//	for(var n in data.children) {
 		//		this.createNode(data.children[n]);
 	//		}
 		//}
+		document.title = this.currentMapManager.getMapName() + '*';
 		return data;
 	},
 	
 	setNodeContent : function(id, content) {
 		this.getNode(id).getCaption().setContent(content);
 		this.currentMapManager.setNodeContent(id, content);
+		document.title = this.currentMapManager.getMapName() + '*';
 	},
 	
 	setNodePosition : function(id, left, top) {
 		this.getNode(id).moveTo(left, top);
 		this.currentMapManager.setNodePosition(id, left, top);
+		document.title = this.currentMapManager.getMapName() + '*';
 	},
 	
 	deleteNode : function(id) {
@@ -301,10 +336,12 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 			parent = node.getParent();
 		this.currentMapManager.deleteNode(id);
 		parent.removeChild(node, true);
+		document.title = this.currentMapManager.getMapName() + '*';
 	},
 
 	saveMap : function() {
 		this.localStoreManager.saveMapToLocalStorage( this.currentMapManager.getMapData() );
+		document.title = this.currentMapManager.getMapName();
 	}
 	
 });

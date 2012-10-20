@@ -35,7 +35,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 						children : null
 					}
 				},
-				name : 'defaultMap'
+				name : {}
 			};
 			if( name ) {
 				data.name = name;
@@ -85,8 +85,8 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
 	getNode : function(id) {
 		var node = this._mapData.nodes[id];
-		if(arguments[1]) {
-			var nodes = this.getChildren(id);
+		if(arguments[1] === true) {
+			var nodes = this.getChildren(id, true);
 			nodes.unshift(node);
 			return nodes;
 		} else {
@@ -100,6 +100,9 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		if(node && node.children && node.children.length > 0) {
 			for(var i = 0, l = node.children.length; i < l; i++) {
 				nodes.push( this.getNode(node.children[i]) );
+				if(arguments[1] === true) {
+					nodes.push.apply(nodes, this.getChildren(node.children[i], true) );
+				}
 			}
 		}
 		return nodes;
@@ -181,6 +184,10 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	setNodeContent : function(id, text) {
 		this._mapData.nodes[id].content = text;
 	},
+
+	getNodeContent : function(id) {
+		return this._mapData.nodes[id].content;
+	},
 	
 	setNodePosition : function(id, x, y) {
 		if(kampfer.type(id) === 'object') {
@@ -188,6 +195,11 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		}
 		this._mapData.nodes[id].offset.x = x;
 		this._mapData.nodes[id].offset.y = y;
+	},
+
+	getNodePosition : function(id) {
+		var node = this.getNode(id);
+		return node.offset;
 	},
 	
 	renameMap : function(name) {

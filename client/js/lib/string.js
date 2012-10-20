@@ -11,7 +11,7 @@ kampfer.provide('string');
 		//native method
 		function(string) {
 			return kampfer.isDefAndNotNull(string) ? 
-				trim.call(String) : 
+				trim.call(string) : 
 				'';
 		} : 
 		//my method

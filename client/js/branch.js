@@ -7,9 +7,9 @@ kampfer.provide('mindMap.Branch');
 
 kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 	
-	init : function(node) {
-		//this.controller = controller;
-		//this.manager = manager;
+	init : function(node, controller, manager) {
+		this.controller = controller;
+		this.manager = manager;
 		this.node = node;
 		
 		this._id = this.prefix + this.node.getId();

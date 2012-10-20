@@ -8,151 +8,158 @@ kampfer.provide('mindMap.command');
 //失败的尝试,实例command对象时无法随意的传递参数
 //TODO 每个命令对象都监听menu的click事件
 //TODO 将mapController中的命令操作移动到本文件
-kampfer.mindMap.command.CommandController = kampfer.Class.extend({
+kampfer.mindMap.command.Listener = kampfer.Class.extend({
 
-	init : function(menu, map, mapManager, mapController) {
+	init : function(controller, menu) {
+		kampfer.events.addEvent(menu, 'clickitem', this._handleEvent, this);
+		kampfer.events.addEvent(menu, 'show', this._checkCommand, this);
+
+		this.controller = controller;
+
 		this.menu = menu;
 
-		this.mapController = mapController;
-
-		this.mapManager = mapManager;
-
-		this._commandList = {};
-
-		this._commandMap = {};
-
-		this._nextCommandIndex = 0;
-
-		kampfer.events.addEvent(menu, 'clickitem', this._handleEvent, this);
+		this._tagList = {};
 	},
 
-	_commandMap : null,
+	_tagList : null,
 
-	_commandList : null,
+	controller : null,
 
-	_nextCommandIndex : null,
+	addTag : function(tag, command) {
+		if(tag in this._tagList) {
+			return;
+		}
 
-	menu : null,
+		this._tagList[tag] = command;
+	},
 
-	registerCommand : function(name, command) {
-		if( !(name in this._commandMap) ) {
-			this._commandMap[name] = command;
+	delTag : function(tag) {
+		if(tag in this._tagList) {
+			this._tagList[tag] = null;
 		}
 	},
 
-	unregisterCommand : function(name) {
-		if(name in this._commandMap) {
-			this._commandMap[name] = null;
+	getCommand : function(tag) {
+		if(tag in this._tagList) {
+			return this._tagList[tag];
 		}
-	},
-
-	pushCommand : function(command) {
-		this.commandList.splice(this._nextCommandIndex++, 0, command);
 	},
 
 	_handleEvent : function(event) {
 		var command = event.currentItem.innerHTML;
 
 		command = this.getCommand(command);
+
 		if(command) {
-			command = new command(this.mapController, event);
-			command.execute(true);
-		}
-	},
-
-	undo : function(level) {
-		for(var i = 0; i < level; i++) {
-			if(this._nextCommandIndex < this._commandList.length) {
-				var command = this._commandList[this._nextCommandIndex++];
-				command.execute();
-			} else {
-				return;
+			if( !command.isAvailable || command.isAvailable() ) {
+				command = new command(event, this.controller);
+				command.execute(true);
+				console.log(kampfer.mindMap.command.index + ': ' + event.currentItem.innerHTML);
 			}
 		}
 	},
 
-	redo : function(level) {
-		for(var i = 0; i < level; i++) {
-			if(this._nextCommandIndex > 0) {
-				var command = this._commandList[--this._nextCommandIndex];
-				command.unExecute();
-			} else {
-				return;
+	_checkCommand : function(event) {
+		for(var name in this._tagList) {
+			var command = this._tagList[name];
+			if( command && command.isAvailable) {
+				if( command.isAvailable() ) {
+					this.menu.getChild(name).enable();
+				} else {
+					this.menu.getChild(name).disable();
+				}
 			}
 		}
-	},
-
-	dispose : function() {
-		this._commandList = null;
-		this._commandMap = null;
-		this.menu = null;
-		this.map = null;
-		this.mapManager = null;
-		this.mapController = null;
 	}
-
+	
 });
 
 
 kampfer.mindMap.command.Base = kampfer.Class.extend({
-	init : function(controller) {
-		this.map = controller.map;
-		this.mapManager = controller.mapManager;
-		document.title = this.mapManager.getMapName() + '*';
-	},
+	init : function() {},
 	execute : function(needPush) {
 		if(needPush) {
 			kampfer.mindMap.command.addCommand(this);
 		}
 	},
 	unExecute : function() {},
-	dispose : function() {
-		this.map = null;
-		this.mapManager = null;
-	}
+	dispose : function() {}
 });
+
+
+kampfer.mindMap.command.commandList = [];
+
+
+kampfer.mindMap.command.index = 0;
+
+
+kampfer.mindMap.command.addCommand = function(command) {
+	var length = this.commandList.length;
+	length -= this.index;
+	this.commandList.splice(this.index++, length, command);
+};
+
+
+//TODO 目前撤销恢复功能是线性的,需要作成一个循环
+kampfer.mindMap.command.redo = function(level) {
+	for(var i = 0; i < level; i++) {
+		if(this.index < this.commandList.length) {
+			var command = this.commandList[this.index++];
+			command.execute();
+		} else {
+			return;
+		}
+	}
+};
+
+
+kampfer.mindMap.command.undo = function(level) {
+	for(var i = 0; i < level; i++) {
+		if(this.index > 0) {
+			var command = this.commandList[--this.index];
+			command.unExecute();
+		} else {
+			return;
+		}
+	}
+};
 
 
 kampfer.mindMap.command.CreateNewNode = 
 	kampfer.mindMap.command.Base.extend({
-		init : function(controller, data) {
-			this._super(controller);
-			this.pid = this.map.getCurrentNode().getId();
+		init : function(data, controller) {
+			this.controller = controller;
+			this.pid = controller.currentNode.getId();
 			this.offsetX = data.pageX;
 			this.offsetY = data.pageY;
 		},
 
 		execute : function(needPush) {
-			var pid = this.pid, newNode, left, top, mapPosition;
+			var controller = this.controller,
+				pid = this.pid;
 
 			this._super(needPush);
 
 			if(this.newNode) {
-				newNode = this.newNode;
+				controller.createNode(this.newNode);
+
+				controller.setNodePosition( this.newNode.id, this.newNode.offset.x, 
+					this.newNode.offset.y );
 			} else {
-				mapPosition = this.map.getPosition();
-				newNode = {
-					parent : pid,
-					offset : {
-						x : Math.abs(mapPosition.left) + this.offsetX,
-						y : Math.abs(mapPosition.top) + this.offsetY,
-					}
+				this.newNode = controller.createNode(pid);
+			
+				if(pid === 'map') {
+					var mapPosition = controller.map.getPosition();
+					controller.setNodePosition( this.newNode.id,
+						Math.abs(mapPosition.left) + this.offsetX,
+						Math.abs(mapPosition.top) + this.offsetY );
 				}
 			}
-
-			this.newNode = this.mapManager.createNode(newNode);
-			this.mapManager.addNode(this.newNode);
-			this.map.getChild(pid).addChild(
-				new kampfer.mindMap.node(this.newNode, this.mapManager) );
 		},
 		
 		unExecute : function() {
 			this._super();
-			var id = this.newNode.id,
-				node = this.map.getNode(id),
-				parent = node.getParent();
-			this.mapManager.deleteNode(id);
-			parent.removeChild(node, true);
+			this.controller.deleteNode(this.newNode.id);
 		}
 });
 
@@ -254,15 +261,7 @@ kampfer.mindMap.command.SaveNodePosition =
 
 kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
 	execute : function() {
-		var level = 1;
-		for(var i = 0; i < level; i++) {
-			if(this._nextCommandIndex < this._commandList.length) {
-				var command = this._commandList[this._nextCommandIndex++];
-				command.execute();
-			} else {
-				return;
-			}
-		}
+		kampfer.mindMap.command.undo(1);
 	},
 
 	unExecute : function() {
@@ -270,24 +269,32 @@ kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
 	}
 });
 
+kampfer.mindMap.command.Undo.isAvailable = function() {
+	if(kampfer.mindMap.command.index <= 0) {
+		return false;
+	}
+	return true;
+}
+
+
 
 kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 	execute : function() {
-		var level = 1;
-		for(var i = 0; i < level; i++) {
-			if(this._nextCommandIndex > 0) {
-				var command = this._commandList[--this._nextCommandIndex];
-				command.unExecute();
-			} else {
-				return;
-			}
-		}
+		kampfer.mindMap.command.redo(1);
 	},
 
 	unExecute : function() {
 		kampfer.mindMap.command.undo(1);
 	}
 });
+
+kampfer.mindMap.command.Redo.isAvailable = function() {
+	if(kampfer.mindMap.command.index >= 
+		kampfer.mindMap.command.commandList.length) {
+		return false;
+	} 
+	return true;
+}
 
 
 kampfer.mindMap.command.Save = kampfer.mindMap.command.Base.extend({
@@ -296,6 +303,5 @@ kampfer.mindMap.command.Save = kampfer.mindMap.command.Base.extend({
 	},
 	execute : function() {
 		this.controller.saveMap();
-		document.title = this.mapManager.getMapName();
 	}
 });

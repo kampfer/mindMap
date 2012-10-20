@@ -337,7 +337,8 @@ kampfer.events.fireEvent = function(elem, type, data) {
 	} else {
 		eventObj = data;
 		eventObj.type = type;
-		eventObj.target = elem;
+		//target应该是触发事件的对象,不应该被改变
+		//eventObj.target = elem;
 	}
 	
 	

@@ -8,11 +8,11 @@ kampfer.require('mindMap.Caption');
 
 kampfer.provide('mindMap.Node');
 
+//TODO node should take care of its position itself
 kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 	
 	init : function(data, manager) {
 		this.data = data;
-		//this.controller = controller;
 		this.manager = manager;
 		
 		this._id = this.data.id;
@@ -24,11 +24,6 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 			this.addBranch();
 		}
 		this.addChildren();
-	},
-
-	render : function() {
-		this._super();
-		this.moveTo(this.offsetX, this.offsetY);
 	},
 	
 	addCaption : function() {

@@ -12,11 +12,15 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 		this._content = content;
 		this._disabled = false;
 	},
+
+	getId : function() {
+		return this._content;
+	},
 	
 	decorate : function() {
 		kampfer.dom.addClass(this._element, 'menu-item');
 		if(this._disabled) {
-			kampfer.dom.addClass(this._element, 'disable');
+			this.disable();
 		}
 		
 		this._element.setAttribute('role', 'menuItem');
@@ -32,10 +36,14 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	
 	disable : function() {
 		this._disabled = true;
+		kampfer.dom.addClass(this._element, 'disabled');
+		this._element.setAttribute('disabled', 'true');
 	},
 	
 	enable : function() {
 		this._disabled = false;
+		kampfer.dom.removeClass(this._element, 'disabled');
+		this._element.setAttribute('disabled', 'false');
 	},
 	
 	isDisabled : function() {
@@ -79,11 +87,13 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	show : function() {
 		this.setVisible(this._element, true);
 		this.setVisible(this._body, true);
+		this.fireEvent('show');
 	},
 	
 	hide : function() {
 		this.setVisible(this._element, false);
 		this.setVisible(this._body, false);
+		this.fireEvent('hide');
 	},
 	
 	setVisible : function(element, visible) {
@@ -123,8 +133,11 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 			if( this.isMenuItem(event.target) ) {
 				event.currentItem = event.target;
 				this.fireEvent('clickitem', event);
+				this.fireEvent(event.target.innerHTML, event);
 			}
-			this.hide();
+			if( event.target.getAttribute('disabled') !== 'true' ) {
+				this.hide();
+			}
 		}
 		
 	},
