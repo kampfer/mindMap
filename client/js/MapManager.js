@@ -45,24 +45,6 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		this._mapData = data;
 	},
 	
-	mapTemplate : {
-		nodes : {
-			root : {
-				id : 'root',
-				parent : '',
-				children : [],
-				content : 'root',
-				offset : {
-					x : '1000',
-					y : '1000'
-				},
-				style : 'root'
-			}
-		},
-		name : 'template',
-		config : {}
-	},
-	
 	_mapName : null,
 	
 	_mapData : null,

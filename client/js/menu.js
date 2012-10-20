@@ -8,26 +8,24 @@ kampfer.provide('mindMap.MenuItem');
 
 kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	
-	init : function(content) {
-		this._content = content;
+	init : function(caption, command) {
+		this._caption = caption;
 		this._disabled = false;
+		this._command = command;
 	},
 
 	getId : function() {
-		return this._content;
+		return this._caption;
 	},
 	
 	decorate : function() {
 		kampfer.dom.addClass(this._element, 'menu-item');
-		if(this._disabled) {
-			this.disable();
-		}
 		
 		this._element.setAttribute('role', 'menuItem');
 		
 		this._element.id = this.getId();
 		
-		this._element.innerHTML = this._content;
+		this._element.innerHTML = this._caption;
 	},
 		
 	enterDocument : function() {
@@ -48,13 +46,21 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	
 	isDisabled : function() {
 		return this._disabled;
+	},
+
+	getCommand : function() {
+		return this._command;
+	},
+
+	dispose : function() {
+		this._command = null;
 	}
 	
 });
 
 kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	
-	init : function() {
+	init : function(view, model, controller) {
 		this.monitorEvents();
 	},
 	
@@ -69,8 +75,7 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 		this._super();
 		
 		this.setVisible(this._element, false);
-		this.setBodyVisible(false);
-		this.setLabelVisible(false);
+		this.setVisible(this._body, false);
 		
 		kampfer.dom.addClass(this._element, 'menu');
 		kampfer.dom.addClass(this._body, 'menu-body');
@@ -105,14 +110,6 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 		element.style.display = display;
 	},
 	
-	setBodyVisible : function(visible) {
-		this.setVisible(this._body, visible);
-	},
-	
-	setLabelVisible : function(visible) {
-		this.setVisible(this._label, visible);
-	},
-	
 	action2Function : {
 		
 		mouseover : function(event) {
@@ -131,9 +128,15 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 		
 		click : function(event) {
 			if( this.isMenuItem(event.target) ) {
-				event.currentItem = event.target;
 				this.fireEvent('clickitem', event);
 				this.fireEvent(event.target.innerHTML, event);
+
+				var command = this.getChild(event.target.id).getCommand();
+				if( command && command.isAvailable() ) {
+					command = new command(event, this.view, this.model);
+					command.execute();
+					command.push2Stack();
+				}
 			}
 			if( event.target.getAttribute('disabled') !== 'true' ) {
 				this.hide();

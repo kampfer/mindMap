@@ -30,20 +30,13 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('save') );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('redo') );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('undo') );
-		var ListenMenuMap = new kampfer.mindMap.command.Listener(this, this.menuForMap);
-		ListenMenuMap.addTag('create node', kampfer.mindMap.command.CreateNewNode);
-		ListenMenuMap.addTag('redo', kampfer.mindMap.command.Redo);
-		ListenMenuMap.addTag('undo', kampfer.mindMap.command.Undo);
-		ListenMenuMap.addTag('save', kampfer.mindMap.command.Save);
 		
 		this.menuForNode = new kampfer.mindMap.Menu();
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('create child') );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('edit text') );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('delete') );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('...') );
-		var ListenMenuNode = new kampfer.mindMap.command.Listener(this, this.menuForNode);
-		ListenMenuNode.addTag('create child', kampfer.mindMap.command.CreateNewNode);
-		ListenMenuNode.addTag('delete', kampfer.mindMap.command.DeleteNode);
+
 		kampfer.events.addEvent(this.menuForNode, 'edit text', function() {
 			this.currentNode.getCaption().insertTextarea();
 			this.currentState = 'nodeEditing';
