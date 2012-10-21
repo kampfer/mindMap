@@ -21,7 +21,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	 * 如果以上两种情况都不符合，将使用模板对象
 	 * @param	name{string|object|null}
 	 */
-	init : function(data) {
+	init : function(data, localstore) {
 		var type = kampfer.type(data), name;
 		if( type !== 'object' ) {
 			if( type === 'string' ) {
@@ -43,15 +43,18 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		}
 		this._mapName = data.name;
 		this._mapData = data;
+		this._localStore = localstore;
 	},
 	
 	_mapName : null,
 	
 	_mapData : null,
-	
-	_left : null,
-	
-	_top: null,
+
+	_isModified : false,
+
+	isModified : function() {
+		return this._isModified;
+	},
 	
 	getMapData : function() {
 		return this._mapData;
@@ -104,6 +107,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 				this._mapData.nodes[pid].children.push(id);
 			}
 		}
+		this._isModified = true;
 	},
 	
 	createNode : function(data) {
@@ -155,6 +159,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 				}
 			}
 		}
+		this._isModified = true;
 	},
 
 	/**
@@ -165,6 +170,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
 	setNodeContent : function(id, text) {
 		this._mapData.nodes[id].content = text;
+		this._isModified = true;
 	},
 
 	getNodeContent : function(id) {
@@ -177,28 +183,27 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		}
 		this._mapData.nodes[id].offset.x = x;
 		this._mapData.nodes[id].offset.y = y;
+		this._isModified = true;
 	},
 
+	//传值
 	getNodePosition : function(id) {
 		var node = this.getNode(id);
-		return node.offset;
+		return {
+			left : node.offset.x,
+			top : node.offset.y
+		}
 	},
 	
 	renameMap : function(name) {
 		this._mapName = name;
 		this._mapData.name = name;
+		this._isModified = true;
 	},
-	
-	setMapPosition : function(left, top) {
-		this._left = left;
-		this._top = top;
-	},
-	
-	getMapPosition : function() {
-		return {
-			left : this._left,
-			top : this._top
-		};
+
+	saveMap : function() {
+		this._localStore.saveMapToLocalStorage( this.getMapData() );
+		this._isModified = false;
 	},
 	
 	/*

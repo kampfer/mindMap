@@ -36,7 +36,7 @@ kampfer.mindMap.Component = kampfer.mindMap.Composition.extend({
 	},
 	
 	removeChild : function(child, unrender) {
-		this._super(child);
+		child = this._super(child);
 		if(unrender) {
 			child.exitDocument();
 			var childElement = child.getElement();

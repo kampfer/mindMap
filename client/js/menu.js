@@ -8,11 +8,12 @@ kampfer.provide('mindMap.MenuItem');
 
 kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	
-	init : function(caption, command) {
+	init : function(caption, commandConstructor) {
 		this._caption = caption;
-		this._disabled = false;
-		this._command = command;
+		this._commandConstructor = commandConstructor;
 	},
+
+	_disabled : false,
 
 	getId : function() {
 		return this._caption;
@@ -20,6 +21,7 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	
 	decorate : function() {
 		kampfer.dom.addClass(this._element, 'menu-item');
+		this._element.style.display = 'none';
 		
 		this._element.setAttribute('role', 'menuItem');
 		
@@ -30,6 +32,23 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 		
 	enterDocument : function() {
 		this._super( this._parent.getBody() );
+	},
+
+	show : function() {
+		var command = this.getCommand();
+		if(command) {
+			if( command.isAvailable() ) {
+				this.enable();
+			} else {
+				this.disable();
+			}
+		}
+		
+		this._element.style.display = '';
+	},
+
+	hide : function() {
+		this._element.style.display = 'none';
 	},
 	
 	disable : function() {
@@ -49,11 +68,16 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	},
 
 	getCommand : function() {
+		if( this._commandConstructor ) {
+			var p = this.getParent();
+			this._command = new this._commandConstructor(p.view, p.model, p.controller);
+		}
 		return this._command;
 	},
 
 	dispose : function() {
 		this._command = null;
+		this._commandInstance = null;
 	}
 	
 });
@@ -61,6 +85,9 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	
 	init : function(view, model, controller) {
+		this.view = view;
+		this.model = model;
+		this.controller = controller;
 		this.monitorEvents();
 	},
 	
@@ -92,13 +119,19 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	show : function() {
 		this.setVisible(this._element, true);
 		this.setVisible(this._body, true);
-		this.fireEvent('show');
+		this.eachChild(function(child) {
+			child.show();
+		});
+		this.fireEvent('shown');
 	},
 	
 	hide : function() {
 		this.setVisible(this._element, false);
 		this.setVisible(this._body, false);
-		this.fireEvent('hide');
+		this.eachChild(function(child) {
+			child.hide();
+		});
+		this.fireEvent('hided');
 	},
 	
 	setVisible : function(element, visible) {
@@ -132,8 +165,7 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 				this.fireEvent(event.target.innerHTML, event);
 
 				var command = this.getChild(event.target.id).getCommand();
-				if( command && command.isAvailable() ) {
-					command = new command(event, this.view, this.model);
+				if( command ) {
 					command.execute();
 					command.push2Stack();
 				}
@@ -167,6 +199,12 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 			return true;
 		}
 		return false;
+	},
+
+	dispose : function() {
+		this.view = null;
+		this.model = null;
+		this.controller = null;
 	}
 	
 });

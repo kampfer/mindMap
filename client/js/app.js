@@ -7,11 +7,9 @@ kampfer.provide('mindMap.app');
 
 (function(kampfer) {
 	
-	var mapName = 'test';
-	var localManager = new kampfer.mindMap.MapsManager(mapName);
-	var data = localManager.getCurMap();
-	data = data ? data : mapName;
-	var manager = new kampfer.mindMap.MapManager(data);
+	var localManager = new kampfer.mindMap.MapsManager('mindMap');
+	var data = localManager.getMapData('test');
+	var manager = new kampfer.mindMap.MapManager(data, localManager);
 	document.title = manager.getMapName();
 	var controller = new kampfer.mindMap.MapController(manager, localManager);
 	controller.render();

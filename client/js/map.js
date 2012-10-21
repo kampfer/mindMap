@@ -5,10 +5,12 @@ kampfer.require('mindMap.Node');
 
 kampfer.provide('mindMap.Map');
 
+
 kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 	
 	init : function(manager) {
 		this.manager = manager;
+		this.currentNode = this;
 
 		this.addChildren();
 	},
@@ -29,7 +31,7 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 			left : winSize.width / 2 - 1000 + 'px',
 			top : winSize.height / 2 - 1000 + 'px'
 		});
-		this.manager.setMapPosition(winSize.width / 2 - 1000, winSize.height / 2 - 1000);
+		//this.manager.setMapPosition(winSize.width / 2 - 1000, winSize.height / 2 - 1000);
 	},
 	
 	getNode : function(id) {

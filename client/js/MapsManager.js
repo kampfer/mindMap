@@ -12,10 +12,7 @@ kampfer.provide('mindMap.MapsManager');
 
 kampfer.mindMap.MapsManager = kampfer.Class.extend({
 
-	init : function(mapName, appName) {
-		if(mapName) {
-			this._curMapName = mapName;
-		}
+	init : function(appName) {
 		if(appName) {	
 			this._appName = appName;
 		}
@@ -23,19 +20,8 @@ kampfer.mindMap.MapsManager = kampfer.Class.extend({
 	
 	_appName : 'mindMap',
 	
-	//正在使用的mindMap的名字。通过名字可以更快的查找数据。
-	_curMapName : null,
-	
 	getAppName : function() {
 		return this._appName;
-	},
-	
-	setCurMapName : function(name) {
-		this._curMapName = name;
-	},
-	
-	getCurMapName : function() {
-		return this._curMapName;
 	},
 	
 	//从localStorage中读取mindMap保存的数据。
@@ -55,12 +41,6 @@ kampfer.mindMap.MapsManager = kampfer.Class.extend({
 		var mapStore = this.getMapStorage();
 		if(name) {
 			return mapStore.maps[name];
-		}
-	},
-	
-	getCurMap : function() {
-		if(this._curMapName) {
-			return this.getMapData(this._curMapName);
 		}
 	},
 	
