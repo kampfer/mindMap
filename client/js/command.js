@@ -298,3 +298,8 @@ kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 		return true;
 	}
 });
+
+
+kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
+	execute : function() {}
+});
