@@ -15,17 +15,8 @@ kampfer.provide('mindMap.app');
 
 	kampfer.events.addEvent($('createNewMap'), 'click', function() {
 		var mapName = prompt('请输入map的名字');
-		if(!mapName) {
-			alert('map名不能为空！');
-			return;
-		}
 
-		var data = localManager.getMapData(mapName);
-
-		if(!data) {
-			data = mapName;
-		}
-		var manager = new kampfer.mindMap.MapManager(data, localManager);
+		var manager = new kampfer.mindMap.MapManager(mapName, localManager);
 
 		document.title = manager.getMapName();
 
@@ -35,7 +26,20 @@ kampfer.provide('mindMap.app');
 	});
 
 	kampfer.events.addEvent($('openMapInBroswer'), 'click', function() {
-		alert('未完成！');
+		var hint = '请选择map : ' + localManager.getMapList().join(',');
+		var mapName = prompt(hint);
+		if(mapName) {
+			var manager = new kampfer.mindMap.MapManager(mapName, localManager);
+
+			document.title = manager.getMapName();
+
+			var controller = new kampfer.mindMap.MapController(manager, localManager);
+			controller.render();
+			controller.monitorEvents();
+		} else if(mapName === '') {
+			alert('请输入map名字');
+			arguments.callee();
+		}
 	});
 
 	kampfer.events.addEvent($('openMapInJson'), 'click', function() {

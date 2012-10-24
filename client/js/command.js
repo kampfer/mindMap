@@ -227,9 +227,6 @@ kampfer.mindMap.command.SaveMap = kampfer.mindMap.command.Base.extend({
 	},
 
 	execute : function() {
-		if( !this.isAvailable() ) {
-			return;
-		}
 		if( this.isAvailable() ) {
 			this.mapManager.saveMap();
 		}

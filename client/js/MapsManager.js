@@ -60,6 +60,20 @@ kampfer.mindMap.MapsManager = kampfer.Class.extend({
 	getMapCount : function() {
 		var mapStorage = this.getMapStorage();
 		return mapStorage.maps._count;
+	},
+
+	//返回包含所有map名字的数组
+	getMapList : function() {
+		var mapStorage = this.getMapStorage();
+		if(mapStorage.maps._count > 0) {
+			var ret = [];
+			for(var map in mapStorage.maps) {
+				if( map !== '_count') {
+					ret.push(map);
+				}
+			}
+			return ret;
+		}
 	}
 
 });
