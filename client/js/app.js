@@ -18,6 +18,9 @@ kampfer.provide('mindMap.app');
 
 	kampfer.events.addEvent($('createNewMap'), 'click', function() {
 		var mapName = prompt('请输入map的名字');
+		if(mapName === null) {
+			return;
+		}
 
 		var manager = new kampfer.mindMap.MapManager(mapName, localManager);
 

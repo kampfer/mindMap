@@ -2,7 +2,7 @@ kampfer.addDependency('app.js', ['mindMap.app'], ['mindMap.MapsManager','mindMap
 kampfer.addDependency('base.js', [], []);
 kampfer.addDependency('branch.js', ['mindMap.Branch'], ['mindMap.Component','style','events']);
 kampfer.addDependency('caption.js', ['mindMap.Caption'], ['mindMap.Component','style','events']);
-kampfer.addDependency('command.js', ['mindMap.command'], ['Class','events','mindMap.Node']);
+kampfer.addDependency('command.js', ['mindMap.command'], ['Class','events','BlobBuilder','saveAs','mindMap.Node']);
 kampfer.addDependency('component.js', ['mindMap.Component'], ['mindMap.Composition','style']);
 kampfer.addDependency('composition.js', ['mindMap.Composition'], ['events.EventTarget']);
 kampfer.addDependency('config.js', ['mindMap','mindMap.config'], []);
@@ -13,6 +13,7 @@ kampfer.addDependency('lib/eventtarget.js', ['events.EventTarget'], ['events','C
 kampfer.addDependency('lib/string.js', ['string'], []);
 kampfer.addDependency('lib/style.js', ['style'], []);
 kampfer.addDependency('lib/support.js', ['browser.support'], []);
+kampfer.addDependency('lib/tools/BlobBuilder.min.js', ['BlobBuilder'], []);
 kampfer.addDependency('lib/tools/class.js', ['Class'], []);
 kampfer.addDependency('lib/tools/FileSaver.min.js', ['saveAs'], []);
 kampfer.addDependency('lib/tools/json2.js', ['JSON'], []);

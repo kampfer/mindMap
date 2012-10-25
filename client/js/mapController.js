@@ -28,6 +28,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('save', kampfer.mindMap.command.SaveMap) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('redo', kampfer.mindMap.command.Redo) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('undo', kampfer.mindMap.command.Undo) );
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('saveAsText', kampfer.mindMap.command.SaveAsText) );
 		
 		this.menuForNode = new kampfer.mindMap.Menu(this.map, this.currentMapManager, this);
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('create child', kampfer.mindMap.command.CreateNode) );

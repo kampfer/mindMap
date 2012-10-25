@@ -1,6 +1,8 @@
 /*global window kampfer console localStorage*/
 kampfer.require('Class');
 kampfer.require('events');
+kampfer.require('BlobBuilder');
+kampfer.require('saveAs');
 kampfer.require('mindMap.Node');
 
 kampfer.provide('mindMap.command');
@@ -299,4 +301,21 @@ kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 
 kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
 	execute : function() {}
+});
+
+
+kampfer.mindMap.command.SaveAsText = kampfer.mindMap.command.Base.extend({
+	init : function(map, mapManager) {
+		this.mapManager = mapManager;
+	},
+
+	execute : function() {
+		var content = this.mapManager.dataToJSON();
+		var mapName = this.mapManager.getMapName();
+		//The standard W3C File API BlobBuilder interface is not available in all browsers. 
+		//BlobBuilder.js is a cross-browser BlobBuilder implementation that solves this.
+		var bb = new kampfer.BlobBuilder();
+		bb.append(content);
+		kampfer.saveAs( bb.getBlob('text/plain;charset=utf-8'), mapName + '.txt' );
+	}
 });
