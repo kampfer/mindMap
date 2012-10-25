@@ -8,12 +8,13 @@
 		<script type="text/javascript" src="js/base.js"></script>
 	</head>
 	<body oncontextmenu="return false">
-		<p>welcome to kampfer's mindMap!</p>
+		<p style="line-height:2em;font-size:18px;">welcome to kampfer's mindMap!</p>
 		<ul>
 			<li><a href="javascript:void(0);" id="createNewMap">新建map</a></li>
 			<li><a href="javascript:void(0);" id="openMapInBroswer">打开localstore中的map</a></li>
 			<li><a href="javascript:void(0);" id="openMapInJson">打开本地保存的map文件</a></li>
 		</ul>
+		<div style="display:none;"><input type="file" name="mapJson" id="mapJson" /></div>
 		<script type="text/javascript">
 			kampfer.require('mindMap.app');
 		</script>

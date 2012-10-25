@@ -4,7 +4,7 @@ kampfer.require('events');
 kampfer.require('mindMap.Map');
 kampfer.require('mindMap.Node');
 kampfer.require('mindMap.Menu');
-kampfer.require('mindMap.commandManager');
+kampfer.require('mindMap.command');
 
 kampfer.provide('mindMap.MapController');
 

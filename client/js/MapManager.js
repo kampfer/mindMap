@@ -50,7 +50,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
 	_mapData : null,
 
-	_isModified : true,
+	_isModified : false,
 
 	isModified : function() {
 		return this._isModified;
