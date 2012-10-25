@@ -74,6 +74,24 @@ kampfer.mindMap.MapsManager = kampfer.Class.extend({
 			}
 			return ret;
 		}
+	},
+
+	hasMap : function(mapName) {
+		var mapStore = kampfer.store.get(this._appName);
+		if(mapStore) {
+			if(mapName in mapStore.maps) {
+				return true;
+			}
+		}
+		return false;
+	},
+
+	removeMap : function(mapName) {
+		if( this.hasMap(mapName) ) {
+			var mapStore = kampfer.store.get(this._appName);
+			delete mapStore.maps[mapName];
+			kampfer.store.set(this._appName, mapStore);
+		}
 	}
 
 });

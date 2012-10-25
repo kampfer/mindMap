@@ -160,6 +160,10 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 		},
 		
 		click : function(event) {
+			if( event.target.getAttribute('disabled') !== 'true' ) {
+				this.hide();
+			}
+
 			if( this.isMenuItem(event.target) ) {
 				this.fireEvent('clickitem', event);
 				this.fireEvent(event.target.innerHTML, event);
@@ -169,9 +173,6 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 					command.execute();
 					command.push2Stack();
 				}
-			}
-			if( event.target.getAttribute('disabled') !== 'true' ) {
-				this.hide();
 			}
 		}
 		

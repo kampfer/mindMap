@@ -42,7 +42,13 @@ kampfer.provide('mindMap.app');
 
 		var hint = '请选择map : ' + mapList.join(',');
 		var mapName = prompt(hint);
-		if(mapName) {
+		
+		if(mapName === '') {
+			alert('请输入map名字');
+			arguments.callee();
+		} else if( !localManager.hasMap(mapName) ) {
+			alert('map不存在');
+		} else {
 			var data = localManager.getMapData(mapName);
 			var manager = new kampfer.mindMap.MapManager(data, localManager);
 
@@ -53,9 +59,6 @@ kampfer.provide('mindMap.app');
 			controller.monitorEvents();
 
 			maping = true;
-		} else if(mapName === '') {
-			alert('请输入map名字');
-			arguments.callee();
 		}
 	});
 

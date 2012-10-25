@@ -195,13 +195,17 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		}
 	},
 	
-	renameMap : function(name) {
-		this._mapName = name;
+	setMapName : function(name) {
+		//this._mapName = name;
 		this._mapData.name = name;
 		this._isModified = true;
 	},
 
 	saveMap : function() {
+		if(this._mapName !== this._mapData.name) {
+			this._localStore.removeMap(this._mapName);
+			this._mapName = this._mapData.name;
+		}
 		this._localStore.saveMapToLocalStorage( this.getMapData() );
 		this._isModified = false;
 	},

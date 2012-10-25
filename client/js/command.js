@@ -319,3 +319,21 @@ kampfer.mindMap.command.SaveAsText = kampfer.mindMap.command.Base.extend({
 		kampfer.saveAs( bb.getBlob('text/plain;charset=utf-8'), mapName + '.txt' );
 	}
 });
+
+
+kampfer.mindMap.command.RenameMap = kampfer.mindMap.command.Base.extend({
+	init : function(map, mapManager) {
+		this.mapManager = mapManager;
+	},
+
+	execute : function() {
+		do {
+			var newName = prompt('请输入新map名:');
+		} while(newName === '')
+
+		if(newName) {
+			this.mapManager.setMapName(newName);
+			document.title = newName;
+		}
+	}
+});
