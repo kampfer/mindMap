@@ -35,6 +35,9 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('create child', kampfer.mindMap.command.CreateNode) );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('edit text') );
 		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('delete', kampfer.mindMap.command.DeleteNode) );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('copy', kampfer.mindMap.command.Copy) );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('cut', kampfer.mindMap.command.Cut) );
+		this.menuForNode.addItem( new kampfer.mindMap.MenuItem('paste', kampfer.mindMap.command.Paste) );
 
 		kampfer.events.addEvent(this.menuForNode, 'edit text', function() {
 			this.map.currentNode.getCaption().insertTextarea();

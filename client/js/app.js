@@ -2,6 +2,7 @@
 kampfer.require('mindMap.MapsManager');
 kampfer.require('mindMap.MapManager');
 kampfer.require('mindMap.MapController');
+kampfer.require('mindMap.command');
 kampfer.require('JSON');
 
 kampfer.provide('mindMap.app');
@@ -10,6 +11,11 @@ kampfer.provide('mindMap.app');
 
 	function $(id) {
 		return document.getElementById(id);
+	}
+
+	function doCeateNewMap(data, localstore) {
+		var command = new kampfer.mindMap.command.CreateNewMap(data, localstore);
+		command.execute();
 	}
 	
 	var localManager = new kampfer.mindMap.MapsManager('mindMap');
@@ -22,13 +28,7 @@ kampfer.provide('mindMap.app');
 			return;
 		}
 
-		var manager = new kampfer.mindMap.MapManager(mapName, localManager);
-
-		document.title = manager.getMapName();
-
-		controller = new kampfer.mindMap.MapController(manager, localManager);
-		controller.render();
-		controller.monitorEvents();
+		doCeateNewMap(mapName, localManager);
 
 		maping = true;
 	});
@@ -50,13 +50,7 @@ kampfer.provide('mindMap.app');
 			alert('map不存在');
 		} else {
 			var data = localManager.getMapData(mapName);
-			var manager = new kampfer.mindMap.MapManager(data, localManager);
-
-			document.title = manager.getMapName();
-
-			controller = new kampfer.mindMap.MapController(manager, localManager);
-			controller.render();
-			controller.monitorEvents();
+			doCeateNewMap(data, localManager);
 
 			maping = true;
 		}
@@ -75,11 +69,7 @@ kampfer.provide('mindMap.app');
 					var result = e.target.result;
 					var data = kampfer.JSON.parse(result);
 
-					var manager = new kampfer.mindMap.MapManager(data, localManager);
-					document.title = manager.getMapName();
-					controller = new kampfer.mindMap.MapController(manager, localManager);
-					controller.render();
-					controller.monitorEvents();
+					doCeateNewMap(data, localManager);
 				}
 				reader.readAsText(f);
 			}

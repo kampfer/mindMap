@@ -8,6 +8,9 @@ kampfer.provide('mindMap.MapsManager');
  * 负责维护localStorage
  * MapsManager提供的查询方法返回的都是对数据的引用，因此它们都是只读的。
  * 绝对不要直接对它们进行写操作。
+ * localStorage目前维护两部分内容:
+ * 1. map的信息
+ * 2. clipboard的信息
  */
 
 kampfer.mindMap.MapsManager = kampfer.Class.extend({
@@ -30,8 +33,13 @@ kampfer.mindMap.MapsManager = kampfer.Class.extend({
 		var mapStore = kampfer.store.get(this._appName);
 		if(!mapStore) {
 			mapStore = {};
+
 			mapStore.maps = {};
 			mapStore.maps._count = 0;
+
+			//保存复制,剪切的内容.只保存最新的一次操作的内容.
+			mapStore.clipboard = null;
+
 			kampfer.store.set(this._appName, mapStore);
 		}
 		return mapStore;
@@ -91,6 +99,21 @@ kampfer.mindMap.MapsManager = kampfer.Class.extend({
 			var mapStore = kampfer.store.get(this._appName);
 			delete mapStore.maps[mapName];
 			kampfer.store.set(this._appName, mapStore);
+		}
+	},
+
+	setClipboard : function(data) {
+		var mapStore = kampfer.store.get(this._appName);
+		if(mapStore && mapStore.clipboard) {
+			mapStore.clipboard = data;
+			kampfer.store.set(this._appName, mapStore);
+		}
+	},
+
+	getClipboard : function() {
+		var mapStore = kampfer.store.get(this._appName);
+		if(mapStore && mapStore.clipboard) {
+			return mapStore.clipboard;
 		}
 	}
 

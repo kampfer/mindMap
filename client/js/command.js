@@ -4,6 +4,8 @@ kampfer.require('events');
 kampfer.require('BlobBuilder');
 kampfer.require('saveAs');
 kampfer.require('mindMap.Node');
+kampfer.require('mindMap.MapController');
+kampfer.require('mindMap.MapManager');
 
 kampfer.provide('mindMap.command');
 
@@ -300,7 +302,18 @@ kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
-	execute : function() {}
+	init : function(data, localstore) {
+		this.data = data;
+		this.localstore = localstore;
+	},
+
+	execute : function() {
+		var manager = new kampfer.mindMap.MapManager(this.data, this.localstore);
+		document.title = manager.getMapName();
+		controller = new kampfer.mindMap.MapController(manager, this.localstore);
+		controller.render();
+		controller.monitorEvents();
+	}
 });
 
 
@@ -335,5 +348,32 @@ kampfer.mindMap.command.RenameMap = kampfer.mindMap.command.Base.extend({
 			this.mapManager.setMapName(newName);
 			document.title = newName;
 		}
+	}
+});
+
+
+kampfer.mindMap.command.Copy = kampfer.mindMap.command.Base.extend({
+});
+
+
+kampfer.mindMap.command.Cut = kampfer.mindMap.command.Base.extend({
+});
+
+
+kampfer.mindMap.command.Paste = kampfer.mindMap.command.Base.extend({
+	init : function(map, mapManager, mapController) {
+		this.map = map;
+		this.mapManager = mapManager;
+	},
+
+	isAvailable : function() {
+		if( this.mapManager._localStore.getClipboard() ) {
+			return true;
+		}
+		return false;
+	},
+
+	excute : function() {
+		var data = this.mapManager._localStore.getClipboard();
 	}
 });
