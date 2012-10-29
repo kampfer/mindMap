@@ -38,7 +38,7 @@ kampfer.mindMap.MapsManager = kampfer.Class.extend({
 			mapStore.maps._count = 0;
 
 			//保存复制,剪切的内容.只保存最新的一次操作的内容.
-			mapStore.clipboard = null;
+			mapStore.clipboard = [];
 
 			kampfer.store.set(this._appName, mapStore);
 		}

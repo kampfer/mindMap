@@ -76,8 +76,10 @@ kampfer.mindMap.command.CreateNode = kampfer.mindMap.command.Base.extend({
 			this.nodeData = this.mapManager.createNode(node);
 		}
 		this.mapManager.addNode(this.nodeData);
-		this.commandTargt.addChild( 
+		this.commandTargt.addChild(
 			new kampfer.mindMap.Node(this.nodeData, this.mapManager), true );
+
+		document.title = this.mapManager.getMapName() + '*';
 	},
 
 	unExecute : function() {
@@ -86,6 +88,8 @@ kampfer.mindMap.command.CreateNode = kampfer.mindMap.command.Base.extend({
 		}
 		this.commandTargt.removeChild(this.nodeData.id, true);
 		this.mapManager.deleteNode(this.nodeData.id);
+
+		document.title = this.mapManager.getMapName() + '*';
 	},
 
 	dispose : function() {
@@ -117,6 +121,8 @@ kampfer.mindMap.command.DeleteNode = kampfer.mindMap.command.Base.extend({
 		}
 		this.commandTarget.removeChild(this.nodeId, true);
 		this.mapManager.deleteNode(this.nodeId);
+
+		document.title = this.mapManager.getMapName() + '*';
 	},
 
 	unExecute : function() {
@@ -138,6 +144,8 @@ kampfer.mindMap.command.DeleteNode = kampfer.mindMap.command.Base.extend({
 			this.commandTarget.addChild( 
 				new kampfer.mindMap.Node(node, this.mapManager), true );
 		}
+
+		document.title = this.mapManager.getMapName() + '*';
 	},
 
 	dispose : function() {
@@ -167,6 +175,8 @@ kampfer.mindMap.command.SaveNodePosition = kampfer.mindMap.command.Base.extend({
 		//不直接使用map.currentNode是因为它会随时改变
 		this.map.getNode(this.nodeId).moveTo(this.newPos.left, this.newPos.top);
 		this.mapManager.setNodePosition(this.nodeId, this.newPos.left, this.newPos.top);
+
+		document.title = this.mapManager.getMapName() + '*';
 	},
 
 	unExecute : function() {
@@ -175,6 +185,8 @@ kampfer.mindMap.command.SaveNodePosition = kampfer.mindMap.command.Base.extend({
 		}
 		this.map.getNode(this.nodeId).moveTo(this.oriPos.left, this.oriPos.top);
 		this.mapManager.setNodePosition(this.nodeId, this.oriPos.left, this.oriPos.top);
+
+		document.title = this.mapManager.getMapName() + '*';
 	},
 
 	dispose : function() {
@@ -207,6 +219,8 @@ kampfer.mindMap.command.SaveNodeContent = kampfer.mindMap.command.Base.extend({
 		}
 		caption.setContent(this.newContent);
 		this.mapManager.setNodeContent(this.nodeId, this.newContent);
+
+		document.title = this.mapManager.getMapName() + '*';
 	},
 
 	unExecute : function() {
@@ -215,6 +229,8 @@ kampfer.mindMap.command.SaveNodeContent = kampfer.mindMap.command.Base.extend({
 		}
 		this.map.getNode(this.nodeId).getCaption().setContent(this.oriContent);
 		this.mapManager.setNodeContent(this.nodeId, this.oriContent);
+
+		document.title = this.mapManager.getMapName() + '*';
 	},
 
 	dispose : function() {
@@ -233,6 +249,8 @@ kampfer.mindMap.command.SaveMap = kampfer.mindMap.command.Base.extend({
 	execute : function() {
 		if( this.isAvailable() ) {
 			this.mapManager.saveMap();
+
+			document.title = this.mapManager.getMapName();
 		}
 	},
 
@@ -260,6 +278,8 @@ kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
 				return;
 			}
 		}
+
+		document.title = this.mapManager.getMapName() + '*';
 	},
 
 	level : 1,
@@ -287,6 +307,8 @@ kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 				return;
 			}
 		}
+
+		document.title = this.mapManager.getMapName() + '*';
 	},
 
 	level : 1,
@@ -313,6 +335,7 @@ kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
 		controller = new kampfer.mindMap.MapController(manager, this.localstore);
 		controller.render();
 		controller.monitorEvents();
+		return controller;
 	}
 });
 
@@ -346,17 +369,45 @@ kampfer.mindMap.command.RenameMap = kampfer.mindMap.command.Base.extend({
 
 		if(newName) {
 			this.mapManager.setMapName(newName);
-			document.title = newName;
+			document.title = newName + '*';
 		}
 	}
 });
 
 
 kampfer.mindMap.command.Copy = kampfer.mindMap.command.Base.extend({
+	init : function(map, mapManager) {
+		this.commandTarget = map.currentNode;
+		this.mapManager = mapManager;
+	},
+
+	execute : function() {
+		var nodeId = this.commandTarget.getId();
+		var data = this.mapManager.getNode(nodeId, true);
+		this.mapManager._localStore.setClipboard(data);
+	}
 });
 
 
 kampfer.mindMap.command.Cut = kampfer.mindMap.command.Base.extend({
+	init : function(map, mapManager, mapController) {
+		this.map = map;
+		this.mapManager = mapManager;
+		this.commandTarget = map.currentNode;
+	},
+
+	execute : function() {
+		var nodeId = this.commandTarget.getId();
+		var data = this.mapManager.getNode(nodeId, true);
+		this.mapManager._localStore.setClipboard(data);
+		//删除节点
+		this.commandTarget.getParent().removeChild(nodeId, true);
+		this.mapManager.deleteNode(nodeId);
+
+		document.title = this.mapManager.getMapName() + '*';
+	},
+
+	needPush : true
 });
 
 
@@ -364,6 +415,8 @@ kampfer.mindMap.command.Paste = kampfer.mindMap.command.Base.extend({
 	init : function(map, mapManager, mapController) {
 		this.map = map;
 		this.mapManager = mapManager;
+		this.mapController = mapController;
+		this.commandTarget = map.currentNode;
 	},
 
 	isAvailable : function() {
@@ -373,7 +426,38 @@ kampfer.mindMap.command.Paste = kampfer.mindMap.command.Base.extend({
 		return false;
 	},
 
-	excute : function() {
-		var data = this.mapManager._localStore.getClipboard();
+	execute : function() {
+		this.nodeData = this.mapManager._localStore.getClipboard();
+		var node;
+		if(this.commandTarget.getId() === 'map') {
+			var nodeData = this.nodeData.length ? this.nodeData[0] : this.nodeData;
+			var mapPosition = this.map.getPosition();
+			nodeData.offset.x = Math.abs(mapPosition.left) + this.mapController.lastPageX;
+			nodeData.offset.y = Math.abs(mapPosition.top) + this.mapController.lastPageY;
+		}
+		if(this.nodeData.length) {
+			for(var i = 0, l = this.nodeData.length; i < l; i++) {
+				node = this.mapManager.createNode(this.nodeData[i]);
+				this.mapManager.addNode(node);
+			}
+			//node类会自动添加后代节点，所以不在循环中添加addChild
+			this.commandTarget.addChild( 
+				new kampfer.mindMap.Node(this.nodeData[0], this.mapManager), true );
+		} else {
+			node = this.mapManager.createNode(this.nodeData);
+			this.mapManager.addNode(node);
+			this.commandTarget.addChild( 
+				new kampfer.mindMap.Node(node, this.mapManager), true );
+		}
+
+		document.title = this.mapManager.getMapName() + '*';
+	},
+
+	unExecute : function() {
+		var node = this.nodeData.length ? this.nodeData[0] : this.nodeData;
+		this.commandTargt.removeChild(node.id, true);
+		this.mapManager.deleteNode(node.id);
+
+		document.title = this.mapManager.getMapName() + '*';
 	}
 });

@@ -15,7 +15,7 @@ kampfer.provide('mindMap.app');
 
 	function doCeateNewMap(data, localstore) {
 		var command = new kampfer.mindMap.command.CreateNewMap(data, localstore);
-		command.execute();
+		return command.execute();
 	}
 	
 	var localManager = new kampfer.mindMap.MapsManager('mindMap');
@@ -28,7 +28,7 @@ kampfer.provide('mindMap.app');
 			return;
 		}
 
-		doCeateNewMap(mapName, localManager);
+		controller = doCeateNewMap(mapName, localManager);
 
 		maping = true;
 	});
@@ -50,7 +50,7 @@ kampfer.provide('mindMap.app');
 			alert('map不存在');
 		} else {
 			var data = localManager.getMapData(mapName);
-			doCeateNewMap(data, localManager);
+			controller = doCeateNewMap(data, localManager);
 
 			maping = true;
 		}
@@ -69,7 +69,9 @@ kampfer.provide('mindMap.app');
 					var result = e.target.result;
 					var data = kampfer.JSON.parse(result);
 
-					doCeateNewMap(data, localManager);
+					controller = doCeateNewMap(data, localManager);
+
+					maping = true;
 				}
 				reader.readAsText(f);
 			}
