@@ -37,9 +37,6 @@ kampfer.mindMap.MapsManager = kampfer.Class.extend({
 			mapStore.maps = {};
 			mapStore.maps._count = 0;
 
-			//保存复制,剪切的内容.只保存最新的一次操作的内容.
-			mapStore.clipboard = [];
-
 			kampfer.store.set(this._appName, mapStore);
 		}
 		return mapStore;
@@ -104,7 +101,7 @@ kampfer.mindMap.MapsManager = kampfer.Class.extend({
 
 	setClipboard : function(data) {
 		var mapStore = kampfer.store.get(this._appName);
-		if(mapStore && mapStore.clipboard) {
+		if(mapStore) {
 			mapStore.clipboard = data;
 			kampfer.store.set(this._appName, mapStore);
 		}
@@ -114,6 +111,14 @@ kampfer.mindMap.MapsManager = kampfer.Class.extend({
 		var mapStore = kampfer.store.get(this._appName);
 		if(mapStore && mapStore.clipboard) {
 			return mapStore.clipboard;
+		}
+	},
+
+	removeClipboard : function() {
+		var mapStore = kampfer.store.get(this._appName);
+		if(mapStore && mapStore.clipboard) {
+			delete mapStore.clipboard;
+			kampfer.store.set(this._appName, mapStore);
 		}
 	}
 

@@ -97,17 +97,24 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		if( kampfer.type(node) === 'object' ) {
 			var pid = node.parent,
 				id = node.id;
-			if(id) {
+			//node参数的id信息可能已经包含在内存中(mapData),所以需要先判断信息是否已经存在
+			if( id && !(id in this._mapData.nodes) ) {
+				this._isModified = true;
 				this._mapData.nodes[id] = node;
 			}
 			if(pid && this._mapData.nodes[pid]) {
 				if(!this._mapData.nodes[pid].children) {
 					this._mapData.nodes[pid].children = [];
 				}
+				//node参数的id信息可能已经包含在内存中(mapData),所以需要先判断信息是否已经存在
+				for(var i = 0, child; child = this._mapData.nodes[pid].children[i]; i++) {
+					if(child === id) {
+						return;
+					}
+				}
 				this._mapData.nodes[pid].children.push(id);
 			}
 		}
-		this._isModified = true;
 	},
 	
 	createNode : function(data) {

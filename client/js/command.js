@@ -420,18 +420,22 @@ kampfer.mindMap.command.Paste = kampfer.mindMap.command.Base.extend({
 	},
 
 	isAvailable : function() {
-		if( this.mapManager._localStore.getClipboard() ) {
-			return true;
+		var clipboard = this.mapManager._localStore.getClipboard();
+		if( !clipboard || clipboard.length <= 0) {
+			return false;
 		}
-		return false;
+		return true;
 	},
 
 	execute : function() {
 		this.nodeData = this.mapManager._localStore.getClipboard();
+		this.mapManager._localStore.removeClipboard();
+
 		var node;
 		if(this.commandTarget.getId() === 'map') {
 			var nodeData = this.nodeData.length ? this.nodeData[0] : this.nodeData;
 			var mapPosition = this.map.getPosition();
+			nodeData.parent = 'map';
 			nodeData.offset.x = Math.abs(mapPosition.left) + this.mapController.lastPageX;
 			nodeData.offset.y = Math.abs(mapPosition.top) + this.mapController.lastPageY;
 		}
