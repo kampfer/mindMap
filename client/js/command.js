@@ -463,5 +463,7 @@ kampfer.mindMap.command.Paste = kampfer.mindMap.command.Base.extend({
 		this.mapManager.deleteNode(node.id);
 
 		document.title = this.mapManager.getMapName() + '*';
-	}
+	},
+
+	needPush : true
 });
