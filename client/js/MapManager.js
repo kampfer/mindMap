@@ -68,6 +68,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		return this._mapName;
 	},
 	
+	//@return {array}
 	getNode : function(id) {
 		var node = this._mapData.nodes[id];
 		if(arguments[1] === true) {
