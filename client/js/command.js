@@ -444,13 +444,18 @@ kampfer.mindMap.command.Paste = kampfer.mindMap.command.Base.extend({
 		this.nodeData = this.mapManager._localStore.getClipboard();
 		this.mapManager._localStore.removeClipboard();
 
+		var nodeData = this.nodeData.length ? this.nodeData[0] : this.nodeData;
+		var pid = this.commandTarget.getId();
+		nodeData.parent = pid;
 		if(this.commandTarget.getId() === 'map') {
-			var nodeData = this.nodeData.length ? this.nodeData[0] : this.nodeData;
 			var mapPosition = this.map.getPosition();
-			nodeData.parent = 'map';
 			nodeData.offset.x = Math.abs(mapPosition.left) + this.mapController.lastPageX;
 			nodeData.offset.y = Math.abs(mapPosition.top) + this.mapController.lastPageY;
+		}  else {
+			nodeData.offset.x = 100;
+			nodeData.offset.y = 100;
 		}
+
 		if(this.nodeData.length) {
 			for(var i = 0, l = this.nodeData.length; i < l; i++) {
 				this.nodeData[i] = this.mapManager.createNode(this.nodeData[i]);

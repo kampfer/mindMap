@@ -150,21 +150,26 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		return node;
 	},
 	
+	//此方法会立即改变children数组的长度
 	deleteNode : function(id) {
 		var node = this._mapData.nodes[id],
 			parent = this._mapData.nodes[node.parent],
 			i, l;
-		if(node && node.children) {
-			for(i = 0, l = node.children.length; i < l; i++) {
-				this.deleteNode(node.children[i]);
-			}
-		}
+
 		delete this._mapData.nodes[id];
 		if(parent && parent.children) {
 			for(i = 0, l = parent.children.length; i < l; i++) {
 				if(parent.children[i] === id) {
 					parent.children.splice(i, 1);
 				}
+			}
+		}
+		
+		if(node && node.children) {
+			//执行deleteNode后会减小children.length的长度,所以这里不用length循环
+			//for(i = 0, l = node.children.length; i < l; i++) {
+			for(i = 0, l; l = node.children[i]; i++) {
+				this.deleteNode(l);
 			}
 		}
 		this._isModified = true;

@@ -169,7 +169,7 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 				this.fireEvent(event.target.innerHTML, event);
 
 				var command = this.getChild(event.target.id).getCommand();
-				if( command ) {
+				if( command && command.isAvailable() ) {
 					command.execute();
 					command.push2Stack();
 				}

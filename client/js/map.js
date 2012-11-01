@@ -50,6 +50,18 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 	},
 	
 	getWindowRect : function() {
+		/*
+		//无法明显提升性能
+		if(!this.winSize) {
+			this.winSize = {
+				width : Math.max(document.documentElement.clientWidth,
+					document.documentElement.clientWidth),
+				height : Math.max(document.documentElement.clientHeight,
+					document.documentElement.clientHeight)
+			};
+		}
+		return this.winSize;
+		*/
 		return {
 			width : Math.max(document.documentElement.clientWidth,
 				document.documentElement.clientWidth),
@@ -83,6 +95,6 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 			var child = children[i];
 			this.addChild( new kampfer.mindMap.Node(child, this.manager) );
 		}
-	},
+	}
 	
 });

@@ -210,7 +210,7 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	
 	initialState : 'mapActivated',
 	
-	//储存鼠标坐标,实现拖拽
+	//储存鼠标坐标
 	saveCursorPosition : function(event) {
 		var cur = this.map.currentNode;
 		var position = cur.getPosition();
@@ -218,6 +218,9 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		//光标到component边缘的距离
 		this.lastCursorX = event.pageX - position.left;
 		this.lastCursorY = event.pageY - position.top;
+		//保存光标点击时的位置
+		this.lastPageX = event.pageX;
+		this.lastPageY = event.pageY;
 	},
 	
 	getNodeFromElement : function(element) {
