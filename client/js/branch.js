@@ -40,7 +40,7 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 	},
 	
 	calculateSize : function() {
-		var offset = this.node.getOffset(),
+		var offset = this.node.getPosition(),
 			x = Math.abs(offset.left),
 			y = Math.abs(offset.top);
 		x = x <= 0 ? 10 : x;
@@ -53,7 +53,7 @@ kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
 	
 	calculatePosition : function() {
 		var quadrant = this.node.getQuadrant(),
-			offset = this.node.getOffset();
+			offset = this.node.getPosition();
 		
 		switch(quadrant) {
 			case 1 :

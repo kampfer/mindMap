@@ -52,14 +52,6 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		return this.data.content;
 	},
 	
-	getOffset : function() {
-		return this.getPosition();
-	},
-	
-	getBoundingClientRect : function() {
-		return this._element.getBoundingClientRect();
-	},
-	
 	getBranch : function() {
 		return this.getChild('branch-' + this._id);
 	},
@@ -143,6 +135,7 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		}
 	
 		this.setPosition(x, y);
+		//如果是node就同步更新branch视图
 		if(this.data.parent && this.data.parent !== 'map') {
 			this.getBranch().decorate();
 		}

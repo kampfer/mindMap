@@ -121,10 +121,12 @@ kampfer.mindMap.Component = kampfer.mindMap.Composition.extend({
 	
 	setPosition : function(left, top) {
 		if(this._element) {
-			kampfer.style.setStyle(this._element, {
-				left : left + 'px',
-				top : top + 'px'
-			});
+			//kampfer.style.setStyle(this._element, {
+			//	left : left + 'px',
+			//	top : top + 'px'
+			//});
+			this._element.style.left = left + 'px';
+			this._element.style.top = top + 'px';
 		}
 	},
 	

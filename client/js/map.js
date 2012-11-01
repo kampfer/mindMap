@@ -58,12 +58,9 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 		};
 	},
 	
-	move : function(x, y) {
-		var oriPosition = this.getPosition(),
-			winSize = this.getWindowRect();
-		
-		x += oriPosition.left;
-		y += oriPosition.top;
+	moveTo : function(x, y) {
+		//var startTime = +new Date();
+		var winSize = this.getWindowRect();
 
 		if(x > 0) {
 			x = 0;
@@ -77,6 +74,7 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 		}
 			
 		this.setPosition(x, y);
+		//console.log(+new Date() - startTime);
 	},
 
 	addChildren : function() {

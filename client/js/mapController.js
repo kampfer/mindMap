@@ -113,20 +113,15 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		mapFocus : {
 			
 			mousemove : function(event) {
-				var offsetX = event.pageX - this.lastPageX,
-					offsetY = event.pageY - this.lastPageY;
+				var offsetX = event.pageX - this.lastCursorX,
+					offsetY = event.pageY - this.lastCursorY;
 				
-				this.saveCursorPosition(event);
-				this.map.move(offsetX, offsetY);
+				this.map.moveTo(offsetX, offsetY);
 				
 				return 'mapFocus';
 			},
 			
 			mouseup : function() {
-				return 'mapActivated';
-			},
-
-			mouseout : function() {
 				return 'mapActivated';
 			}
 			
@@ -219,10 +214,8 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	saveCursorPosition : function(event) {
 		var cur = this.map.currentNode;
 		var position = cur.getPosition();
-		//map拖拽
-		this.lastPageX = event.pageX;
-		this.lastPageY = event.pageY;
-		//node拖拽
+		//拖拽
+		//光标到component边缘的距离
 		this.lastCursorX = event.pageX - position.left;
 		this.lastCursorY = event.pageY - position.top;
 	},
