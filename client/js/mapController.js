@@ -213,11 +213,15 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 	//储存鼠标坐标
 	saveCursorPosition : function(event) {
 		var cur = this.map.currentNode;
-		var position = cur.getPosition();
+		//var position = cur.getPosition();
 		//拖拽
 		//光标到component边缘的距离
-		this.lastCursorX = event.pageX - position.left;
-		this.lastCursorY = event.pageY - position.top;
+		// this.lastCursorX = event.pageX - position.left;
+		// this.lastCursorY = event.pageY - position.top;
+		// offsetLeft & offsetTop貌似比style.left快
+		var element = cur.getElement();
+		this.lastCursorX = event.pageX - element.offsetLeft;
+		this.lastCursorY = event.pageY - element.offsetTop;
 		//保存光标点击时的位置
 		this.lastPageX = event.pageX;
 		this.lastPageY = event.pageY;
