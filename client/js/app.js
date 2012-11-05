@@ -1,7 +1,5 @@
 /*global window,kampfer,console,localStorage*/
 kampfer.require('mindMap.MapsManager');
-kampfer.require('mindMap.MapManager');
-kampfer.require('mindMap.MapController');
 kampfer.require('mindMap.command');
 kampfer.require('JSON');
 
