@@ -393,8 +393,8 @@ kampfer.mindMap.command.Copy = kampfer.mindMap.command.Base.extend({
 		var nodeId = this.commandTarget.getId();
 		var data = kampfer.extend( true, [], this.mapManager.getNode(nodeId, true) );
 		for(var i = 0, d; d = data[i]; i++) {
+			//仅仅清空了自身保存的id,而没有清除parent的children属性中保存的id
 			d.id = null;
-			//data[i] = this.mapManager.createNode(d);
 		}
 		//copy的节点数据必须处理．保证node id唯一
 		this.mapManager._localStore.setClipboard(data);
