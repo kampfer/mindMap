@@ -1,26 +1,76 @@
+/**
+ * map.json
+ * map的数据结构采用树型结构, 大致如下所示:
+ * root
+ *	|---child1
+ *		|---child1-1
+ *			|---child1-1-1
+ *		|---child1-2
+ *	|---child2
+ *	|---child3
+ *
+ * 目前node支持如下属性:
+ * node
+ *	|---id
+ *	|---content
+ *	|---offset
+ *	|---parent
+ *	|---children
+ *
+ * 目前map只保存tree和name两个属性
+ * map
+ *	|---tree
+ *	|---name
+ */
 {
-	//节点信息
-	nodes : {
-		//根节点
-		root : {
-			//父节点列表
-			parent : null,
-			//子节点列表
-			children : [],
-			//内容（文字）
-			content : '',
-			//位置信息
-			offset : {
-				x : 10,
-				y : 10
+	"tree" : {
+		"id" : "map",
+		"children" : [
+			{
+				"id" : "child1",
+				"content" : "child1",
+				"offset" : {"x" : 100, "y" : 200},
+				"parent" : "map",
+				"children" : [
+					{
+						"id" : "child1-1",
+						"content" : "child1-1",
+						"offset" : {"x" : 100, "y" : 200},
+						"parent" : "child1",
+						"children" : [
+							{
+								"id" : "child1-1-1",
+								"content" : "child1-1-1",
+								"offset" : {"x" : 200, "y" : 200},
+								"parent" : "child1-1",
+								"children" : null
+							}
+						]
+					},
+					{
+						"id" : "child1-2",
+						"content" : "child1-2",
+						"offset" : {"x" : 200, "y" : 200},
+						"parent" : "child1",
+						"children" : null
+					}
+				]
 			},
-			//样式信息
-			style : 'root'
-		},
-		//其他节点
-		nodeOne : {},
-		nodeTwo : {}
+			{
+				"id" : "child2",
+				"content" : "child2",
+				"offset" : {"x" : 100, "y" : 100},
+				"parent" : "map",
+				"children" : null
+			},
+			{
+				"id" : "child3",
+				"content" : "child3",
+				"offset" : {"x" : 200, "y" : 100},
+				"parent" : "map",
+				"children" : null
+			}
+		]
 	},
-	//map配置信息
-	config : {}
+	"name" : "untitled"
 }

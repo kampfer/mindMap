@@ -391,13 +391,14 @@ kampfer.mindMap.command.Copy = kampfer.mindMap.command.Base.extend({
 
 	execute : function() {
 		var nodeId = this.commandTarget.getId();
-		var data = kampfer.extend( true, [], this.mapManager.getNode(nodeId, true) );
-		for(var i = 0, d; d = data[i]; i++) {
-			//仅仅清空了自身保存的id,而没有清除parent的children属性中保存的id
-			d.id = null;
-		}
+		var node = kampfer.extend( true, {}, this.mapManager.getNode(nodeId) );
 		//copy的节点数据必须处理．保证node id唯一
-		this.mapManager._localStore.setClipboard(data);
+		//清除节点的id
+		this.mapManager.traverseNode(node, function(node) {
+			node.id = null;
+		});
+		
+		this.mapManager._localStore.setClipboard(node);
 	}
 });
 
@@ -410,12 +411,32 @@ kampfer.mindMap.command.Cut = kampfer.mindMap.command.Base.extend({
 	},
 
 	execute : function() {
-		var nodeId = this.commandTarget.getId();
-		var data = this.mapManager.getNode(nodeId, true);
-		this.mapManager._localStore.setClipboard(data);
+		if(!this.nodeData) {
+			var nodeId = this.commandTarget.getId();
+			this.nodeData = this.mapManager.getNode(nodeId);
+
+			var data = kampfer.extend(true, {}, this.nodeData);
+			//清除节点的id
+			this.mapManager.traverseNode(data, function(node) {
+				node.id = null;
+			});
+			this.mapManager._localStore.setClipboard(data);
+		}
+
 		//删除节点
-		this.commandTarget.getParent().removeChild(nodeId, true);
-		this.mapManager.deleteNode(nodeId);
+		//不能使用commandTarget.getParent()。因为removeChild之后commandTarget到
+		//parent的引用就被断开了。redo undo时会报错。
+		this.map.getNode(this.nodeData.parent).removeChild(this.nodeData.id, true);
+		this.mapManager.deleteNode(this.nodeData.id);
+
+		document.title = this.mapManager.getMapName() + '*';
+	},
+
+	unExecute : function() {
+		this.mapManager.addNode(this.nodeData);
+		//node类会自动添加后代节点，所以不在循环中添加addChild
+		this.map.getNode(this.nodeData.parent).addChild(
+			new kampfer.mindMap.Node(this.nodeData, this.mapManager), true );
 
 		document.title = this.mapManager.getMapName() + '*';
 	},
@@ -441,36 +462,40 @@ kampfer.mindMap.command.Paste = kampfer.mindMap.command.Base.extend({
 	},
 
 	execute : function() {
-		this.nodeData = this.mapManager._localStore.getClipboard();
-		this.mapManager._localStore.removeClipboard();
-
-		var nodeData = this.nodeData.length ? this.nodeData[0] : this.nodeData;
-		var pid = this.commandTarget.getId();
-		nodeData.parent = pid;
-		if(this.commandTarget.getId() === 'map') {
-			var mapPosition = this.map.getPosition();
-			nodeData.offset.x = Math.abs(mapPosition.left) + this.mapController.lastPageX;
-			nodeData.offset.y = Math.abs(mapPosition.top) + this.mapController.lastPageY;
-		}  else {
-			nodeData.offset.x = 100;
-			nodeData.offset.y = 100;
-		}
-
-		if(this.nodeData.length) {
-			for(var i = 0, l = this.nodeData.length; i < l; i++) {
-				this.nodeData[i] = this.mapManager.createNode(this.nodeData[i]);
-				this.mapManager.addNode(this.nodeData[i]);
+		if(!this.nodeData) {
+			this.nodeData = this.mapManager._localStore.getClipboard();
+			//cut不会清除node的id，所以cut后再paste clipboard里的内容不能重复复制
+			//所以这里使用降级的方法:每次paste之后清空clipboard.
+			//这样做也会导致copy的内容无法重复复制。
+			//TODO clipboard of cut需要优化。
+			//this.mapManager._localStore.removeClipboard();
+		
+			//重置node的坐标，parent
+			var pid = this.commandTarget.getId();
+			this.nodeData.parent = pid;
+			if(this.commandTarget.getId() === 'map') {
+				var mapPosition = this.map.getPosition();
+				this.nodeData.offset.x = Math.abs(mapPosition.left) + this.mapController.lastPageX;
+				this.nodeData.offset.y = Math.abs(mapPosition.top) + this.mapController.lastPageY;
+			}  else {
+				this.nodeData.offset.x = 100;
+				this.nodeData.offset.y = 100;
 			}
-			//node类会自动添加后代节点，所以不在循环中添加addChild
-			this.commandTarget.addChild(
-				new kampfer.mindMap.Node(this.nodeData[0], this.mapManager), true );
 		}
+
+		this.nodeData = this.mapManager.createNode(this.nodeData);
+		this.mapManager.addNode(this.nodeData);
+
+		//node类会自动添加后代节点，所以不在循环中添加addChild
+		this.commandTarget.addChild(
+			new kampfer.mindMap.Node(this.nodeData, this.mapManager), true );
+		
 
 		document.title = this.mapManager.getMapName() + '*';
 	},
 
 	unExecute : function() {
-		var node = this.nodeData.length ? this.nodeData[0] : this.nodeData;
+		var node = this.nodeData;
 		this.commandTarget.removeChild(node.id, true);
 		this.mapManager.deleteNode(node.id);
 

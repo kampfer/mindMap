@@ -38,9 +38,12 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 	
 	addChildren : function() {
 		var children = this.manager.getChildren(this.data.id);
-		for(var i = 0, l = children.length; i < l; i++) {
-			var child = children[i];
-			this.addChild( new kampfer.mindMap.Node(child, this.manager) );
+		//没有child的node的children为null,所以这里先进行非空判断
+		if(children) {
+			for(var i = 0, l = children.length; i < l; i++) {
+				var child = children[i];
+				this.addChild( new kampfer.mindMap.Node(child, this.manager) );
+			}
 		}
 	},
 	

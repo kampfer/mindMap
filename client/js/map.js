@@ -91,9 +91,11 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 
 	addChildren : function() {
 		var children = this.manager.getChildren( this.getId() );
-		for(var i = 0, l = children.length; i < l; i++) {
-			var child = children[i];
-			this.addChild( new kampfer.mindMap.Node(child, this.manager) );
+		if(children) {
+			for(var i = 0, l = children.length; i < l; i++) {
+				var child = children[i];
+				this.addChild( new kampfer.mindMap.Node(child, this.manager) );
+			}
 		}
 	}
 	
