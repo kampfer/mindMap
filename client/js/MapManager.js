@@ -32,6 +32,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 			this._mapData.name = this._mapName = data.name;
 		}
 		this._localStore = localstore;
+		this._isModified = false;
 	},
 	
 	_mapData : {
@@ -42,7 +43,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		name : 'untitled'
 	},
 
-	_isModified : false,
+	_isModified : null,
 
 	//重命名map的时候先改变_mapName.保存时会检查_mapName和_mapData.name的一致性,
 	//两者如果不一致那么会删除localstore中名字叫_mapData.name的数据.并将_mapName
@@ -135,10 +136,14 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		}
 
 		//copy时会清除所有id，这里需要再设置一次
-		//TODO 清除了id，那么child的parent就不正确了
 		this.traverseNode(node, function(node) {
 			if(!node.id) {
 				node.id = this.generateUniqueId();
+			}
+			if(node.children) {
+				for(var i = 0, c; c = node.children[i]; i++) {
+					c.parent = node.id;
+				}
 			}
 		});
 

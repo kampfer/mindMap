@@ -25,10 +25,10 @@ kampfer.mindMap.MapController = kampfer.Class.extend({
 		
 		this.menuForMap = new kampfer.mindMap.Menu(this.map, this.currentMapManager, this);
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('create node', kampfer.mindMap.command.CreateNode) );
-		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('save', kampfer.mindMap.command.SaveMap) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('redo', kampfer.mindMap.command.Redo) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('undo', kampfer.mindMap.command.Undo) );
-		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('saveAsText', kampfer.mindMap.command.SaveAsText) );
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('save in broswer', kampfer.mindMap.command.SaveMap) );
+		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('save in disk', kampfer.mindMap.command.SaveAsText) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('renameMap', kampfer.mindMap.command.RenameMap) );
 		this.menuForMap.addItem( new kampfer.mindMap.MenuItem('paste', kampfer.mindMap.command.Paste) );
 		

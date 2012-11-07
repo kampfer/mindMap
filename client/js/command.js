@@ -417,6 +417,8 @@ kampfer.mindMap.command.Cut = kampfer.mindMap.command.Base.extend({
 
 			var data = kampfer.extend(true, {}, this.nodeData);
 			//清除节点的id
+			//使用已有数据创建节点时,如果没有id,会自动设置id,并且设置child的parent属性
+			//使之总是指向正确的父节点
 			this.mapManager.traverseNode(data, function(node) {
 				node.id = null;
 			});
@@ -464,11 +466,6 @@ kampfer.mindMap.command.Paste = kampfer.mindMap.command.Base.extend({
 	execute : function() {
 		if(!this.nodeData) {
 			this.nodeData = this.mapManager._localStore.getClipboard();
-			//cut不会清除node的id，所以cut后再paste clipboard里的内容不能重复复制
-			//所以这里使用降级的方法:每次paste之后清空clipboard.
-			//这样做也会导致copy的内容无法重复复制。
-			//TODO clipboard of cut需要优化。
-			//this.mapManager._localStore.removeClipboard();
 		
 			//重置node的坐标，parent
 			var pid = this.commandTarget.getId();
