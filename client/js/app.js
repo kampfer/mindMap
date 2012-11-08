@@ -44,6 +44,8 @@ kampfer.provide('mindMap.app');
 		if(mapName === '') {
 			alert('请输入map名字');
 			arguments.callee();
+		} else if(mapName === null) {
+			return;
 		} else if( !localManager.hasMap(mapName) ) {
 			alert('map不存在');
 		} else {

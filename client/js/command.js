@@ -42,7 +42,6 @@ kampfer.mindMap.command.Base = kampfer.Class.extend({
 });
 
 
-//createNode 不维护后代节点
 kampfer.mindMap.command.CreateNode = kampfer.mindMap.command.Base.extend({
 	init : function(map, mapManager, controller) {
 		this.map = map;
@@ -96,6 +95,7 @@ kampfer.mindMap.command.CreateNode = kampfer.mindMap.command.Base.extend({
 		this.nodeData = null;
 		this.map = null;
 		this.mapManger = null;
+		this.commandTarget = null;
 	}
 });
 
@@ -152,6 +152,7 @@ kampfer.mindMap.command.DeleteNode = kampfer.mindMap.command.Base.extend({
 		this.nodeData = null;
 		this.map = null;
 		this.mapManger = null;
+		this.commandTarget = null;
 	}
 });
 
