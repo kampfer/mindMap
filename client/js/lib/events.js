@@ -212,6 +212,10 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	
 	//将用户操作保存
 	handlers.push(handlerObj);
+
+	// 192行将elem的引用赋给了proxy.srcElement, 形成了循环引用.
+	// 所以这里清空elem.
+	elem = null;
 	
 	return handlerObj.key;
 };
