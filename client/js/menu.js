@@ -8,30 +8,47 @@ kampfer.provide('mindMap.MenuItem');
 
 kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	
-	init : function(content) {
-		this._content = content;
-		this._disabled = false;
+	init : function(caption, commandConstructor) {
+		this._caption = caption;
+		this._commandConstructor = commandConstructor;
 	},
 
+	_disabled : false,
+
 	getId : function() {
-		return this._content;
+		return this._caption;
 	},
 	
 	decorate : function() {
 		kampfer.dom.addClass(this._element, 'menu-item');
-		if(this._disabled) {
-			this.disable();
-		}
+		this._element.style.display = 'none';
 		
 		this._element.setAttribute('role', 'menuItem');
 		
 		this._element.id = this.getId();
 		
-		this._element.innerHTML = this._content;
+		this._element.innerHTML = this._caption;
 	},
 		
 	enterDocument : function() {
 		this._super( this._parent.getBody() );
+	},
+
+	show : function() {
+		var command = this.getCommand();
+		if(command) {
+			if( command.isAvailable() ) {
+				this.enable();
+			} else {
+				this.disable();
+			}
+		}
+		
+		this._element.style.display = '';
+	},
+
+	hide : function() {
+		this._element.style.display = 'none';
 	},
 	
 	disable : function() {
@@ -48,13 +65,29 @@ kampfer.mindMap.MenuItem = kampfer.mindMap.Component.extend({
 	
 	isDisabled : function() {
 		return this._disabled;
+	},
+
+	getCommand : function() {
+		if( this._commandConstructor ) {
+			var p = this.getParent();
+			this._command = new this._commandConstructor(p.view, p.model, p.controller);
+		}
+		return this._command;
+	},
+
+	dispose : function() {
+		this._command = null;
+		this._commandInstance = null;
 	}
 	
 });
 
 kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	
-	init : function() {
+	init : function(view, model, controller) {
+		this.view = view;
+		this.model = model;
+		this.controller = controller;
 		this.monitorEvents();
 	},
 	
@@ -69,8 +102,7 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 		this._super();
 		
 		this.setVisible(this._element, false);
-		this.setBodyVisible(false);
-		this.setLabelVisible(false);
+		this.setVisible(this._body, false);
 		
 		kampfer.dom.addClass(this._element, 'menu');
 		kampfer.dom.addClass(this._body, 'menu-body');
@@ -87,13 +119,19 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 	show : function() {
 		this.setVisible(this._element, true);
 		this.setVisible(this._body, true);
-		this.fireEvent('show');
+		this.eachChild(function(child) {
+			child.show();
+		});
+		this.fireEvent('shown');
 	},
 	
 	hide : function() {
 		this.setVisible(this._element, false);
 		this.setVisible(this._body, false);
-		this.fireEvent('hide');
+		this.eachChild(function(child) {
+			child.hide();
+		});
+		this.fireEvent('hided');
 	},
 	
 	setVisible : function(element, visible) {
@@ -103,14 +141,6 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 		
 		var display = visible ? '' : 'none';
 		element.style.display = display;
-	},
-	
-	setBodyVisible : function(visible) {
-		this.setVisible(this._body, visible);
-	},
-	
-	setLabelVisible : function(visible) {
-		this.setVisible(this._label, visible);
 	},
 	
 	action2Function : {
@@ -130,13 +160,19 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 		},
 		
 		click : function(event) {
-			if( this.isMenuItem(event.target) ) {
-				event.currentItem = event.target;
-				this.fireEvent('clickitem', event);
-				this.fireEvent(event.target.innerHTML, event);
-			}
 			if( event.target.getAttribute('disabled') !== 'true' ) {
 				this.hide();
+			}
+
+			if( this.isMenuItem(event.target) ) {
+				this.fireEvent('clickitem', event);
+				this.fireEvent(event.target.innerHTML, event);
+
+				var command = this.getChild(event.target.id).getCommand();
+				if( command && command.isAvailable() ) {
+					command.execute();
+					command.push2Stack();
+				}
 			}
 		}
 		
@@ -164,6 +200,12 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 			return true;
 		}
 		return false;
+	},
+
+	dispose : function() {
+		this.view = null;
+		this.model = null;
+		this.controller = null;
 	}
 	
 });

@@ -121,7 +121,7 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 			
 			if( this.hasNoChild() ) {
 				//this._children = null;
-				delete this._children[id];
+				delete this._children;
 			}
 		}
 		

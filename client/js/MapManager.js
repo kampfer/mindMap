@@ -16,67 +16,60 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
 	/**
 	 * 实例化一个MapManager对象。
-	 * 当传递给构建函数的参数是一个对象，那么这个对象被用作mindmap数据来源，
-	 * 如果传递的参数是一个字符串，那么会以字符串作为name，创建一个新的数据对象，
-	 * 如果以上两种情况都不符合，将使用模板对象
+	 * 当传递给构建函数的参数是一个对象，那么这个对象被用作mindmap数据来源
 	 * @param	name{string|object|null}
 	 */
-	init : function(data) {
-		var type = kampfer.type(data), name;
-		if( type !== 'object' ) {
-			if( type === 'string' ) {
-				name = data;
-			}
-			//data = kampfer.extend(true, {}, this.mapTemplate);
-			data = {
-				nodes : {
-					map : {
-						id : 'map',
-						children : null
-					}
-				},
-				name : {}
-			};
-			if( name ) {
-				data.name = name;
-			}
+	init : function(data, localstore) {
+		//将prototype中的默认数据深拷贝一份
+		this._mapData = kampfer.extend(true, {}, this._mapData);
+		//如果传入了数据,就使用新数据替换原始数据
+		if( kampfer.type(data) === 'object' ) {
+			this._mapData.oriData = data;
+			//map用于快速查找
+			this._mapData.nodeMap = this.parseTree(data.tree);
+			//tree结构更方便操作node，特别是操作多节点node
+			this._mapData.nodeTree = data.tree;
+			this._mapData.name = this._mapName = data.name;
 		}
-		this._mapName = data.name;
-		this._mapData = data;
+		this._localStore = localstore;
+		this._isModified = false;
 	},
 	
-	mapTemplate : {
-		nodes : {
-			root : {
-				id : 'root',
-				parent : '',
-				children : [],
-				content : 'root',
-				offset : {
-					x : '1000',
-					y : '1000'
-				},
-				style : 'root'
-			}
-		},
-		name : 'template',
-		config : {}
+	_mapData : {
+		nodeTree : {},
+		//map中保存的都是到node的引用
+		nodeMap : {},
+		oriData : null,
+		name : 'untitled'
 	},
-	
+
+	_isModified : null,
+
+	//重命名map的时候先改变_mapName.保存时会检查_mapName和_mapData.name的一致性,
+	//两者如果不一致那么会删除localstore中名字叫_mapData.name的数据.并将_mapName
+	//和_mapData.name同步. 这个过程需要同时保存新名字和旧名字,_mapName保存新名字
+	//_mapData.name是旧名字。
 	_mapName : null,
-	
-	_mapData : null,
-	
-	_left : null,
-	
-	_top: null,
-	
-	getMapData : function() {
-		return this._mapData;
+
+	//解析原始数据, 通过tree生成map
+	parseTree : function(data) {
+		var map = {};
+
+		//迭代生成节点的树型结构
+		this.traverseNode(data, function(node) {
+			map[node.id] = node;
+		});
+
+		return map;
+	},
+
+	isModified : function() {
+		return this._isModified;
 	},
 	
 	dataToJSON : function() {
-		return JSON.stringify(this._mapData);
+		return JSON.stringify({
+			tree:this._mapData.nodeTree, name:this._mapData.name});
 	},
 	
 	getMapName : function() {
@@ -84,43 +77,33 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	},
 	
 	getNode : function(id) {
-		var node = this._mapData.nodes[id];
-		if(arguments[1] === true) {
-			var nodes = this.getChildren(id, true);
-			nodes.unshift(node);
-			return nodes;
-		} else {
-			return node;
-		}
+		return this._mapData.nodeMap[id];
 	},
 	
 	getChildren : function(id) {
-		var node = this._mapData.nodes[id],
-			nodes = [];
-		if(node && node.children && node.children.length > 0) {
-			for(var i = 0, l = node.children.length; i < l; i++) {
-				nodes.push( this.getNode(node.children[i]) );
-				if(arguments[1] === true) {
-					nodes.push.apply(nodes, this.getChildren(node.children[i], true) );
-				}
-			}
-		}
-		return nodes;
+		var node = this.getNode(id);
+		return node.children;
 	},
 	
+	//如果有同id的node那么新的node不会被添加
 	addNode : function(node) {
-		if( kampfer.type(node) === 'object' ) {
-			var pid = node.parent,
-				id = node.id;
-			if(id) {
-				this._mapData.nodes[id] = node;
-			}
-			if(pid && this._mapData.nodes[pid]) {
-				if(!this._mapData.nodes[pid].children) {
-					this._mapData.nodes[pid].children = [];
+		if( kampfer.type(node) === 'object' && !this.getNode(node.id) ) {
+			var parent = this.getNode(node.parent);
+			//add node to nodeTree
+			if(parent) {
+				if(!parent.children) {
+					parent.children = [];
 				}
-				this._mapData.nodes[pid].children.push(id);
+				parent.children.push(node);
 			}
+			//add node to nodeMap
+			this.traverseNode(node, function(node) {
+				if( !(node.id in this._mapData.nodeMap) ) {
+					this._mapData.nodeMap[node.id] = node;
+				}
+			});
+			
+			this._isModified = true;
 		}
 	},
 	
@@ -133,9 +116,10 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 			offset : {
 				x : 100,
 				y : 100
-			},
-			style : null
-		}, type = kampfer.type(data);
+			}
+		}, 
+		type = kampfer.type(data);
+
 		if( type === 'object' ) {
 			for(var attr in node) {
 				if(attr in data) {
@@ -150,64 +134,102 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		} else if( type === 'string' ) {
 			node.parent = data;
 		}
-		if(!node.id) {
-			node.id = this.generateUniqueId();
-		}
+
+		//copy时会清除所有id，这里需要再设置一次
+		this.traverseNode(node, function(node) {
+			if(!node.id) {
+				node.id = this.generateUniqueId();
+			}
+			if(node.children) {
+				for(var i = 0, c; c = node.children[i]; i++) {
+					c.parent = node.id;
+				}
+			}
+		});
+
 		return node;
 	},
 	
+	//此方法会立即改变children数组的长度
 	deleteNode : function(id) {
-		var node = this._mapData.nodes[id],
-			parent = this._mapData.nodes[node.parent],
-			i, l;
-		if(node && node.children) {
-			for(i = 0, l = node.children.length; i < l; i++) {
-				this.deleteNode(node.children[i]);
-			}
+		var node = this.getNode(id);
+
+		if(node) {
+			var parent = this.getNode(node.parent);
 		}
-		delete this._mapData.nodes[id];
 		if(parent && parent.children) {
-			for(i = 0, l = parent.children.length; i < l; i++) {
-				if(parent.children[i] === id) {
+			//delete node from tree
+			for(var i = 0, c; c = parent.children[i]; i++) {
+				if(c.id === id) {
 					parent.children.splice(i, 1);
+					break;
 				}
 			}
+			//delete node from map
+			this.traverseNode(node, function(node) {
+				delete this._mapData.nodeMap[node.id];
+			});
+			
 		}
-	},
 
-	/**
-	 * 克隆节点. 此方法会同时返回子节点的拷贝. 此方法属于深克隆, 
-	 * 所有的节点副本都是全新生成的.
-	 */
-	cloneNode : function(id) {},
+		this._isModified = true;
+
+		return node;
+	},
 	
 	setNodeContent : function(id, text) {
-		this._mapData.nodes[id].content = text;
+		var node = this.getNode(id);
+		node.content = text;
+		this._isModified = true;
+	},
+
+	getNodeContent : function(id) {
+		var node = this.getNode(id);
+		return node.content;
 	},
 	
 	setNodePosition : function(id, x, y) {
 		if(kampfer.type(id) === 'object') {
 			id = id.id;
 		}
-		this._mapData.nodes[id].offset.x = x;
-		this._mapData.nodes[id].offset.y = y;
+		var node = this.getNode(id);
+		node.offset.x = x;
+		node.offset.y = y;
+		this._isModified = true;
 	},
-	
-	renameMap : function(name) {
-		this._mapName = name;
-		this._mapData.name = name;
-	},
-	
-	setMapPosition : function(left, top) {
-		this._left = left;
-		this._top = top;
-	},
-	
-	getMapPosition : function() {
+
+	//传值
+	getNodePosition : function(id) {
+		var node = this.getNode(id);
 		return {
-			left : this._left,
-			top : this._top
-		};
+			left : node.offset.x,
+			top : node.offset.y
+		}
+	},
+	
+	setMapName : function(name) {
+		this._mapName = name;
+		this._isModified = true;
+	},
+
+	saveMap : function() {
+		//如果map被重命名,那么需要删除旧map
+		if(this._mapName !== this._mapData.name) {
+			this._localStore.removeMap(this._mapData.name);
+			this._mapData.name = this._mapName;
+		}
+		this._localStore.saveMapToLocalStorage(
+			{tree:this._mapData.nodeTree, name:this._mapData.name});
+		this._isModified = false;
+	},
+
+	traverseNode : function(node, callback) {
+		if(node.children) {
+			for(var i = 0, child; child = node.children[i]; i++) {
+				this.traverseNode(child, callback);
+			}
+		}
+		callback.call(this, node);
 	},
 	
 	/*
@@ -229,6 +251,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	
 	dispose : function() {
 		this._mapData = null;
+		this._localStore = null;
 	}
 	
 });

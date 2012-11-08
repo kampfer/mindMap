@@ -8,6 +8,7 @@ kampfer.require('mindMap.Caption');
 
 kampfer.provide('mindMap.Node');
 
+//TODO node should take care of its position itself
 kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 	
 	init : function(data, manager) {
@@ -37,9 +38,12 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 	
 	addChildren : function() {
 		var children = this.manager.getChildren(this.data.id);
-		for(var i = 0, l = children.length; i < l; i++) {
-			var child = children[i];
-			this.addChild( new kampfer.mindMap.Node(child, this.manager) );
+		//没有child的node的children为null,所以这里先进行非空判断
+		if(children) {
+			for(var i = 0, l = children.length; i < l; i++) {
+				var child = children[i];
+				this.addChild( new kampfer.mindMap.Node(child, this.manager) );
+			}
 		}
 	},
 	
@@ -49,14 +53,6 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 	
 	getContent : function() {
 		return this.data.content;
-	},
-	
-	getOffset : function() {
-		return this.getPosition();
-	},
-	
-	getBoundingClientRect : function() {
-		return this._element.getBoundingClientRect();
 	},
 	
 	getBranch : function() {
@@ -142,6 +138,7 @@ kampfer.mindMap.Node = kampfer.mindMap.Component.extend({
 		}
 	
 		this.setPosition(x, y);
+		//如果是node就同步更新branch视图
 		if(this.data.parent && this.data.parent !== 'map') {
 			this.getBranch().decorate();
 		}

@@ -202,6 +202,8 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 		events.proxy._count++;
 		
 		if(elem.addEventListener) {
+			//使用代理函数会屏蔽很多浏览器操作
+			//TODO 考虑调整代码
 			elem.addEventListener(type, proxy, false);
 		} else if(elem.attachEvent) {
 			elem.attachEvent("on" + type, proxy);
@@ -210,6 +212,10 @@ kampfer.events.addEvent = function(elem, type, handler, scope) {
 	
 	//将用户操作保存
 	handlers.push(handlerObj);
+
+	// 192行将elem的引用赋给了proxy.srcElement, 形成了循环引用.
+	// 所以这里清空elem.
+	elem = null;
 	
 	return handlerObj.key;
 };

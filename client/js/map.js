@@ -5,10 +5,12 @@ kampfer.require('mindMap.Node');
 
 kampfer.provide('mindMap.Map');
 
+
 kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 	
 	init : function(manager) {
 		this.manager = manager;
+		this.currentNode = this;
 
 		this.addChildren();
 	},
@@ -29,7 +31,7 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 			left : winSize.width / 2 - 1000 + 'px',
 			top : winSize.height / 2 - 1000 + 'px'
 		});
-		this.manager.setMapPosition(winSize.width / 2 - 1000, winSize.height / 2 - 1000);
+		//this.manager.setMapPosition(winSize.width / 2 - 1000, winSize.height / 2 - 1000);
 	},
 	
 	getNode : function(id) {
@@ -48,6 +50,18 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 	},
 	
 	getWindowRect : function() {
+		/*
+		//无法明显提升性能
+		if(!this.winSize) {
+			this.winSize = {
+				width : Math.max(document.documentElement.clientWidth,
+					document.documentElement.clientWidth),
+				height : Math.max(document.documentElement.clientHeight,
+					document.documentElement.clientHeight)
+			};
+		}
+		return this.winSize;
+		*/
 		return {
 			width : Math.max(document.documentElement.clientWidth,
 				document.documentElement.clientWidth),
@@ -56,12 +70,9 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 		};
 	},
 	
-	move : function(x, y) {
-		var oriPosition = this.getPosition(),
-			winSize = this.getWindowRect();
-		
-		x += oriPosition.left;
-		y += oriPosition.top;
+	moveTo : function(x, y) {
+		//var startTime = +new Date();
+		var winSize = this.getWindowRect();
 
 		if(x > 0) {
 			x = 0;
@@ -75,14 +86,17 @@ kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
 		}
 			
 		this.setPosition(x, y);
+		//console.log(+new Date() - startTime);
 	},
 
 	addChildren : function() {
 		var children = this.manager.getChildren( this.getId() );
-		for(var i = 0, l = children.length; i < l; i++) {
-			var child = children[i];
-			this.addChild( new kampfer.mindMap.Node(child, this.manager) );
+		if(children) {
+			for(var i = 0, l = children.length; i < l; i++) {
+				var child = children[i];
+				this.addChild( new kampfer.mindMap.Node(child, this.manager) );
+			}
 		}
-	},
+	}
 	
 });
