@@ -1,2 +1,0 @@
-﻿1. 子component的z-index有点问题，当移动z-index较低的component经过z-index较高的component的时候，z-index较低的component会失去控制。
-2. 使用鼠标移动node时，如果移动太快，node会失去焦点。程序效率问题，需要优化。
