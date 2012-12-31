@@ -24,28 +24,62 @@ div.node {
 }
 
 div.node-caption {
-    position: absolute;
     min-width: 100px;
     max-width: 200px;
-    background-color: #CCDDEE;
-    border-color: #8BA2C0 #5890BF #4F93CA #768FA5;
-    border-radius: 16px 16px 16px 16px;
-    border-style: solid;
-    border-width: 2px;
-    color: #FFFFFF;
-    font: 12px/1.5 "Tahoma", Geneva, sans-serif;
     padding:10px;
-    text-shadow: 1px 2px 2px rgba(10, 10, 10, 0.5);
     z-index: 99;
-    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    border-radius : 6px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: black;
+    color: white;
+}
+
+div.node-caption.black {
+    border-color: #222 #222 black;
+    background-color: #363636;
+    background-image: -webkit-linear-gradient(top, #444, #222);
+    background-repeat: repeat-x;
+}
+
+div.node-caption.red {
+    border-color: #BD362F #BD362F #802420;
+    background-color: #DA4F49;
+    background-image: -webkit-linear-gradient(top, #EE5F5B, #BD362F);
+    background-repeat: repeat-x;
+}
+
+div.node-caption.orange {
+    border-color: #F89406 #F89406 #AD6704;
+    background-color: #FAA732;
+    background-image: -webkit-linear-gradient(top, #FBB450, #F89406);
+    background-repeat: repeat-x;
+}
+
+div.node-caption.green {
+    border-color: #51A351 #51A351 #387038;
+    background-color: #5BB75B;
+    background-image: -webkit-linear-gradient(top, #62C462, #51A351);
+    background-repeat: repeat-x;
+}
+
+div.node-caption.blue {
+    border-color: #2F96B4 #2F96B4 #1F6377;
+    background-color: #2F96B4;
+    background-image: -webkit-linear-gradient(top, #5BC0DE, #2F96B4);
+    background-repeat: repeat-x;
+}
+
+div.node-caption.dark-blue {
+    border-color: #04C #04C #002A80;
+    background-color: #04C;
+    background-image: -webkit-linear-gradient(top, #08C, #04C);
+    background-repeat: repeat-x;
 }
 
 div.node canvas{
     position:absolute;
-}
-
-textarea.node-editor{
-    width:100px;
 }
 
 body > .navbar .brand {
