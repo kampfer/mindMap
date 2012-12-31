@@ -9,52 +9,60 @@
         <link rel="stylesheet" type="text/css" href="../css/app.css">
     </head>
     <body>
+        <!-- Navbar
+        ================================================== -->
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
-                <div class="container">
-                    <a class="brand" href="./index.html">kampfer's mindMap</a>
-                    <div class="nav-collapse collapse">
-                        <ul class="nav">
-                            <li class="dropdown active">
-                                <a href="#" class="dropdown-toggle">
-                                    <i class="icon-file"></i> File<b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu" style="display:block;">
-                                    <li><a href="#">Action</a></li>
-                                    <li><a href="#">Another action</a></li>
-                                    <li><a href="#">Something else here</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                    <li><a href="#">One more separated link</a></li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle">
-                                    <i class="icon-pencil"></i> Edit<b class="caret"></b>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                <a class="brand" href="./index.html">kampfer's mindMap</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="dropdown active">
+                            <a href="#" class="dropdown-toggle">
+                                File<b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu" style="display:block;">
+                                <li><a href="#"><i class="icon-ban-circle"></i> Action</a></li>
+                                <li><a href="#"><i class="icon-ban-circle"></i> Another action</a></li>
+                                <li><a href="#"><i class="icon-ban-circle"></i> Something else here</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#"><i class="icon-ban-circle"></i> Separated link</a></li>
+                                <li><a href="#"><i class="icon-ban-circle"></i> One more separated link</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle">
+                                Edit<b class="caret"></b>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-        <div class="container" style="height:100%;">
-            <div class="dropdown clearfix">
-                <ul class="dropdown-menu" role="menu" style="display:block;left:300px;top:200px;">
-                    <li><a tabindex="-1" href="#"><i class="icon-ban-circle"></i> new file</a></li>
-                    <li><a tabindex="-1" href="#"><i class="icon-eject"></i> Another action</a></li>
-                    <li><a tabindex="-1" href="#"><i class="icon-plus"></i> Something else here</a></li>
-                    <li class="divider"></li>
-                    <li class="dropdown-submenu">
-                        <a tabindex="-1" href="#"><i class="icon-ban-circle"></i> Separated link</a>
-                        <ul class="dropdown-menu">
-                            <li><a tabindex="-1" href="#"><i class="icon-exclamation-sign"></i> open new file</a></li>
-                            <li><a tabindex="-1" href="#"><i class="icon-leaf"></i> open new file</a></li>
-                            <li><a tabindex="-1" href="#"><i class="icon-folder-close"></i> open new file</a></li>
-                        </ul>
-                    </li>
-                </ul>
+
+        <!-- MapContainer
+        ================================================== -->
+        <div class="map-container">
+            <div class="node" style="position:absolute;left:600px;top:200px;">
+                <div class="node-caption">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
+                <canvas></canvas>
             </div>
         </div>
+
+        <!-- menu
+        ================================================== -->
+        <ul class="dropdown-menu" role="menu" style="display:block;left:300px;top:200px;">
+            <li><a tabindex="-1" href="#"><i class="icon-ban-circle"></i> new file</a></li>
+            <li><a tabindex="-1" href="#"><i class="icon-eject"></i> Another action</a></li>
+            <li><a tabindex="-1" href="#"><i class="icon-plus"></i> Something else here</a></li>
+            <li class="divider"></li>
+            <li class="dropdown-submenu">
+                <a tabindex="-1" href="#"><i class="icon-ban-circle"></i> Separated link</a>
+                <ul class="dropdown-menu">
+                    <li><a tabindex="-1" href="#"><i class="icon-exclamation-sign"></i> open new file</a></li>
+                    <li><a tabindex="-1" href="#"><i class="icon-leaf"></i> open new file</a></li>
+                    <li><a tabindex="-1" href="#"><i class="icon-folder-close"></i> open new file</a></li>
+                </ul>
+            </li>
+        </ul>
     </body>
 </html>
