@@ -10,7 +10,33 @@ body{
     background:url('../img/bg.gif') repeat;
 }
 
-.map-container{
+.app-vertical-nav{
+    left:10px;
+    top:10px;
+    position:fixed;
+    z-index:9999;
+}
+
+.app-vertical-nav > .dropdown-menu {
+    min-width:auto;
+    display: block;
+}
+
+.app-vertical-nav > .dropdown-menu li > a {
+    padding:3px 10px;
+}
+
+.app-vertical-nav > .dropdown-menu .dropdown-submenu > a:after {
+    border-color: transparent transparent transparent #000;
+    margin-right: -7px;
+    margin-top: 3px;
+}
+
+.app-vertical-nav > .dropdown-menu .dropdown-submenu:hover > a:after {
+    border-left-color: #fff;
+}
+
+.map-container {
     position: relative;
 }
 
@@ -18,12 +44,12 @@ body{
     position:absolute;
 }
 
-div.node {
+div.node{
     position: absolute;
     cursor: default; 
 }
 
-div.node-caption {
+div.node-caption{
     min-width: 100px;
     max-width: 200px;
     padding:10px;
@@ -36,42 +62,42 @@ div.node-caption {
     color: white;
 }
 
-div.node-caption.black {
+div.node-caption.black{
     border-color: #222 #222 black;
     background-color: #363636;
     background-image: -webkit-linear-gradient(top, #444, #222);
     background-repeat: repeat-x;
 }
 
-div.node-caption.red {
+div.node-caption.red{
     border-color: #BD362F #BD362F #802420;
     background-color: #DA4F49;
     background-image: -webkit-linear-gradient(top, #EE5F5B, #BD362F);
     background-repeat: repeat-x;
 }
 
-div.node-caption.orange {
+div.node-caption.orange{
     border-color: #F89406 #F89406 #AD6704;
     background-color: #FAA732;
     background-image: -webkit-linear-gradient(top, #FBB450, #F89406);
     background-repeat: repeat-x;
 }
 
-div.node-caption.green {
+div.node-caption.green{
     border-color: #51A351 #51A351 #387038;
     background-color: #5BB75B;
     background-image: -webkit-linear-gradient(top, #62C462, #51A351);
     background-repeat: repeat-x;
 }
 
-div.node-caption.blue {
+div.node-caption.blue{
     border-color: #2F96B4 #2F96B4 #1F6377;
     background-color: #2F96B4;
     background-image: -webkit-linear-gradient(top, #5BC0DE, #2F96B4);
     background-repeat: repeat-x;
 }
 
-div.node-caption.dark-blue {
+div.node-caption.dark-blue{
     border-color: #04C #04C #002A80;
     background-color: #04C;
     background-image: -webkit-linear-gradient(top, #08C, #04C);
@@ -82,7 +108,7 @@ div.node canvas{
     position:absolute;
 }
 
-body > .navbar .brand {
+body > .navbar .brand{
   padding-right: 0;
   padding-left: 0;
   margin-left: 20px;
