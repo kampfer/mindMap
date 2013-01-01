@@ -13,12 +13,12 @@
         ================================================== -->
         <div class="app-vertical-nav">
 	    	<ul class="dropdown-menu">
-	            <li><a tabindex="-1" href="#"><i class="icon-ban-circle"></i></a></li>
+	            <li><a tabindex="-1" href="#"><i class="icon-file"></i></a></li>
 	            <li><a tabindex="-1" href="#"><i class="icon-eject"></i></a></li>
 	            <li><a tabindex="-1" href="#"><i class="icon-plus"></i></a></li>
 	            <li class="divider"></li>
 	            <li class="dropdown-submenu">
-	                <a tabindex="-1" href="#"><i class="icon-ban-circle"></i></a>
+	                <a tabindex="-1" href="#"><i class="icon-file"></i></a>
 	                <ul class="dropdown-menu">
 	                    <li><a tabindex="-1" href="#"><i class="icon-exclamation-sign"></i> open new file</a></li>
 	                    <li><a tabindex="-1" href="#"><i class="icon-leaf"></i> open new file</a></li>
@@ -30,7 +30,7 @@
 
         <!-- MapContainer
         ================================================== -->
-        <div class="map-container">
+        <div class="app-container">
             <div class="node" style="right:10px;top:10px;">
                 <div class="node-caption black">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
                 <canvas></canvas>
@@ -39,33 +39,136 @@
                 <div class="node-caption red">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
                 <canvas></canvas>
             </div>
-            <div class="node" style="right:10px;top:190px;">
+            <div class="node" style="right:240px;top:10px;">
                 <div class="node-caption orange">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
                 <canvas></canvas>
             </div>
-            <div class="node" style="right:240px;top:10px;">
+            <div class="node" style="right:240px;top:100px;">
                 <div class="node-caption green">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
                 <canvas></canvas>
             </div>
-            <div class="node" style="right:240px;top:100px;">
+            <div class="node" style="right:470px;top:10px;">
                 <div class="node-caption blue">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
                 <canvas></canvas>
             </div>
-            <div class="node" style="right:240px;top:190px;">
+            <div class="node" style="right:470px;top:100px;">
                 <div class="node-caption dark-blue">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
                 <canvas></canvas>
             </div>
         </div>
 
+        <!-- footer
+        ================================================== -->
+        <div class="app-footer">
+            <div class="container">
+                <!--
+                © 2011-2012 l.w.kampfer@gmail.com
+                -->
+                <p>© 2011-2012 <a href="#">kampfer</a></p>
+                <a href="#" class="brand">Kampfer's MindMap</a>
+            </div>
+        </div>
+
         <!-- dialog
         ================================================== -->
-        <div style="left:400px;top:10px;" class="modal">
+        <div style="left:350px;top:10px;" class="modal">
             <div class="modal-header">
                 <button class="close" type="button">×</button>
-                <h3>Modal header</h3>
+                <h3>Please choose a file:</h3>
             </div>
             <div class="modal-body">
-                <p>One fine body…</p>
+                <p class="text-info">There are 13 maps in your localstorage.</p>
+                <table class="table table-condensed table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>map name</th>
+                            <th>lastModified</th>
+                        </tr>
+                    </thead>    
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap1</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr class="info">
+                            <td>3</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap3</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>14</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>15</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                        <tr>
+                            <td>16</td>
+                            <td><i class="icon-file"></i> kampfer's mindmap2</td>
+                            <td>2012-12-12</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <a class="btn" href="#">Close</a>

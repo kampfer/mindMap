@@ -36,12 +36,45 @@ body{
     border-left-color: #fff;
 }
 
-.map-container {
+.app-container {
     position: relative;
 }
 
-#map{
-    position:absolute;
+.app-footer{
+    position: fixed;
+    left:0px;
+    bottom:0px;
+    width:100%;
+    height: 40px;
+    line-height: 40px;
+    background-color: #000;
+    text-align: center;
+}
+
+.app-footer:after{
+    clear: both;
+}
+
+.app-footer a{
+    color: #333;
+}
+
+.app-footer a:hover{
+    text-decoration: none;
+    color: #fff;
+}
+
+.app-footer .brand{
+    color: #000000;
+    font-weight: bold;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.125);;
+    -webkit-transition: all .2s linear;
+    -moz-transition: all .2s linear;
+    transition: all .2s linear;
+    font-size: 20px;
+    position: absolute;
+    right: 90px;
+    top: 0px;
 }
 
 div.node{
@@ -106,17 +139,4 @@ div.node-caption.dark-blue{
 
 div.node canvas{
     position:absolute;
-}
-
-body > .navbar .brand{
-  padding-right: 0;
-  padding-left: 0;
-  margin-left: 20px;
-  float: right;
-  font-weight: bold;
-  color: #000;
-  text-shadow: 0 1px 0 rgba(255,255,255,.1), 0 0 30px rgba(255,255,255,.125);
-  -webkit-transition: all .2s linear;
-     -moz-transition: all .2s linear;
-          transition: all .2s linear;
 }
