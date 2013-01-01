@@ -12,7 +12,7 @@ body{
 
 .app-vertical-nav{
     left:10px;
-    top:10px;
+    top:50px;
     position:fixed;
     z-index:9999;
 }
@@ -139,4 +139,13 @@ div.node-caption.dark-blue{
 
 div.node canvas{
     position:absolute;
+}
+
+.modal .app-file-list{
+    max-height: 200px;
+    overflow: auto;
+}
+
+.modal .app-file-name{
+    padding-top: 20px;
 }
