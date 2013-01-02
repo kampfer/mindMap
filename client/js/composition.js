@@ -70,7 +70,7 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 	
 	/**
 	 * 添加子对象。
- 	 * @param {kampfer.mindMap.Composition} child
+	 * @param {kampfer.mindMap.Composition} child
 	 */
 	addChild : function(child) {
 		
@@ -96,7 +96,7 @@ kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
 	
 	/**
 	 * 删除子对象
- 	 * @param {string|kampfer.mindMap.Composition} child
+	 * @param {string|kampfer.mindMap.Composition} child
 	 */
 	removeChild : function(child) {
 		if(child) {

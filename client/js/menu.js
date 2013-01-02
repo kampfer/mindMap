@@ -183,7 +183,7 @@ kampfer.mindMap.Menu = kampfer.mindMap.Component.extend({
 			this.createDom();
 		}
 		
-		kampfer.events.addEvent(this._element, 'mouseover mouseout click'.split(' '), 
+		kampfer.events.addEvent(this._element, 'mouseover mouseout click'.split(' '),
 			this._handleEvents, this);
 	},
 	

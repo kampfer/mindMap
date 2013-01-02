@@ -40,8 +40,8 @@ kampfer.mindMap.MenuController = kampfer.Class.extend({
 	},
 	
 	addItems : function(list) {
-		this.mapMenu.addItem( 
-			new kampfer.mindMap.MenuItem('添加子节点', function() {}) 
+		this.mapMenu.addItem(
+			new kampfer.mindMap.MenuItem('添加子节点', function() {})
 		);
 	},
 	
@@ -74,5 +74,5 @@ kampfer.mindMap.MenuController = kampfer.Class.extend({
 		},
 		
 		unexceptedEvent : function() {return;}
-	}	
+	}
 });

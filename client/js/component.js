@@ -1,6 +1,6 @@
 /*global kampfer*/
 kampfer.require('mindMap.Composition');
-kampfer.require('style');
+kampfer.require('dom');
 
 kampfer.provide('mindMap.Component');
 
@@ -113,8 +113,8 @@ kampfer.mindMap.Component = kampfer.mindMap.Composition.extend({
 	getPosition : function() {
 		if(this._element) {
 			return {
-				left : parseInt( kampfer.style.getStyle(this._element, 'left'), 10 ),
-				top : parseInt( kampfer.style.getStyle(this._element, 'top'), 10 )
+				left : parseInt( kampfer.dom.getStyle(this._element, 'left'), 10 ),
+				top : parseInt( kampfer.dom.getStyle(this._element, 'top'), 10 )
 			};
 		}
 	},

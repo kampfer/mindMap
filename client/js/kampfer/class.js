@@ -7,7 +7,7 @@ kampfer.Class.initializing = false;
 kampfer.Class.extend = function(props) {
 	var Class = function() {
 		if(!kampfer.Class.initializing && this.initializer) {
-			this.initializer.apply(this, arguments);			
+			this.initializer.apply(this, arguments);
 		}
 	};
 

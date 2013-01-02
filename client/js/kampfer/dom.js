@@ -1,6 +1,4 @@
 /*global kampfer*/
-kampfer.require('string');
-
 kampfer.provide('dom');
 
 kampfer.dom.create = function(name) {
@@ -27,7 +25,7 @@ kampfer.dom.addClass = function(elem, value) {
 						setClass += classNames[ c ] + " ";
 					}
 				}
-				elem.className = kampfer.string.trim( setClass );
+				elem.className = setClass.trim();
 			}
 		}
 	}
@@ -79,8 +77,8 @@ kampfer.dom.getCascadedStyle = function(element, style) {
 
 
 kampfer.dom.getStyle = function(element, style) {
-	return kampfer.style.getComputedStyle(element, style) || 
-		kampfer.style.getCascadedStyle(element, style) || 
+	return kampfer.style.getComputedStyle(element, style) ||
+		kampfer.style.getCascadedStyle(element, style) ||
 		element.style[style];
 };
 
@@ -88,7 +86,7 @@ kampfer.dom.getStyle = function(element, style) {
 //需要输入正确的javascript格式名
 //TODO 处理样式名
 kampfer.dom.setStyle = function(element, name, value) {
-	if( kampfer.isDefAndNotNull(value) && 
+	if( kampfer.isDefAndNotNull(value) &&
 		kampfer.type(name) === 'string' ) {
 		element.style[name] = value;
 	} else if( kampfer.isObject(name) ) {
