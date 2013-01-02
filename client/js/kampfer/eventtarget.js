@@ -9,8 +9,6 @@ kampfer.provide('events.EventTarget');
 
 kampfer.events.EventTarget = kampfer.Class.extend({
 	
-	//init : function() {},
-	
 	parentNode : null,
 	
 	addListener : function(type, listener, context) {

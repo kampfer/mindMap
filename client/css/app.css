@@ -18,7 +18,7 @@ body{
 }
 
 .app-vertical-nav > .dropdown-menu {
-    min-width:auto;
+    min-width: auto;
     display: block;
 }
 
@@ -40,11 +40,11 @@ body{
     position: relative;
 }
 
-.app-footer{
+.app-footer {
     position: fixed;
-    left:0px;
-    bottom:0px;
-    width:100%;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
     height: 40px;
     line-height: 40px;
     background-color: #000;
@@ -67,7 +67,7 @@ body{
 .app-footer .brand{
     color: #000000;
     font-weight: bold;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.125);;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.125);
     -webkit-transition: all .2s linear;
     -moz-transition: all .2s linear;
     transition: all .2s linear;

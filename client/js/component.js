@@ -15,7 +15,7 @@ kampfer.mindMap.Component = kampfer.mindMap.Composition.extend({
 	_inDocument : false,
 	
 	addChild : function(child, render) {
-		this._super(child);
+		kampfer.mindMap.Component.superClass.addChild.apply(this, arguments);
 		if(child._inDocument && this._inDocument) {
 		//如果父子component都在文档流中，那么将子component剪切到父component
 			this._element.appendChild( child.getElement() );
@@ -36,7 +36,7 @@ kampfer.mindMap.Component = kampfer.mindMap.Composition.extend({
 	},
 	
 	removeChild : function(child, unrender) {
-		child = this._super(child);
+		child = kampfer.mindMap.Component.superClass.removeChild.apply(this, arguments);
 		if(unrender) {
 			child.exitDocument();
 			var childElement = child.getElement();
@@ -129,6 +129,16 @@ kampfer.mindMap.Component = kampfer.mindMap.Composition.extend({
 			this._element.style.top = top + 'px';
 		}
 	},
+
+	show : function() {
+		this.dispatch('beforeshow');
+		this._element.style.display = 'block';
+	},
+
+	hide : function() {
+		this.dispatch('beforehide');
+		this._element.style.display = 'none';
+	},
 	
 	getSize : function() {
 		if(this._inDocument) {
@@ -137,6 +147,10 @@ kampfer.mindMap.Component = kampfer.mindMap.Composition.extend({
 				height : this._element.offsetHeight
 			};
 		}
+	},
+
+	dispose : function() {
+		kampfer.mindMap.Component.superClass.dispose.apply(this);
 	}
 	
 });

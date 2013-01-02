@@ -44,22 +44,57 @@
 
         <!-- menu
         ================================================== -->
-        <ul class="dropdown-menu" role="menu" style="display:block;left:300px;top:200px;">
-            <li><a tabindex="-1" href="#"><i class="icon-ban-circle"></i> new file</a></li>
-            <li><a tabindex="-1" href="#"><i class="icon-eject"></i> Another action</a></li>
-            <li><a tabindex="-1" href="#"><i class="icon-plus"></i> Something else here</a></li>
+        <ul class="dropdown-menu" id="menu">
+            <li><a tabindex="-1" href="javascript:void(0);">Action</a></li>
+            <li><a tabindex="-1" href="javascript:void(0);">Another action</a></li>
+            <li><a tabindex="-1" href="javascript:void(0);">Something else here</a></li>
             <li class="divider"></li>
             <li class="dropdown-submenu">
-                <a tabindex="-1" href="#"><i class="icon-ban-circle"></i> Separated link</a>
+                <a tabindex="-1" href="javascript:void(0);">More options</a>
                 <ul class="dropdown-menu">
-                    <li><a tabindex="-1" href="#"><i class="icon-exclamation-sign"></i> open new file</a></li>
-                    <li><a tabindex="-1" href="#"><i class="icon-leaf"></i> open new file</a></li>
-                    <li><a tabindex="-1" href="#"><i class="icon-folder-close"></i> open new file</a></li>
+                    <li><a tabindex="-1" href="javascript:void(0);">Second level link</a></li>
+                    <li><a tabindex="-1" href="javascript:void(0);">Second level link</a></li>
+                    <li><a tabindex="-1" href="javascript:void(0);">Second level link</a></li>
+                    <li><a tabindex="-1" href="javascript:void(0);">Second level link</a></li>
+                    <li class="dropdown-submenu">
+                        <a tabindex="-1" href="javascript:void(0);">Second level link</a>
+                        <ul class="dropdown-menu">
+                            <li><a tabindex="-1" href="javascript:void(0);">Third level link</a></li>
+                            <li><a tabindex="-1" href="javascript:void(0);">Third level link</a></li>
+                            <li class="divider"></li>
+                            <li><a tabindex="-1" href="javascript:void(0);">Third level link</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </li>
+            <li><a tabindex="-1" href="javascript:void(0);">Another action</a></li>
+            <li><a tabindex="-1" href="javascript:void(0);">Second level link</a></li>
         </ul>
 
+        <!-- script
+        ================================================== -->
         <script type="text/javascript">
+            var menu = new kampfer.mindMap.Menu('menu');
+            kampfer.events.addListener(menu, 'beforeshow', function(event) {
+                console.log(event.type);
+            });
+            kampfer.events.addListener(menu, 'beforehide', function(event) {
+                console.log(event.type);
+            });
+
+
+            kampfer.events.addListener(document, 'contextmenu', function(event) {
+                menu.setPosition(event.pageX, event.pageY);
+                menu.show();
+                return false;
+            });
+
+            kampfer.events.addListener(document, 'click', function() {
+                menu.hide();
+                return false;
+            });
+
+            menu.disable(0);
         </script>
     </body>
 </html>
