@@ -21,13 +21,12 @@ kampfer.Menu = kampfer.Component.extend({
 		kampfer.events.addListener(this._element, 'click', function(event) {
 			var command = event.target.getAttribute('command');
 			if( command && !(/disabled/.test(event.target.parentNode.className)) ) {
+				this.hide();
 				this.dispatch(command);
 				console.log(command);
 				event.preventDefault();
 			}
 		}, this);
-
-		this.hide();
 	},
 
 	disable : function(index) {

@@ -10,32 +10,34 @@ body{
     background:url('../img/bg.gif') repeat;
 }
 
-.app-vertical-nav.dropdown-menu {
-    min-width: auto;
-    display: block;
-}
-
-.app-vertical-nav > .dropdown-submenu > .dropdown-menu{
-    min-width: 230px;
-}
-
-.app-vertical-nav.dropdown-menu li > a {
-    padding:5px 10px;
-}
-
-.app-vertical-nav.dropdown-menu .dropdown-submenu > a:after {
-    border-color: transparent transparent transparent #000;
-    margin-right: -8px;
-    margin-top: 3px;
-}
-
-.app-vertical-nav.dropdown-menu .dropdown-submenu:hover > a:after {
-    border-left-color: #fff;
-}
-
 .dropdown-menu .short-cut{
     float: right;
     font-size: 12px;
+}
+
+.app-tool-bar{
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 99;
+}
+
+.app-tool-bar .dropdown-menu{
+    min-width: 250px;
+}
+
+.app-tool-bar > .dropdown-menu{
+    display: block;
+    min-width: 40px;
+}
+
+#file, #edit, #help{
+    padding: 5px 10px;
+}
+
+#file:after, #edit:after{
+    margin-right: -5px;
+    margin-top: 3px;
 }
 
 .app-container {
@@ -83,7 +85,7 @@ body{
 
 div.node{
     position: absolute;
-    cursor: default; 
+    cursor: default;
 }
 
 div.node-caption{

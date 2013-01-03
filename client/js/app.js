@@ -2,16 +2,17 @@ kampfer.require('Menu');
 
 kampfer.provide('mindMap');
 kampfer.provide('mindMap.contextMenu');
-kampfer.provide('mindMap.navBar');
+kampfer.provide('mindMap.fileMenu');
+kampfer.provide('mindMap.editMenu');
 
-kampfer.mindMap.contextMenu = new kampfer.Menu('menu');
 
-kampfer.mindMap.navBar = new kampfer.Menu('nav-bar');
+kampfer.mindMap.contextMenu = new kampfer.Menu('context-menu');
+
+kampfer.mindMap.fileMenu = new kampfer.Menu('file-menu');
+
+kampfer.mindMap.editMenu = new kampfer.Menu('edit-menu');
 
 kampfer.mindMap.init = function() {
-    kampfer.mindMap.navBar.setPosition(10, 10);
-    kampfer.mindMap.navBar.show();
-
     var mapContainer = document.getElementById('map-container');
 
 	kampfer.events.addListener(mapContainer, 'contextmenu', function(event) {
@@ -25,5 +26,5 @@ kampfer.mindMap.init = function() {
             kampfer.mindMap.contextMenu.hide();
             return false;
         }
-    });
+    })
 };
