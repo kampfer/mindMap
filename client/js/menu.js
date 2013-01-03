@@ -24,7 +24,7 @@ kampfer.Menu = kampfer.Component.extend({
 				this.hide();
 				this.dispatch(command);
 				console.log(command);
-				event.preventDefault();
+				return false;
 			}
 		}, this);
 	},

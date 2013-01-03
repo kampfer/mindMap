@@ -31,11 +31,11 @@ body{
     min-width: 40px;
 }
 
-#file, #edit, #help{
+#file > a, #edit > a, #help > a{
     padding: 5px 10px;
 }
 
-#file:after, #edit:after{
+#file > a:after, #edit > a:after{
     margin-right: -5px;
     margin-top: 3px;
 }
