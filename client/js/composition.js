@@ -1,14 +1,14 @@
 /*global kampfer*/
 kampfer.require('events.EventTarget');
 
-kampfer.provide('mindMap.Composition');
+kampfer.provide('Composition');
 
 /**
  * 实现一个composition模式的类，用于组织对象，协调对象的关系。
  * 涉及parent的方法(get,set)只会影响到实例对象本身，而涉及child的方法不仅会影响对象自己，
  * 还会影响child实例对象。所以请使用child相关方法维护对象间的组织关系。
  */
-kampfer.mindMap.Composition = kampfer.events.EventTarget.extend({
+kampfer.Composition = kampfer.events.EventTarget.extend({
 	
 	//init : function() {},
 	

@@ -1,10 +1,10 @@
 /*global kampfer*/
-kampfer.require('mindMap.Composition');
+kampfer.require('Composition');
 kampfer.require('dom');
 
-kampfer.provide('mindMap.Component');
+kampfer.provide('Component');
 
-kampfer.mindMap.Component = kampfer.mindMap.Composition.extend({
+kampfer.Component = kampfer.Composition.extend({
 	
 	_element : null,
 	

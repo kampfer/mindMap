@@ -10,34 +10,38 @@ body{
     background:url('../img/bg.gif') repeat;
 }
 
-.app-vertical-nav{
-    left:10px;
-    top:50px;
-    position:fixed;
-    z-index:9999;
-}
-
-.app-vertical-nav > .dropdown-menu {
+.app-vertical-nav.dropdown-menu {
     min-width: auto;
     display: block;
 }
 
-.app-vertical-nav > .dropdown-menu li > a {
-    padding:3px 10px;
+.app-vertical-nav > .dropdown-submenu > .dropdown-menu{
+    min-width: 230px;
 }
 
-.app-vertical-nav > .dropdown-menu .dropdown-submenu > a:after {
+.app-vertical-nav.dropdown-menu li > a {
+    padding:5px 10px;
+}
+
+.app-vertical-nav.dropdown-menu .dropdown-submenu > a:after {
     border-color: transparent transparent transparent #000;
-    margin-right: -7px;
+    margin-right: -8px;
     margin-top: 3px;
 }
 
-.app-vertical-nav > .dropdown-menu .dropdown-submenu:hover > a:after {
+.app-vertical-nav.dropdown-menu .dropdown-submenu:hover > a:after {
     border-left-color: #fff;
+}
+
+.dropdown-menu .short-cut{
+    float: right;
+    font-size: 12px;
 }
 
 .app-container {
     position: relative;
+    width:100%;
+    height:100%;
 }
 
 .app-footer {

@@ -45,9 +45,9 @@
         <!-- menu
         ================================================== -->
         <ul class="dropdown-menu" id="menu">
-            <li><a tabindex="-1" href="javascript:void(0);">Action</a></li>
+            <li><a tabindex="-1" href="javascript:void(0);" command="fuck">Action</a></li>
             <li><a tabindex="-1" href="javascript:void(0);">Another action</a></li>
-            <li><a tabindex="-1" href="javascript:void(0);">Something else here</a></li>
+            <li><a tabindex="-1" href="javascript:void(0);" command="cry">Something else here</a></li>
             <li class="divider"></li>
             <li class="dropdown-submenu">
                 <a tabindex="-1" href="javascript:void(0);">More options</a>
@@ -81,6 +81,9 @@
             kampfer.events.addListener(menu, 'beforehide', function(event) {
                 console.log(event.type);
             });
+            kampfer.events.addListener(menu, 'cry', function(event) {
+                console.log(event.type);
+            });
 
 
             kampfer.events.addListener(document, 'contextmenu', function(event) {
@@ -89,9 +92,11 @@
                 return false;
             });
 
-            kampfer.events.addListener(document, 'click', function() {
-                menu.hide();
-                return false;
+            kampfer.events.addListener(document, 'click', function(event) {
+                if(event.which === 1) {
+                    menu.hide();
+                    return false;
+                }
             });
 
             menu.disable(0);
