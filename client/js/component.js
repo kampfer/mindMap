@@ -131,13 +131,17 @@ kampfer.Component = kampfer.Composition.extend({
 	},
 
 	show : function() {
-		this.dispatch('beforeshow');
-		this._element.style.display = 'block';
+		if(this._element) {
+			this.dispatch('beforeshow');
+			this._element.style.display = 'block';
+		}
 	},
 
 	hide : function() {
-		this.dispatch('beforehide');
-		this._element.style.display = 'none';
+		if(this._element) {
+			this.dispatch('beforehide');
+			this._element.style.display = 'none';
+		}
 	},
 	
 	getSize : function() {

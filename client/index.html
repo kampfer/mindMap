@@ -10,40 +10,32 @@
         <script type="text/javascript" src="./js/base.js"></script>
 	</head>
 	<body>
-		<!-- Navbar
+		<!-- toolbar
         ================================================== -->
-		<ul class="app-vertical-nav dropdown-menu" id="nav-bar">
-	        <li class="dropdown-submenu">
-	        	<a tabindex="-1" href="javascript:void(0);" title="File"><i class="icon-file"></i></a>
-	        	<ul class="dropdown-menu">
-	                <li><a tabindex="-1" href="javascript:void(0);"><span class="short-cut">Ctrl+N</span>new file</a></li>
-	                <li><a tabindex="-1" href="javascript:void(0);">open file in storage</a></li>
-	                <li><a tabindex="-1" href="javascript:void(0);">open file in disk</a></li>
-	                <li><a tabindex="-1" href="javascript:void(0);"><span class="short-cut">Ctrl+S</span>save file in storage</a></li>
-	                <li><a tabindex="-1" href="javascript:void(0);"><span class="short-cut">Ctrl+Shift+S</span>save file in disk</a></li>
-	            </ul>
-	        </li>
-	        <li class="dropdown-submenu">
-	        	<a tabindex="-1" href="javascript:void(0);" title="Edit"><i class="icon-pencil"></i></a>
-	        	<ul class="dropdown-menu">
-	                <li><a tabindex="-1" href="javascript:void(0);" command="copy"><span class="short-cut">Ctrl+C</span>Copy</a></li>
-		            <li><a tabindex="-1" href="javascript:void(0);" command="cut"><span class="short-cut">Ctrl+X</span>Cut</a></li>
-		            <li><a tabindex="-1" href="javascript:void(0);" command="paste"><span class="short-cut">Ctrl+V</span>Paste</a></li>
-	            </ul>
-	       	</li>
-	        <li><a tabindex="-1" href="javascript:void(0);" title="Help"><i class="icon-question-sign"></i></a></li>
-	    </ul>
-
-		<!-- drop menu
-        ================================================== -->
-        <ul class="dropdown-menu" id="menu">
-            <li><a tabindex="-1" href="javascript:void(0);" command="copy"><span class="short-cut">Ctrl+C</span>Copy</a></li>
-            <li><a tabindex="-1" href="javascript:void(0);" command="cut"><span class="short-cut">Ctrl+X</span>Cut</a></li>
-            <li><a tabindex="-1" href="javascript:void(0);" command="paste"><span class="short-cut">Ctrl+V</span>Paste</a></li>
-            <li class="divider"></li>
-            <li><a tabindex="-1" href="javascript:void(0);" command="selectAll"><span class="short-cut">Ctrl+A</span>Select All</a></li>
-        </ul>
-
+        <div class="app-tool-bar">
+        	<ul class="btn-group btn-group-vertical">
+	        	<li class="dropdown">
+	        		<a href="javascript:void(0);" title="File" id="file" class="btn"><i class="icon-file"></i></a>
+	        		<ul class="dropdown-menu" id="file-menu">
+	        			<li><a tabindex="-1" href="javascript:void(0);"><span class="short-cut">Ctrl+N</span>new file</a></li>
+		                <li><a tabindex="-1" href="javascript:void(0);">open file in storage</a></li>
+		                <li><a tabindex="-1" href="javascript:void(0);">open file in disk</a></li>
+		                <li><a tabindex="-1" href="javascript:void(0);"><span class="short-cut">Ctrl+S</span>save file in storage</a></li>
+		                <li><a tabindex="-1" href="javascript:void(0);"><span class="short-cut">Ctrl+Shift+S</span>save file in disk</a></li>
+	        		</ul>
+	        	</li>
+	        	<li class="dropdown">
+	        		<a href="javascript:void(0);" title="Edit" id="edit" class="btn"><i class="icon-edit"></i></a>
+	        		<ul class="dropdown-menu" id="edit-menu">
+        				<li><a tabindex="-1" href="javascript:void(0);" command="copy"><span class="short-cut">Ctrl+C</span>Copy</a></li>
+			            <li><a tabindex="-1" href="javascript:void(0);" command="cut"><span class="short-cut">Ctrl+X</span>Cut</a></li>
+			            <li><a tabindex="-1" href="javascript:void(0);" command="paste"><span class="short-cut">Ctrl+V</span>Paste</a></li>
+	        		</ul>
+	        	</li>
+	        	<li><a href="javascript:void(0);" title="Help" id="help" class="btn"><i class="icon-question-sign"></i></a></li>
+        	</ul>
+        </div>
+		
         <!-- MapContainer
         ================================================== -->
         <div class="app-container" id="map-container">
@@ -52,27 +44,16 @@
                 <div class="node-caption black">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
                 <canvas></canvas>
             </div>
-            <div class="node" style="right:10px;top:140px;">
-                <div class="node-caption red">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
-                <canvas></canvas>
-            </div>
-            <div class="node" style="right:240px;top:50px;">
-                <div class="node-caption orange">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
-                <canvas></canvas>
-            </div>
-            <div class="node" style="right:240px;top:140px;">
-                <div class="node-caption green">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
-                <canvas></canvas>
-            </div>
-            <div class="node" style="right:470px;top:50px;">
-                <div class="node-caption blue">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
-                <canvas></canvas>
-            </div>
-            <div class="node" style="right:470px;top:140px;">
-                <div class="node-caption dark-blue">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
-                <canvas></canvas>
-            </div>
         	-->
+        	<!-- drop menu
+	        ================================================== -->
+	        <ul class="dropdown-menu" id="context-menu">
+	            <li><a tabindex="-1" href="javascript:void(0);" command="copy"><span class="short-cut">Ctrl+C</span>Copy</a></li>
+	            <li><a tabindex="-1" href="javascript:void(0);" command="cut"><span class="short-cut">Ctrl+X</span>Cut</a></li>
+	            <li><a tabindex="-1" href="javascript:void(0);" command="paste"><span class="short-cut">Ctrl+V</span>Paste</a></li>
+	            <li class="divider"></li>
+	            <li><a tabindex="-1" href="javascript:void(0);" command="selectAll"><span class="short-cut">Ctrl+A</span>Select All</a></li>
+	        </ul>
         </div>
 
         <!-- footer

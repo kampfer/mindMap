@@ -232,7 +232,7 @@ kampfer.events.Listener.key = 0;
 kampfer.events.addListener = function(elem, eventType, listener, context) {
 	// filter commet and text node
 	// nor undefined eventType or listener
-	if( elem.nodeType === 3 || elem.nodeType === 8 || !eventType ||
+	if( !elem || elem.nodeType === 3 || elem.nodeType === 8 || !eventType ||
 		kampfer.type(listener) !== 'function' ) {
 		return;
 	}
