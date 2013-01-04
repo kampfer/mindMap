@@ -15,7 +15,7 @@ kampfer.provide('mindMap.MapsManager');
 
 kampfer.mindMap.MapsManager = kampfer.Class.extend({
 
-	init : function(appName) {
+	initializer : function(appName) {
 		if(appName) {
 			this._appName = appName;
 		}

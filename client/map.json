@@ -17,10 +17,10 @@
  *	|---parent
  *	|---children
  *
- * 目前map只保存tree和name两个属性
  * map
  *	|---tree
  *	|---name
+ *	|---lastModified
  */
 {
 	"tree" : {
@@ -72,5 +72,6 @@
 			}
 		]
 	},
-	"name" : "untitled"
+	"name" : "untitled",
+	"lastModified" : 123456789
 }

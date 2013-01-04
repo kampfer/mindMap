@@ -17,7 +17,7 @@ kampfer.mindMap.command.index = 0;
 
 
 kampfer.mindMap.command.Base = kampfer.Class.extend({
-	init : function() {},
+	initializer : function() {},
 
 	execute : function() {},
 
@@ -43,7 +43,7 @@ kampfer.mindMap.command.Base = kampfer.Class.extend({
 
 
 kampfer.mindMap.command.CreateNode = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager, controller) {
+	initializer : function(map, mapManager, controller) {
 		this.map = map;
 		this.mapManager = mapManager;
 		this.commandTargt = map.currentNode;
@@ -101,7 +101,7 @@ kampfer.mindMap.command.CreateNode = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.DeleteNode = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager, mapController) {
+	initializer : function(map, mapManager, mapController) {
 		this.map = map;
 		this.mapManager = mapManager;
 		this.commandTarget = map.currentNode.getParent();
@@ -158,7 +158,7 @@ kampfer.mindMap.command.DeleteNode = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.SaveNodePosition = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager) {
+	initializer : function(map, mapManager) {
 		this.map = map;
 		this.mapManager = mapManager;
 		this.nodeId = map.currentNode.getId();
@@ -200,7 +200,7 @@ kampfer.mindMap.command.SaveNodePosition = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.SaveNodeContent = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager, mapController) {
+	initializer : function(map, mapManager, mapController) {
 		this.map = map;
 		this.mapManager = mapManager;
 		this.mapController = mapController;
@@ -243,7 +243,7 @@ kampfer.mindMap.command.SaveNodeContent = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.SaveMap = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager) {
+	initializer : function(map, mapManager) {
 		this.mapManager = mapManager;
 	},
 
@@ -266,7 +266,7 @@ kampfer.mindMap.command.SaveMap = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager) {
+	initializer : function(map, mapManager) {
 		this.mapManager = mapManager;
 	},
 
@@ -299,7 +299,7 @@ kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager) {
+	initializer : function(map, mapManager) {
 		this.mapManager = mapManager;
 	},
 
@@ -333,7 +333,7 @@ kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
-	init : function(data, localstore) {
+	initializer : function(data, localstore) {
 		this.data = data;
 		this.localstore = localstore;
 	},
@@ -350,7 +350,7 @@ kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.SaveAsText = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager) {
+	initializer : function(map, mapManager) {
 		this.mapManager = mapManager;
 	},
 
@@ -367,7 +367,7 @@ kampfer.mindMap.command.SaveAsText = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.RenameMap = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager) {
+	initializer : function(map, mapManager) {
 		this.mapManager = mapManager;
 	},
 
@@ -385,7 +385,7 @@ kampfer.mindMap.command.RenameMap = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.Copy = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager) {
+	initializer : function(map, mapManager) {
 		this.commandTarget = map.currentNode;
 		this.mapManager = mapManager;
 	},
@@ -405,7 +405,7 @@ kampfer.mindMap.command.Copy = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.Cut = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager, mapController) {
+	initializer : function(map, mapManager, mapController) {
 		this.map = map;
 		this.mapManager = mapManager;
 		this.commandTarget = map.currentNode;
@@ -449,7 +449,7 @@ kampfer.mindMap.command.Cut = kampfer.mindMap.command.Base.extend({
 
 
 kampfer.mindMap.command.Paste = kampfer.mindMap.command.Base.extend({
-	init : function(map, mapManager, mapController) {
+	initializer : function(map, mapManager, mapController) {
 		this.map = map;
 		this.mapManager = mapManager;
 		this.mapController = mapController;

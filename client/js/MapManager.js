@@ -1,6 +1,5 @@
 /*global kampfer*/
 kampfer.require('Class');
-kampfer.require('store');
 
 kampfer.provide('mindMap.MapManager');
 
@@ -19,7 +18,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	 * 当传递给构建函数的参数是一个对象，那么这个对象被用作mindmap数据来源
 	 * @param	name{string|object|null}
 	 */
-	init : function(data, localstore) {
+	initializer : function(data, localstore) {
 		//将prototype中的默认数据深拷贝一份
 		this._mapData = kampfer.extend(true, {}, this._mapData);
 		//如果传入了数据,就使用新数据替换原始数据

@@ -20,10 +20,13 @@ kampfer.Menu = kampfer.Component.extend({
 
 		kampfer.events.addListener(this._element, 'click', function(event) {
 			var command = event.target.getAttribute('command');
+			//点击菜单后菜单项自动获得焦点并且高亮显示,我们不需要这种效果,
+			//所以这里使菜单项失去焦点
+			event.target.blur();
+			//如果菜单项绑定了命令并且没有被禁用就触发相应事件
 			if( command && !(/disabled/.test(event.target.parentNode.className)) ) {
 				this.hide();
 				this.dispatch(command);
-				console.log(command);
 				return false;
 			}
 		}, this);

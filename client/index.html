@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<title>index* - Kampfer's MindMap</title>
+		<title>Kampfer's MindMap</title>
 		<link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="./css/bootstrap-responsive.min.css">
         <link rel="stylesheet" type="text/css" href="./css/app.css">
@@ -17,7 +17,7 @@
 	        	<li class="dropdown-submenu" id="file">
 	        		<a href="javascript:void(0);" title="File" tabindex="-1"><i class="icon-file"></i></a>
 	        		<ul class="dropdown-menu" id="file-menu">
-	        			<li><a tabindex="-1" href="javascript:void(0);" command="newFile"><span class="short-cut">Ctrl+N</span>new file</a></li> 
+	        			<li><a tabindex="-1" href="javascript:void(0);" command="newFile"><span class="short-cut">Ctrl+N</span>new file</a></li>
 		                <li><a tabindex="-1" href="javascript:void(0);" command="openFileInStorage">open file in storage</a></li>
 		                <li><a tabindex="-1" href="javascript:void(0);" command="openFileInDisk">open file in disk</a></li>
 		                <li><a tabindex="-1" href="javascript:void(0);" command="saveFileInStorage"><span class="short-cut">Ctrl+S</span>save file in storage</a></li>
@@ -30,6 +30,9 @@
         				<li><a tabindex="-1" href="javascript:void(0);" command="copy"><span class="short-cut">Ctrl+C</span>Copy</a></li>
 			            <li><a tabindex="-1" href="javascript:void(0);" command="cut"><span class="short-cut">Ctrl+X</span>Cut</a></li>
 			            <li><a tabindex="-1" href="javascript:void(0);" command="paste"><span class="short-cut">Ctrl+V</span>Paste</a></li>
+			            <li class="divider"></li>
+			            <li><a tabindex="-1" href="javascript:void(0);" command="undo"><span class="short-cut">Ctrl+Z</span>Undo</a></li>
+			            <li><a tabindex="-1" href="javascript:void(0);" command="redo"><span class="short-cut">Ctrl+Y</span>Redo</a></li>
 	        		</ul>
 	        	</li>
 	        	<li class="divider"></li>
@@ -42,7 +45,7 @@
         <div class="app-container" id="map-container">
         	<!--
             <div class="node" style="right:10px;top:50px;">
-                <div class="node-caption black">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
+                <div class="node-caption blue">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
                 <canvas></canvas>
             </div>
         	-->
@@ -52,6 +55,9 @@
 	            <li><a tabindex="-1" href="javascript:void(0);" command="copy"><span class="short-cut">Ctrl+C</span>Copy</a></li>
 	            <li><a tabindex="-1" href="javascript:void(0);" command="cut"><span class="short-cut">Ctrl+X</span>Cut</a></li>
 	            <li><a tabindex="-1" href="javascript:void(0);" command="paste"><span class="short-cut">Ctrl+V</span>Paste</a></li>
+	            <li class="divider"></li>
+	            <li><a tabindex="-1" href="javascript:void(0);" command="undo"><span class="short-cut">Ctrl+Z</span>Undo</a></li>
+	            <li><a tabindex="-1" href="javascript:void(0);" command="redo"><span class="short-cut">Ctrl+Y</span>Redo</a></li>
 	            <li class="divider"></li>
 	            <li><a tabindex="-1" href="javascript:void(0);" command="selectAll"><span class="short-cut">Ctrl+A</span>Select All</a></li>
 	        </ul>

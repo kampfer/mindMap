@@ -1,9 +1,13 @@
 kampfer.require('Menu');
+kampfer.require('mindMap.MapsManager');
+kampfer.require('mindMap.MapManager');
+//kampfer.require('mindMap.command');
 
 kampfer.provide('mindMap');
 kampfer.provide('mindMap.contextMenu');
 kampfer.provide('mindMap.fileMenu');
 kampfer.provide('mindMap.editMenu');
+kampfer.provide('mindMap.currentMap');
 
 
 kampfer.mindMap.contextMenu = new kampfer.Menu('context-menu');
@@ -11,6 +15,8 @@ kampfer.mindMap.contextMenu = new kampfer.Menu('context-menu');
 kampfer.mindMap.fileMenu = new kampfer.Menu('file-menu');
 
 kampfer.mindMap.editMenu = new kampfer.Menu('edit-menu');
+
+kampfer.mindMap.mapsManager = new kampfer.mindMap.MapsManager();
 
 kampfer.mindMap.init = function() {
     var mapContainer = document.getElementById('map-container'),
@@ -30,7 +36,7 @@ kampfer.mindMap.init = function() {
             return false;
         }
     });
-    /*
+
     kampfer.events.addListener(fileBtn, 'mouseover', function() {
         kampfer.mindMap.fileMenu.show();
     });
@@ -46,5 +52,8 @@ kampfer.mindMap.init = function() {
     kampfer.events.addListener(editBtn, 'mouseout', function() {
         kampfer.mindMap.editMenu.hide();
     });
-    */
+
+    kampfer.events.addListener(kampfer.mindMap.fileMenu, 'newFile', function() {
+        kampfer.mindMap.currentMap = new kampfer.mindMap.Map();
+    });
 };
