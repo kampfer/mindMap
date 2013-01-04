@@ -1,7 +1,7 @@
 kampfer.require('Menu');
 kampfer.require('mindMap.MapsManager');
 kampfer.require('mindMap.MapManager');
-//kampfer.require('mindMap.command');
+kampfer.require('mindMap.command');
 
 kampfer.provide('mindMap');
 kampfer.provide('mindMap.contextMenu');
@@ -10,13 +10,11 @@ kampfer.provide('mindMap.editMenu');
 kampfer.provide('mindMap.currentMap');
 
 
-kampfer.mindMap.contextMenu = new kampfer.Menu('context-menu');
+kampfer.mindMap.window = new kampfer.mindMap.Window('map-container');
 
-kampfer.mindMap.fileMenu = new kampfer.Menu('file-menu');
+kampfer.mindMap.toolBar = new kampfer.mindMap.toolBar('tool-bar');
 
-kampfer.mindMap.editMenu = new kampfer.Menu('edit-menu');
-
-kampfer.mindMap.mapsManager = new kampfer.mindMap.MapsManager();
+kampfer.mindMap.commandController = new kampfer.mindMap.commandController();
 
 kampfer.mindMap.init = function() {
     var mapContainer = document.getElementById('map-container'),
@@ -24,6 +22,7 @@ kampfer.mindMap.init = function() {
         editBtn = document.getElementById('edit'),
         helpBtn = document.getElementById('help');
 
+    //windowController
 	kampfer.events.addListener(mapContainer, 'contextmenu', function(event) {
         kampfer.mindMap.contextMenu.setPosition(event.pageX, event.pageY);
         kampfer.mindMap.contextMenu.show();
@@ -37,6 +36,7 @@ kampfer.mindMap.init = function() {
         }
     });
 
+    //toolbarController
     kampfer.events.addListener(fileBtn, 'mouseover', function() {
         kampfer.mindMap.fileMenu.show();
     });
@@ -53,7 +53,49 @@ kampfer.mindMap.init = function() {
         kampfer.mindMap.editMenu.hide();
     });
 
-    kampfer.events.addListener(kampfer.mindMap.fileMenu, 'newFile', function() {
-        kampfer.mindMap.currentMap = new kampfer.mindMap.Map();
-    });
+    //commandController
+    kampfer.events.addListener(kampfer.mindMap.fileMenu, 'newFile',
+        kampfer.mindMap.command.createNewMap);
+
+    kampfer.events.addListener(kampfer.mindMap.fileMenu, 'openFileInStorage',
+        kampfer.mindMap.command.openFileInStorage);
+
+    kampfer.events.addListener(kampfer.mindMap.fileMenu, 'openFileInDisk',
+        kampfer.mindMap.command.openFileInDisk);
+
+    kampfer.events.addListener(kampfer.mindMap.fileMenu, 'saveFileInStorage',
+        kampfer.mindMap.command.saveFileInStorage);
+
+    kampfer.events.addListener(kampfer.mindMap.fileMenu, 'saveFileInDisk',
+        kampfer.mindMap.command.saveFileInDisk);
+
+    kampfer.events.addListener(kampfer.mindMap.editMenu, 'copy',
+        kampfer.mindMap.command.copy);
+
+    kampfer.events.addListener(kampfer.mindMap.editMenu, 'cut',
+        kampfer.mindMap.command.cut);
+
+    kampfer.events.addListener(kampfer.mindMap.editMenu, 'paste',
+        kampfer.mindMap.command.paste);
+
+    kampfer.events.addListener(kampfer.mindMap.editMenu, 'undo',
+        kampfer.mindMap.command.undo);
+
+    kampfer.events.addListener(kampfer.mindMap.editMenu, 'redo',
+        kampfer.mindMap.command.redo);
+
+    kampfer.events.addListener(kampfer.mindMap.contextMenu, 'copy',
+        kampfer.mindMap.command.copy);
+
+    kampfer.events.addListener(kampfer.mindMap.contextMenu, 'cut',
+        kampfer.mindMap.command.cut);
+
+    kampfer.events.addListener(kampfer.mindMap.contextMenu, 'paste',
+        kampfer.mindMap.command.paste);
+
+    kampfer.events.addListener(kampfer.mindMap.contextMenu, 'undo',
+        kampfer.mindMap.command.undo);
+
+    kampfer.events.addListener(kampfer.mindMap.contextMenu, 'redo',
+        kampfer.mindMap.command.redo);
 };
