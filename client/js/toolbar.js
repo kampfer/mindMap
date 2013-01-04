@@ -1,0 +1,1 @@
+kampfer.provide('mindMap.ToolBar');

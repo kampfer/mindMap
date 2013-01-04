@@ -17,6 +17,27 @@ kampfer.mindMap.toolBar = new kampfer.mindMap.toolBar('tool-bar');
 kampfer.mindMap.commandController = new kampfer.mindMap.commandController();
 
 kampfer.mindMap.init = function() {
+    kampfer.mindMap.commandController.subscrible(kampfer.mindMap.window);
+    kampfer.mindMap.commandController.subscrible(kampfer.mindMap.toolBar);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     var mapContainer = document.getElementById('map-container'),
         fileBtn = document.getElementById('file'),
         editBtn = document.getElementById('edit'),
