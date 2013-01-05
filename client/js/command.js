@@ -4,7 +4,6 @@ kampfer.require('events');
 kampfer.require('BlobBuilder');
 kampfer.require('saveAs');
 kampfer.require('mindMap.Node');
-kampfer.require('mindMap.MapController');
 kampfer.require('mindMap.MapManager');
 
 kampfer.provide('mindMap.command');

@@ -1,11 +1,11 @@
 /*global kampfer console*/
-kampfer.require('mindMap.Component');
-kampfer.require('style');
+kampfer.require('Component');
+kampfer.require('dom');
 kampfer.require('events');
 
 kampfer.provide('mindMap.Branch');
 
-kampfer.mindMap.Branch = kampfer.mindMap.Component.extend({
+kampfer.mindMap.Branch = kampfer.Component.extend({
 	
 	init : function(node, controller, manager) {
 		this.controller = controller;

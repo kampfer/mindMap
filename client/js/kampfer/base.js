@@ -253,7 +253,7 @@
 							if (requireName in deps.nameToPath) {
 								visitNode(deps.nameToPath[requireName]);
 							} else {
-								throw Error('Undefined nameToPath for ' + requireName);
+								throw Error('Undefined nameToPath for ' + requireName ' in ' + path);
 							}
 						}
 					}

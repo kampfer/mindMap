@@ -1,66 +1,69 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<title>Kampfer's MindMap</title>
-		<link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>Kampfer's MindMap</title>
+        <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="./css/bootstrap-responsive.min.css">
         <link rel="stylesheet" type="text/css" href="./css/app.css">
         <script type="text/javascript" src="./js/base.js"></script>
-	</head>
-	<body>
-		<!-- toolbar
+    </head>
+    <body>
+        <!-- toolbar
         ================================================== -->
         <div class="app-tool-bar">
-        	<ul class="dropdown-menu">
-	        	<li class="dropdown-submenu" id="file">
-	        		<a href="javascript:void(0);" title="File" tabindex="-1"><i class="icon-file"></i></a>
-	        		<ul class="dropdown-menu" id="file-menu">
-	        			<li><a tabindex="-1" href="javascript:void(0);" command="newFile"><span class="short-cut">Ctrl+N</span>new file</a></li>
-		                <li><a tabindex="-1" href="javascript:void(0);" command="openFileInStorage">open file in storage</a></li>
-		                <li><a tabindex="-1" href="javascript:void(0);" command="openFileInDisk">open file in disk</a></li>
-		                <li><a tabindex="-1" href="javascript:void(0);" command="saveFileInStorage"><span class="short-cut">Ctrl+S</span>save file in storage</a></li>
-		                <li><a tabindex="-1" href="javascript:void(0);" command="saveFileInDisk"><span class="short-cut">Ctrl+Shift+S</span>save file in disk</a></li>
-	        		</ul>
-	        	</li>
-	        	<li class="dropdown-submenu" id="edit">
-	        		<a href="javascript:void(0);" title="Edit" tabindex="-1"><i class="icon-edit"></i></a>
-	        		<ul class="dropdown-menu" id="edit-menu">
-        				<li><a tabindex="-1" href="javascript:void(0);" command="copy"><span class="short-cut">Ctrl+C</span>Copy</a></li>
-			            <li><a tabindex="-1" href="javascript:void(0);" command="cut"><span class="short-cut">Ctrl+X</span>Cut</a></li>
-			            <li><a tabindex="-1" href="javascript:void(0);" command="paste"><span class="short-cut">Ctrl+V</span>Paste</a></li>
-			            <li class="divider"></li>
-			            <li><a tabindex="-1" href="javascript:void(0);" command="undo"><span class="short-cut">Ctrl+Z</span>Undo</a></li>
-			            <li><a tabindex="-1" href="javascript:void(0);" command="redo"><span class="short-cut">Ctrl+Y</span>Redo</a></li>
-	        		</ul>
-	        	</li>
-	        	<li class="divider"></li>
-	        	<li id="help"><a href="javascript:void(0);" title="Help" tabindex="-1"><i class="icon-question-sign"></i></a></li>
-        	</ul>
+            <ul class="dropdown-menu">
+                <li class="dropdown-submenu" id="file">
+                    <a href="javascript:void(0);" title="File" tabindex="-1"><i class="icon-file"></i></a>
+                    <ul class="dropdown-menu" id="file-menu">
+                        <li><a tabindex="-1" href="javascript:void(0);" command="newFile"><span class="short-cut">Ctrl+N</span>new file</a></li>
+                        <li><a tabindex="-1" href="javascript:void(0);" command="openFileInStorage">open file in storage</a></li>
+                        <li><a tabindex="-1" href="javascript:void(0);" command="openFileInDisk">open file in disk</a></li>
+                        <li><a tabindex="-1" href="javascript:void(0);" command="saveFileInStorage"><span class="short-cut">Ctrl+S</span>save file in storage</a></li>
+                        <li><a tabindex="-1" href="javascript:void(0);" command="saveFileInDisk"><span class="short-cut">Ctrl+Shift+S</span>save file in disk</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown-submenu" id="edit">
+                    <a href="javascript:void(0);" title="Edit" tabindex="-1"><i class="icon-edit"></i></a>
+                    <ul class="dropdown-menu" id="edit-menu">
+                        <li><a tabindex="-1" href="javascript:void(0);" command="copy"><span class="short-cut">Ctrl+C</span>Copy</a></li>
+                        <li><a tabindex="-1" href="javascript:void(0);" command="cut"><span class="short-cut">Ctrl+X</span>Cut</a></li>
+                        <li><a tabindex="-1" href="javascript:void(0);" command="paste"><span class="short-cut">Ctrl+V</span>Paste</a></li>
+                        <li class="divider"></li>
+                        <li><a tabindex="-1" href="javascript:void(0);" command="undo"><span class="short-cut">Ctrl+Z</span>Undo</a></li>
+                        <li><a tabindex="-1" href="javascript:void(0);" command="redo"><span class="short-cut">Ctrl+Y</span>Redo</a></li>
+                    </ul>
+                </li>
+                <li class="divider"></li>
+                <li id="help"><a href="javascript:void(0);" title="Help" tabindex="-1"><i class="icon-question-sign"></i></a></li>
+            </ul>
         </div>
-		
+        
         <!-- MapContainer
         ================================================== -->
         <div class="app-container" id="map-container">
-        	<!--
-            <div class="node" style="right:10px;top:50px;">
-                <div class="node-caption blue">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
-                <canvas></canvas>
+            <!-- map document
+            ================================================== -->
+            <div class="map">
+                <div class="node" style="right:10px;top:50px;">
+                    <div class="node-caption blue">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
+                    <canvas></canvas>
+                </div>
             </div>
-        	-->
-        	<!-- drop menu
-	        ================================================== -->
-	        <ul class="dropdown-menu" id="context-menu">
-	            <li><a tabindex="-1" href="javascript:void(0);" command="copy"><span class="short-cut">Ctrl+C</span>Copy</a></li>
-	            <li><a tabindex="-1" href="javascript:void(0);" command="cut"><span class="short-cut">Ctrl+X</span>Cut</a></li>
-	            <li><a tabindex="-1" href="javascript:void(0);" command="paste"><span class="short-cut">Ctrl+V</span>Paste</a></li>
-	            <li class="divider"></li>
-	            <li><a tabindex="-1" href="javascript:void(0);" command="undo"><span class="short-cut">Ctrl+Z</span>Undo</a></li>
-	            <li><a tabindex="-1" href="javascript:void(0);" command="redo"><span class="short-cut">Ctrl+Y</span>Redo</a></li>
-	            <li class="divider"></li>
-	            <li><a tabindex="-1" href="javascript:void(0);" command="selectAll"><span class="short-cut">Ctrl+A</span>Select All</a></li>
-	        </ul>
+            
+            <!-- drop menu
+            ================================================== -->
+            <ul class="dropdown-menu" id="context-menu">
+                <li><a tabindex="-1" href="javascript:void(0);" command="copy"><span class="short-cut">Ctrl+C</span>Copy</a></li>
+                <li><a tabindex="-1" href="javascript:void(0);" command="cut"><span class="short-cut">Ctrl+X</span>Cut</a></li>
+                <li><a tabindex="-1" href="javascript:void(0);" command="paste"><span class="short-cut">Ctrl+V</span>Paste</a></li>
+                <li class="divider"></li>
+                <li><a tabindex="-1" href="javascript:void(0);" command="undo"><span class="short-cut">Ctrl+Z</span>Undo</a></li>
+                <li><a tabindex="-1" href="javascript:void(0);" command="redo"><span class="short-cut">Ctrl+Y</span>Redo</a></li>
+                <li class="divider"></li>
+                <li><a tabindex="-1" href="javascript:void(0);" command="selectAll"><span class="short-cut">Ctrl+A</span>Select All</a></li>
+            </ul>
         </div>
 
         <!-- footer
@@ -74,14 +77,14 @@
 
         <!-- others
         ================================================== -->
-		<div style="display:none;"><input type="file" name="mapJson" id="mapJson" /></div>
+        <div style="display:none;"><input type="file" name="mapJson" id="mapJson" /></div>
 
-		<script type="text/javascript">
-			kampfer.require('mindMap');
-		</script>
+        <script type="text/javascript">
+            kampfer.require('mindMap');
+        </script>
 
-		<script type="text/javascript">
-			kampfer.mindMap.init();
-		</script>
-	</body>
+        <script type="text/javascript">
+            kampfer.mindMap.init();
+        </script>
+    </body>
 </html>

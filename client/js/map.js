@@ -1,12 +1,12 @@
 /*global kampfer console*/
 kampfer.require('events');
-kampfer.require('mindMap.Component');
+kampfer.require('Component');
 kampfer.require('mindMap.Node');
 
 kampfer.provide('mindMap.Map');
 
 
-kampfer.mindMap.Map = kampfer.mindMap.Component.extend({
+kampfer.mindMap.Map = kampfer.Component.extend({
 	
 	init : function(manager) {
 		this.manager = manager;
