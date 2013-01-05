@@ -8,15 +8,27 @@ kampfer.provide('MenuItem');
 
 kampfer.Menu = kampfer.Component.extend({
 
-	initializer : function(elemId) {
-		var type = kampfer.type(elemId);
+	initializer : function(elem) {
+		kampfer.Menu.superClass.initializer.apply(this, arguments);
+
+		var type = kampfer.type(elem);
 
 		if(type === 'string') {
-			this._element = this._doc.getElementById(elemId);
-		} else if(type === 'object') {
-			this._element = elemId;
-		} else if(type === 'undefined') {
+			this._element = this._doc.getElementById(elem);
+			this._id = elem;
+
+			if(!this._element) {
+				this.render();
+			}
+		} else if(type === 'object' && elem.nodeType) {
+			this._element = elem;
+			this._id = elem.id;
+		} else {
+			return;
 		}
+
+		this._wasDecorated = true;
+		this._inDocument = true;
 
 		kampfer.events.addListener(this._element, 'click', function(event) {
 			var command = event.target.getAttribute('command');

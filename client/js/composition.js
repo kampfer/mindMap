@@ -47,7 +47,7 @@ kampfer.Composition = kampfer.events.EventTarget.extend({
 	 * @param	{kampfer.mindMap.Composition}parent
 	 */
 	setParent : function(parent) {
-		if( parent && !(parent instanceof kampfer.mindMap.Composition) ) {
+		if( parent && !(parent instanceof kampfer.Composition) ) {
 			throw('parent is not instanceof composition');
 		}
 		
@@ -74,7 +74,7 @@ kampfer.Composition = kampfer.events.EventTarget.extend({
 	 */
 	addChild : function(child) {
 		
-		if( !(child instanceof kampfer.mindMap.Composition) ) {
+		if( !(child instanceof kampfer.Composition) ) {
 			throw('wrong type param');
 		}
 		
@@ -106,7 +106,7 @@ kampfer.Composition = kampfer.events.EventTarget.extend({
 				id = child;
 				child = this.getChild(id);
 			} else if(type === 'object') {
-				if( !(child instanceof kampfer.mindMap.Composition) ) {
+				if( !(child instanceof kampfer.Composition) ) {
 					throw('wrong type param');
 				}
 				id = child.getId();

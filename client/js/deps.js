@@ -1,4 +1,4 @@
-kampfer.addDependency('app.js', ['mindMap','mindMap.window'], ['mindMap.Window','mindMap.MapsManager','mindMap.MapManager','mindMap.command']);
+kampfer.addDependency('app.js', ['mindMap','mindMap.window','mindMap.toolBar'], ['mindMap.Window','mindMap.ToolBar']);
 kampfer.addDependency('base.js', [], []);
 kampfer.addDependency('branch.js', ['mindMap.Branch'], ['Component','dom','events']);
 kampfer.addDependency('caption.js', ['mindMap.Caption'], ['Component','dom','events']);
@@ -27,5 +27,5 @@ kampfer.addDependency('plugins/BlobBuilder.min.js', ['BlobBuilder'], []);
 kampfer.addDependency('plugins/FileSaver.min.js', ['saveAs'], []);
 kampfer.addDependency('plugins/modernizr-latest.js', [], []);
 kampfer.addDependency('plugins/store.min.js', ['store'], []);
-kampfer.addDependency('toolbar.js', ['mindMap.ToolBar'], []);
-kampfer.addDependency('window.js', ['mindMap.Window','mindMap.contextMenu'], ['events.EventTarget','events','Menu']);
+kampfer.addDependency('toolbar.js', ['mindMap.ToolBar'], ['Component','events','Menu']);
+kampfer.addDependency('window.js', ['mindMap.Window','mindMap.contextMenu'], ['Component','events','Menu','dom']);

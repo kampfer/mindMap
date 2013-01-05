@@ -5,17 +5,22 @@ kampfer.require('dom');
 kampfer.provide('Component');
 
 kampfer.Component = kampfer.Composition.extend({
+
+	initializer : function() {
+		this._wasDecorated = false;
+		this._inDocument = false;
+	},
 	
 	_element : null,
 	
 	_doc : kampfer.global.document,
 	
-	_wasDecorated : false,
+	_wasDecorated : null,
 	
-	_inDocument : false,
+	_inDocument : null,
 	
 	addChild : function(child, render) {
-		kampfer.mindMap.Component.superClass.addChild.apply(this, arguments);
+		kampfer.Component.superClass.addChild.apply(this, arguments);
 		if(child._inDocument && this._inDocument) {
 		//如果父子component都在文档流中，那么将子component剪切到父component
 			this._element.appendChild( child.getElement() );
@@ -36,7 +41,7 @@ kampfer.Component = kampfer.Composition.extend({
 	},
 	
 	removeChild : function(child, unrender) {
-		child = kampfer.mindMap.Component.superClass.removeChild.apply(this, arguments);
+		child = kampfer.Component.superClass.removeChild.apply(this, arguments);
 		if(unrender) {
 			child.exitDocument();
 			var childElement = child.getElement();
@@ -154,7 +159,7 @@ kampfer.Component = kampfer.Composition.extend({
 	},
 
 	dispose : function() {
-		kampfer.mindMap.Component.superClass.dispose.apply(this);
+		kampfer.Component.superClass.dispose.apply(this);
 	}
 	
 });

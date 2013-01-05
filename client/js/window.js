@@ -1,4 +1,4 @@
-kampfer.require('events.EventTarget');
+kampfer.require('Component');
 kampfer.require('events');
 kampfer.require('Menu');
 kampfer.require('dom');
@@ -8,16 +8,20 @@ kampfer.provide('mindMap.contextMenu');
 
 kampfer.mindMap.contextMenu = new kampfer.Menu('context-menu');
 
-kampfer.mindMap.Window = kampfer.events.EventTarget.extend({
-    initializer : function(elem) {
-        var type = kampfer.type(elem),
+kampfer.mindMap.Window = kampfer.Component.extend({
+    initializer : function(id) {
+        var type = kampfer.type(id),
             that = this, scrollX, scrollY, x, y;
 
         if(type === 'string') {
-            this._element = document.getElementById(elem);
-        } else if(type === 'object') {
-            this._element = elem;
-        } else if(type === 'undefined') {
+            this._element = this._doc.getElementById(id);
+            this._id = id;
+
+            if(!this._element) {
+                this.render();
+            }
+        } else {
+            return;
         }
 
         this.beDraged = false;
