@@ -4,6 +4,7 @@ kampfer.require('Menu');
 
 kampfer.provide('mindMap.ToolBar');
 
+//TODO 构造器使用与menu相同的逻辑
 kampfer.mindMap.ToolBar = kampfer.Component.extend({
 	initializer : function(id) {
 		var type = kampfer.type(id),
@@ -21,19 +22,7 @@ kampfer.mindMap.ToolBar = kampfer.Component.extend({
         }
 	},
 
-	addMenu : function(id, render) {
-		var menuId = id + '-menu';
-		this.addChild( new kampfer.Menu(menuId), render );
-
-		var menu = this.getMenu(id);
-		kampfer.events.addListener(document.getElementById(id),
-			'mouseover', menu.show, menu);
-
-		kampfer.events.addListener(document.getElementById(id),
-			'mouseout', menu.hide, menu);
-	},
-
-	getMenu : function(id) {
-		return this.getChild( id + '-menu');
+	addMenu : function(menu, trigger) {
+		this.addChild( new kampfer.Menu(menu, trigger), true );
 	}
 });

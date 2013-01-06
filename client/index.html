@@ -14,9 +14,9 @@
         ================================================== -->
         <div class="app-tool-bar" id="app-tool-bar">
             <ul class="dropdown-menu">
-                <li class="dropdown-submenu" id="file">
+                <li class="dropdown-submenu" id="file-menu-trigger">
                     <a href="javascript:void(0);" title="File" tabindex="-1"><i class="icon-file"></i></a>
-                    <ul class="dropdown-menu" id="file-menu">
+                    <ul class="dropdown-menu" id="file-menu" role="menu">
                         <li><a tabindex="-1" href="javascript:void(0);" command="newFile"><span class="short-cut">Ctrl+N</span>new file</a></li>
                         <li><a tabindex="-1" href="javascript:void(0);" command="openFileInStorage">open file in storage</a></li>
                         <li><a tabindex="-1" href="javascript:void(0);" command="openFileInDisk">open file in disk</a></li>
@@ -24,9 +24,9 @@
                         <li><a tabindex="-1" href="javascript:void(0);" command="saveFileInDisk"><span class="short-cut">Ctrl+Shift+S</span>save file in disk</a></li>
                     </ul>
                 </li>
-                <li class="dropdown-submenu" id="edit">
+                <li class="dropdown-submenu" id="edit-menu-trigger">
                     <a href="javascript:void(0);" title="Edit" tabindex="-1"><i class="icon-edit"></i></a>
-                    <ul class="dropdown-menu" id="edit-menu">
+                    <ul class="dropdown-menu" id="edit-menu" role="menu">
                         <li><a tabindex="-1" href="javascript:void(0);" command="copy"><span class="short-cut">Ctrl+C</span>Copy</a></li>
                         <li><a tabindex="-1" href="javascript:void(0);" command="cut"><span class="short-cut">Ctrl+X</span>Cut</a></li>
                         <li><a tabindex="-1" href="javascript:void(0);" command="paste"><span class="short-cut">Ctrl+V</span>Paste</a></li>
@@ -44,13 +44,14 @@
         ================================================== -->
         <div class="app-container" id="map-container">
             <!-- map document
-            ================================================== -->
+            ==================================================
             <div class="map">
-                <div class="node" style="right:10px;top:50px;">
+                <div class="node" style="right:10px;top:50px;" role="node">
                     <div class="node-caption blue">As a thank you, we ask you to include an optional link back to Glyphicons whenever practical.</div>
                     <canvas></canvas>
                 </div>
             </div>
+            -->
             
             <!-- drop menu
             ================================================== -->

@@ -25,11 +25,11 @@ html, body, .map-container{
     min-width: 40px;
 }
 
-#file > a, #edit > a, #help > a{
+.app-tool-bar .dropdown-menu > li > a{
     padding: 5px 10px;
 }
 
-#file > a:after, #edit > a:after{
+.app-tool-bar .dropdown-submenu > a:after{
     margin-right: -5px;
     margin-top: 3px;
 }
