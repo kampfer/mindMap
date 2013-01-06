@@ -2,6 +2,8 @@ kampfer.require('mindMap.Window');
 kampfer.require('mindMap.ToolBar');
 kampfer.require('mindMap.CommandController');
 kampfer.require('mindMap.MapManager');
+kampfer.require('mindMap.Map');
+kampfer.require('mindMap.Node');
 
 kampfer.provide('mindMap');
 kampfer.provide('mindMap.window');
@@ -86,7 +88,7 @@ kampfer.mindMap.init = function() {
     };
 
     var demoMap = new kampfer.mindMap.MapManager(demo);
+    var map = new kampfer.mindMap.Map();
     demoMap.traverse(function(node) {
-        
     });
 };

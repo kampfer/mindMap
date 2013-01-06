@@ -28,21 +28,6 @@ kampfer.mindMap.Map = kampfer.Component.extend({
 		//this.manager.setMapPosition(winSize.width / 2 - 1000, winSize.height / 2 - 1000);
 	},
 	
-	getNode : function(id) {
-		var node;
-		
-		this.eachChild(function(child, cid) {
-			if(cid === id) {
-				node = child;
-				return false;
-			}else {
-				child.eachChild(arguments.callee);
-			}
-		});
-
-		return node;
-	},
-	
 	getWindowRect : function() {
 		return {
 			width : Math.max(document.documentElement.clientWidth,
@@ -50,25 +35,6 @@ kampfer.mindMap.Map = kampfer.Component.extend({
 			height : Math.max(document.documentElement.clientHeight,
 				document.documentElement.clientHeight)
 		};
-	},
-	
-	moveTo : function(x, y) {
-		//var startTime = +new Date();
-		var winSize = this.getWindowRect();
-
-		if(x > 0) {
-			x = 0;
-		} else if(x < winSize.width - 2000) {
-			x = winSize.width - 2000;
-		}
-		if(y > 0) {
-			y = 0;
-		} else if(y < winSize.height - 2000) {
-			y = winSize.height - 2000;
-		}
-			
-		this.setPosition(x, y);
-		//console.log(+new Date() - startTime);
 	},
 
 	addChildren : function() {

@@ -1,4 +1,4 @@
-kampfer.addDependency('app.js', ['mindMap','mindMap.window','mindMap.toolBar'], ['mindMap.Window','mindMap.ToolBar','mindMap.CommandController','mindMap.MapManager']);
+kampfer.addDependency('app.js', ['mindMap','mindMap.window','mindMap.toolBar'], ['mindMap.Window','mindMap.ToolBar','mindMap.CommandController','mindMap.MapManager','mindMap.Map','mindMap.Node']);
 kampfer.addDependency('base.js', [], []);
 kampfer.addDependency('branch.js', ['mindMap.Branch'], ['Component','dom','events']);
 kampfer.addDependency('caption.js', ['mindMap.Caption'], ['Component','dom','events']);

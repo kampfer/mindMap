@@ -58,10 +58,11 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		var map = {};
 
 		//迭代生成节点的树型结构
-		for(var i = 0, root; root = data[i]; i++)
-		this.traverseNode(root, function(node) {
-			map[node.id] = node;
-		});
+		for(var i = 0, root; root = data[i]; i++) {
+			this.traverseNode(root, function(node) {
+				map[node.id] = node;
+			});
+		}
 
 		return map;
 	},
@@ -207,7 +208,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		return {
 			left : node.offset.x,
 			top : node.offset.y
-		}
+		};
 	},
 	
 	setMapName : function(name) {
@@ -226,18 +227,23 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		this._isModified = false;
 	},
 
-	traverseNode : function(node, callback) {
+	traverseNode : function(node, callback, forward) {
+		if(forward) {
+			callback.call(this, node);
+		}
 		if(node.children) {
 			for(var i = 0, child; child = node.children[i]; i++) {
-				this.traverseNode(child, callback);
+				this.traverseNode(child, callback, forward);
 			}
 		}
-		callback.call(this, node);
+		if(!forward) {
+			callback.call(this, node);
+		}
 	},
 
 	traverse : function(callback) {
 		for(var i = 0, node; node = this._mapData.nodeTree[i]; i++) {
-			this.traverseNode(node, callback);
+			this.traverseNode(node, callback, true);
 		}
 	},
 	

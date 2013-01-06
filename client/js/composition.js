@@ -62,6 +62,10 @@ kampfer.Composition = kampfer.events.EventTarget.extend({
 		
 		this.setParentEventTarget(parent);
 		this._parent = parent;
+
+		if( !parent.getChild(this._id) ) {
+			parent.addChild(this);
+		}
 	},
 	
 	getParent : function() {
@@ -91,7 +95,9 @@ kampfer.Composition = kampfer.events.EventTarget.extend({
 			throw('can not add child');
 		}
 		
-		child.setParent(this);
+		if(child._parent !== this) {
+			child.setParent(this);
+		}
 	},
 	
 	/**
@@ -128,11 +134,19 @@ kampfer.Composition = kampfer.events.EventTarget.extend({
 		return child;
 	},
 	
-	//composition只负责子component
 	getChild : function(id) {
-		if(this._children) {
-			return this._children[id];
-		}
+		var node;
+		
+		this.eachChild(function(child, cid) {
+			if(cid === id) {
+				node = child;
+				return false;
+			}else {
+				child.eachChild(arguments.callee);
+			}
+		});
+
+		return node;
 	},
 	
 	//fn(child, id)
