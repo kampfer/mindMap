@@ -1,9 +1,11 @@
-kampfer.require('evnets.EventTarget');
+kampfer.require('events.EventTarget');
 kampfer.require('mindMap.command');
 kampfer.require('events');
 
 kampfer.provide('mindMap.CommandController');
 
+//暂时长这样吧#_#
+//以后再改
 kampfer.mindMap.CommandController = kampfer.events.EventTarget.extend({
 	initializer : function() {
 		this.commandStack = [];
@@ -23,7 +25,8 @@ kampfer.mindMap.CommandController = kampfer.events.EventTarget.extend({
 
 	subscrible : function(target) {
 		this.publishers.push(target);
-		kampfer.events.addListener(target, 'executeCommand', funciton(event) {
+		kampfer.events.addListener(target, 'executeCommand', function(event, name) {
+			console.log('executeCommand : ' + name);
 			kampfer.mindMap.command[name]();
 		});
 	},

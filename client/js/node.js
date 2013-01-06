@@ -10,7 +10,7 @@ kampfer.provide('mindMap.Node');
 //TODO node should take care of its position itself
 kampfer.mindMap.Node = kampfer.Component.extend({
 	
-	init : function(data, manager) {
+	initializer : function(data, manager) {
 		this.data = data;
 		this.manager = manager;
 		
@@ -22,7 +22,6 @@ kampfer.mindMap.Node = kampfer.Component.extend({
 		if(this.data.parent && this.data.parent !== 'map') {
 			this.addBranch();
 		}
-		this.addChildren();
 	},
 	
 	addCaption : function() {
@@ -33,25 +32,6 @@ kampfer.mindMap.Node = kampfer.Component.extend({
 	addBranch : function() {
 		var branch = new kampfer.mindMap.Branch(this, this.manager);
 		this.addChild(branch);
-	},
-	
-	addChildren : function() {
-		var children = this.manager.getChildren(this.data.id);
-		//没有child的node的children为null,所以这里先进行非空判断
-		if(children) {
-			for(var i = 0, l = children.length; i < l; i++) {
-				var child = children[i];
-				this.addChild( new kampfer.mindMap.Node(child, this.manager) );
-			}
-		}
-	},
-	
-	removeChild : function(child) {
-		this._super(child, true);
-	},
-	
-	getContent : function() {
-		return this.data.content;
 	},
 	
 	getBranch : function() {

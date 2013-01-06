@@ -38,7 +38,7 @@ kampfer.Menu = kampfer.Component.extend({
             //如果菜单项绑定了命令并且没有被禁用就触发相应事件
             if( command && !(/disabled/.test(event.target.parentNode.className)) ) {
                 this.hide();
-                this.dispatch(command);
+                this.dispatch('executeCommand', command);
                 return false;
             }
         }, this);

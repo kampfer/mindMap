@@ -21,17 +21,20 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	initializer : function(data, localstore) {
 		//将prototype中的默认数据深拷贝一份
 		this._mapData = kampfer.extend(true, {}, this._mapData);
+
 		//如果传入了数据,就使用新数据替换原始数据
 		if( kampfer.type(data) === 'object' ) {
 			this._mapData.oriData = data;
-			//map用于快速查找
-			this._mapData.nodeMap = this.parseTree(data.tree);
 			//tree结构更方便操作node，特别是操作多节点node
-			this._mapData.nodeTree = data.tree;
+			this._mapData.nodeTree = data.document;
+			//map用于快速查找
+			this._mapData.nodeMap = this.parseTree(this._mapData.nodeTree);
 			this._mapData.name = this._mapName = data.name;
 		}
+
 		this._localStore = localstore;
 		this._isModified = false;
+		this._lastModified = this._mapData.oriData.lastModified;
 	},
 	
 	_mapData : {
@@ -55,7 +58,8 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 		var map = {};
 
 		//迭代生成节点的树型结构
-		this.traverseNode(data, function(node) {
+		for(var i = 0, root; root = data[i]; i++)
+		this.traverseNode(root, function(node) {
 			map[node.id] = node;
 		});
 
@@ -229,6 +233,12 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 			}
 		}
 		callback.call(this, node);
+	},
+
+	traverse : function(callback) {
+		for(var i = 0, node; node = this._mapData.nodeTree[i]; i++) {
+			this.traverseNode(node, callback);
+		}
 	},
 	
 	/*

@@ -26,7 +26,8 @@ kampfer.mindMap.Window = kampfer.Component.extend({
         this.beDraged = false;
 
         kampfer.events.addListener(this._element, 'mousedown', function(event) {
-            if(!that.beDraged) {
+            //不存在map或已经开始拖拽不执行处理逻辑
+            if(kampfer.mindMap.currentMap && !that.beDraged) {
                 that.beDraged = true;
 
                 scrollX = kampfer.dom.scrollLeft(that._element);
