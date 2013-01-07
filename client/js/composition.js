@@ -189,7 +189,7 @@ kampfer.Composition = kampfer.events.EventTarget.extend({
 	},
 	
 	dispose : function() {
-		this._super();
+		kampfer.Composition.superClass.dispose.apply(this);
 		this._parent = null;
 		this._children = null;
 	}

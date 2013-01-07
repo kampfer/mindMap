@@ -78,7 +78,7 @@ kampfer.mindMap.init = function() {
             {
                 "id" : "child3",
                 "content" : "child3",
-                "offset" : {"x" : 200, "y" : 100},
+                "offset" : {"x" : 400, "y" : 100},
                 "parent" : null,
                 "children" : null
             }
@@ -88,7 +88,7 @@ kampfer.mindMap.init = function() {
     };
 
     var demoMap = new kampfer.mindMap.MapManager(demo);
-    var map = new kampfer.mindMap.Map(demoMap);
-    var mapContainer = document.getElementById('mapContainer');
-    map.render(mapContainer);
+    kampfer.mindMap.currentMap = new kampfer.mindMap.Map(demoMap);
+    kampfer.mindMap.window.addChild(kampfer.mindMap.currentMap);
+    kampfer.mindMap.currentMap.render();
 };

@@ -23,7 +23,7 @@ kampfer.mindMap.Branch = kampfer.Component.extend({
         var size = this.calculateSize(),
             position = this.calculatePosition();
             
-        kampfer.style.setStyle(this._element, {
+        kampfer.dom.setStyle(this._element, {
             left : position.left + 'px',
             top : position.top + 'px'
         });
@@ -35,6 +35,37 @@ kampfer.mindMap.Branch = kampfer.Component.extend({
         this._element.setAttribute('role', 'branch');
         
         this.drawLine();
+    },
+
+    getQuadrant : function() {
+        var position = this._parent.getPosition(),
+            x = position.left,
+            y = position.top;
+        
+        if(x > 0 && y < 0) {
+            return 1;
+        }
+        if(x === 0 && y < 0) {
+            return 'topY';
+        }
+        if(x < 0 && y < 0) {
+            return 2;
+        }
+        if(x < 0 && y === 0) {
+            return 'leftX';
+        }
+        if(x < 0 && y > 0) {
+            return 3;
+        }
+        if(x === 0 && y > 0) {
+            return 'bottomY';
+        }
+        if(x > 0 && y > 0) {
+            return 4;
+        }
+        if(x > 0 && y === 0) {
+            return 'rightX';
+        }
     },
     
     calculateSize : function() {
@@ -50,7 +81,7 @@ kampfer.mindMap.Branch = kampfer.Component.extend({
     },
     
     calculatePosition : function() {
-        var quadrant = this.getParent().getQuadrant(),
+        var quadrant = this.getQuadrant(),
             offset = this.getParent().getPosition();
         
         switch(quadrant) {
@@ -69,22 +100,22 @@ kampfer.mindMap.Branch = kampfer.Component.extend({
                     left : 0,
                     top : 0
                 };
-            case 'leftX' : 
+            case 'leftX' :
                 return {
                     left : 0,
                     top : -5
                 };
-            case 3 : 
+            case 3 :
                 return {
                     left : 0,
                     top : -offset.top
                 };
-            case 'bottomY' : 
+            case 'bottomY' :
                 return {
                     left : -5,
                     top : -offset.top
                 };
-            case 4 : 
+            case 4 :
                 return {
                     left : -offset.left,
                     top : -offset.top
@@ -100,7 +131,7 @@ kampfer.mindMap.Branch = kampfer.Component.extend({
     },
     
     drawLine : function() {
-        var quadrant = this.node.getQuadrant(),
+        var quadrant = this.getQuadrant(),
             ctx = this._element.getContext('2d');
         ctx.beginPath();
         if(quadrant === 1) {

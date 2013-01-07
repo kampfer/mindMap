@@ -13,7 +13,7 @@ html, body, .map-container{
     position: fixed;
     top: 10px;
     left: 10px;
-    z-index: 99;
+    z-index: 9999;
 }
 
 .app-tool-bar .dropdown-menu{
@@ -56,6 +56,7 @@ html, body, .map-container{
     line-height: 40px;
     background-color: #000;
     text-align: center;
+    z-index: 9999;
 }
 
 .app-footer:after{
@@ -100,6 +101,7 @@ div.node-caption{
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     background-color: black;
     color: white;
+    position: absolute;
 }
 
 div.node-caption.black{
