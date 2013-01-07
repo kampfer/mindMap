@@ -10,7 +10,7 @@ kampfer.provide('Composition');
  */
 kampfer.Composition = kampfer.events.EventTarget.extend({
 	
-	//init : function() {},
+	//initializer : function() {},
 	
 	//Composition实例
 	_parent : null,

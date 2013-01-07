@@ -77,8 +77,8 @@ kampfer.dom.getCascadedStyle = function(element, style) {
 
 
 kampfer.dom.getStyle = function(element, style) {
-    return kampfer.style.getComputedStyle(element, style) ||
-        kampfer.style.getCascadedStyle(element, style) ||
+    return kampfer.dom.getComputedStyle(element, style) ||
+        kampfer.dom.getCascadedStyle(element, style) ||
         element.style[style];
 };
 
@@ -91,7 +91,7 @@ kampfer.dom.setStyle = function(element, name, value) {
         element.style[name] = value;
     } else if( kampfer.isObject(name) ) {
         for(var attr in name) {
-            kampfer.style.setStyle(element, attr, name[attr]);
+            kampfer.dom.setStyle(element, attr, name[attr]);
         }
     }
 };

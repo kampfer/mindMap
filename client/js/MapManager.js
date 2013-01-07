@@ -85,8 +85,14 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	},
 	
 	getChildren : function(id) {
-		var node = this.getNode(id);
-		return node.children;
+		if(id) {
+			var node = this.getNode(id);
+			return node.children;
+		}
+	},
+
+	getNodeTree : function() {
+		return this._mapData.nodeTree;
 	},
 	
 	//如果有同id的node那么新的node不会被添加

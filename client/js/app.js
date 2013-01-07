@@ -88,7 +88,7 @@ kampfer.mindMap.init = function() {
     };
 
     var demoMap = new kampfer.mindMap.MapManager(demo);
-    var map = new kampfer.mindMap.Map();
-    demoMap.traverse(function(node) {
-    });
+    var map = new kampfer.mindMap.Map(demoMap);
+    var mapContainer = document.getElementById('mapContainer');
+    map.render(mapContainer);
 };
