@@ -6,6 +6,8 @@ kampfer.require('dom');
 kampfer.provide('mindMap.Window');
 kampfer.provide('mindMap.contextMenu');
 
+kampfer.mindMap.contextMenu = new kampfer.Menu( document.getElementById('context-menu') );
+
 //TODO 构造器使用与menu相同的逻辑
 kampfer.mindMap.Window = kampfer.Component.extend({
     initializer : function(id) {
@@ -26,17 +28,27 @@ kampfer.mindMap.Window = kampfer.Component.extend({
         this.beDraged = false;
 
         kampfer.events.addListener(this._element, 'mousedown', function(event) {
-            //不存在map或已经开始拖拽不执行处理逻辑
-            if(kampfer.mindMap.currentMap && !that.beDraged) {
-                that.beDraged = true;
+            kampfer.mindMap.contextMenu.hide();
 
-                scrollX = kampfer.dom.scrollLeft(that._element);
-                scrollY = kampfer.dom.scrollTop(that._element);
-                x = event.pageX;
-                y = event.pageY;
+            if(event.which === 1) {
+                //不存在map或已经开始拖拽不执行处理逻辑
+                if( !that.beDraged && that.getChild('map') ) {
+                    that.beDraged = true;
 
-                return false;
+                    scrollX = kampfer.dom.scrollLeft(that._element);
+                    scrollY = kampfer.dom.scrollTop(that._element);
+                    x = event.pageX;
+                    y = event.pageY;
+
+                    return false;
+                }
             }
+        });
+
+        kampfer.events.addListener(this._element, 'contextmenu', function(event) {
+            kampfer.mindMap.contextMenu.setPosition(event.pageX, event.pageY);
+            kampfer.mindMap.contextMenu.show();
+            return false;
         });
 
         kampfer.events.addListener(this._element, 'mouseup', function(event) {
