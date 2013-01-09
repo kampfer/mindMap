@@ -20,7 +20,15 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	 */
 	initializer : function(data, localstore) {
 		//将prototype中的默认数据深拷贝一份
-		this._mapData = kampfer.extend(true, {}, this._mapData);
+		this._mapData = {
+			nodeTree : {},
+			//map中保存的都是到node的引用
+			nodeMap : {},
+			oriData : null,
+			name : 'untitled'
+		};
+
+		this._lastModified = +new Date();
 
 		//如果传入了数据,就使用新数据替换原始数据
 		if( kampfer.type(data) === 'object' ) {
@@ -29,20 +37,12 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 			this._mapData.nodeTree = data.document;
 			//map用于快速查找
 			this._mapData.nodeMap = this.parseTree(this._mapData.nodeTree);
-			this._mapData.name = this._mapName = data.name;
+			this._mapData.name = data.name;
+			this._lastModified = this._mapData.oriData.lastModified;
 		}
 
 		this._localStore = localstore;
 		this._isModified = false;
-		this._lastModified = this._mapData.oriData.lastModified;
-	},
-	
-	_mapData : {
-		nodeTree : {},
-		//map中保存的都是到node的引用
-		nodeMap : {},
-		oriData : null,
-		name : 'untitled'
 	},
 
 	_isModified : null,
@@ -77,7 +77,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	},
 	
 	getMapName : function() {
-		return this._mapName;
+		return this._mapData.name;
 	},
 	
 	getNode : function(id) {
@@ -218,7 +218,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 	},
 	
 	setMapName : function(name) {
-		this._mapName = name;
+		this._mapData.name = name;
 		this._isModified = true;
 	},
 

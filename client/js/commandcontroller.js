@@ -25,9 +25,13 @@ kampfer.mindMap.CommandController = kampfer.events.EventTarget.extend({
 
 	subscrible : function(target) {
 		this.publishers.push(target);
-		kampfer.events.addListener(target, 'executeCommand', function(event, name) {
-			console.log('executeCommand : ' + name);
-			kampfer.mindMap.command[name]();
+		kampfer.events.addListener(target, 'executeCommand', function(event) {
+			console.log(event);
+			console.log('executeCommand : ' + event.command);
+			var command = kampfer.mindMap.command[event.command];
+			if(command) {
+				command(event);
+			}
 		});
 	},
 
@@ -42,7 +46,7 @@ kampfer.mindMap.CommandController = kampfer.events.EventTarget.extend({
 	dispose : function() {
 		kampfer.mindMap.CommandController.superClass.dispose.apply(this, arguments);
 		for(var i = 0, p; p = this.publishers[i]; i++) {
-			kampfer.events.removeListener(p, 'executeCommand');	
+			kampfer.events.removeListener(p, 'executeCommand');
 		}
 		this.publishers = null;
 		this.commandStack = null;

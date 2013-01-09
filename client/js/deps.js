@@ -1,4 +1,4 @@
-kampfer.addDependency('app.js', ['mindMap','mindMap.window','mindMap.toolBar'], ['mindMap.Window','mindMap.ToolBar','mindMap.CommandController','mindMap.MapManager','mindMap.Map','mindMap.Node']);
+kampfer.addDependency('app.js', ['mindMap','mindMap.window','mindMap.toolBar','mindMap.currentMap','mindMap.commandController'], ['mindMap.Window','mindMap.ToolBar','mindMap.CommandController','mindMap.command','mindMap.MapManager','mindMap.Map','mindMap.Node','mindMap.contextMenu','mindMap.nodeContextMenu']);
 kampfer.addDependency('base.js', [], []);
 kampfer.addDependency('branch.js', ['mindMap.Branch'], ['Component','dom','events']);
 kampfer.addDependency('caption.js', ['mindMap.Caption'], ['Component','dom','events']);
@@ -16,7 +16,7 @@ kampfer.addDependency('kampfer/eventtarget.js', ['events.EventTarget'], ['events
 kampfer.addDependency('kampfer/helper/es5-shim.js', [], []);
 kampfer.addDependency('kampfer/helper/json2.js', [], []);
 kampfer.addDependency('kampfer/support.js', ['browser.support'], []);
-kampfer.addDependency('map.js', ['mindMap.Map'], ['events','dom','Component','mindMap.Node']);
+kampfer.addDependency('map.js', ['mindMap.Map','mindMap.nodeContextMenu'], ['events','dom','Component','mindMap.Node']);
 kampfer.addDependency('mapController.js', ['mindMap.MapController'], ['Class','events','mindMap.Map','mindMap.Node','mindMap.Menu','mindMap.command']);
 kampfer.addDependency('MapManager.js', ['mindMap.MapManager'], ['Class']);
 kampfer.addDependency('MapsManager.js', ['mindMap.MapsManager'], ['Class','store']);

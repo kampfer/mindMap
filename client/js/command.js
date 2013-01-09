@@ -5,8 +5,21 @@ kampfer.require('BlobBuilder');
 kampfer.require('saveAs');
 kampfer.require('mindMap.Node');
 kampfer.require('mindMap.MapManager');
+kampfer.require('mindMap.window');
 
 kampfer.provide('mindMap.command');
+
+kampfer.mindMap.command.createNewMap = function(data) {
+	var map = new kampfer.mindMap.MapManager(data);
+    kampfer.mindMap.currentMap = new kampfer.mindMap.Map(map);
+    kampfer.mindMap.window.addChild(kampfer.mindMap.currentMap);
+    kampfer.mindMap.currentMap.render();
+	document.title = map.getMapName();
+};
+
+kampfer.mindMap.command.createNewNode = function(data) {
+
+};
 
 
 kampfer.mindMap.command.commandList = [];

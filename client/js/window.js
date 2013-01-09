@@ -28,8 +28,6 @@ kampfer.mindMap.Window = kampfer.Component.extend({
         this.beDraged = false;
 
         kampfer.events.addListener(this._element, 'mousedown', function(event) {
-            kampfer.mindMap.contextMenu.hide();
-
             scrollX = kampfer.dom.scrollLeft(that._element);
             scrollY = kampfer.dom.scrollTop(that._element);
             x = event.pageX;
@@ -41,12 +39,6 @@ kampfer.mindMap.Window = kampfer.Component.extend({
                     that.beDraged = true;
                 }
             }
-        });
-
-        kampfer.events.addListener(this._element, 'contextmenu', function(event) {
-            kampfer.mindMap.contextMenu.setPosition(event.pageX + scrollX, event.pageY + scrollY);
-            kampfer.mindMap.contextMenu.show();
-            return false;
         });
 
         kampfer.events.addListener(this._element, 'mouseup', function(event) {
@@ -63,6 +55,16 @@ kampfer.mindMap.Window = kampfer.Component.extend({
 
                 return false;
             }
+        });
+
+        kampfer.events.addListener(this._element, 'contextmenu', function(event) {
+            kampfer.mindMap.contextMenu.setPosition(event.pageX + scrollX, event.pageY + scrollY);
+            kampfer.mindMap.contextMenu.show();
+            return false;
+        });
+
+        kampfer.events.addListener(this._element, 'click', function(event) {
+            kampfer.mindMap.contextMenu.hide();
         });
     },
 

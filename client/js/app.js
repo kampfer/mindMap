@@ -1,24 +1,28 @@
 kampfer.require('mindMap.Window');
 kampfer.require('mindMap.ToolBar');
 kampfer.require('mindMap.CommandController');
+kampfer.require('mindMap.command');
 kampfer.require('mindMap.MapManager');
 kampfer.require('mindMap.Map');
 kampfer.require('mindMap.Node');
+kampfer.require('mindMap.contextMenu');
+kampfer.require('mindMap.nodeContextMenu');
 
 kampfer.provide('mindMap');
 kampfer.provide('mindMap.window');
 kampfer.provide('mindMap.toolBar');
+kampfer.provide('mindMap.currentMap');
+kampfer.provide('mindMap.commandController');
 
+kampfer.mindMap.commandController = new kampfer.mindMap.CommandController();
+kampfer.mindMap.commandController.subscrible(kampfer.mindMap.contextMenu);
+kampfer.mindMap.commandController.subscrible(kampfer.mindMap.nodeContextMenu);
 
 kampfer.mindMap.window = new kampfer.mindMap.Window('map-container');
 
 kampfer.mindMap.toolBar = new kampfer.mindMap.ToolBar('app-tool-bar');
 
-kampfer.mindMap.commandController = new kampfer.mindMap.CommandController();
-
 kampfer.mindMap.currentMap = null;
-
-kampfer.mindMap.currentNode = [];
 
 kampfer.mindMap.init = function() {
     var fileMenu = document.getElementById('file-menu'),
@@ -86,9 +90,4 @@ kampfer.mindMap.init = function() {
         "name" : "untitled",
         "lastModified" : 123456789
     };
-
-    var demoMap = new kampfer.mindMap.MapManager(demo);
-    kampfer.mindMap.currentMap = new kampfer.mindMap.Map(demoMap);
-    kampfer.mindMap.window.addChild(kampfer.mindMap.currentMap);
-    kampfer.mindMap.currentMap.render();
 };
