@@ -31,13 +31,17 @@ kampfer.mindMap.Map = kampfer.Component.extend({
             //if(event.which === 1) {
                 var role = event.target.getAttribute('role');
                 if(role === 'caption' || role === 'node') {
-                    that.currentNode = role === 'caption' ? that.getChild(event.target.id).getParent() :
-                        that.getChild(event.target.id);
-                    x = event.pageX;
-                    y = event.pageY;
                     dragingNode = true;
+
+                    that.currentNode = role === 'caption' ? 
+                        that.getChild(event.target.id).getParent() :
+                        that.getChild(event.target.id);
+
+                    var position = that.currentNode.getPosition();
+                    x = event.pageX - position.left;
+                    y = event.pageY - position.top;
                 }
-           // }
+            //}
         });
 
         kampfer.events.addListener(this._element, 'mouseup', function(event) {
@@ -48,9 +52,7 @@ kampfer.mindMap.Map = kampfer.Component.extend({
 
         kampfer.events.addListener(this._element, 'mousemove', function(event) {
             if(dragingNode) {
-                that.currentNode.move(event.pageX - x, event.pageY - y);
-                x = event.pageX;
-                y = event.pageY;
+                that.currentNode.moveTo(event.pageX - x, event.pageY - y);
                 return false;
             }
         });

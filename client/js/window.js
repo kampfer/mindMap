@@ -30,23 +30,21 @@ kampfer.mindMap.Window = kampfer.Component.extend({
         kampfer.events.addListener(this._element, 'mousedown', function(event) {
             kampfer.mindMap.contextMenu.hide();
 
+            scrollX = kampfer.dom.scrollLeft(that._element);
+            scrollY = kampfer.dom.scrollTop(that._element);
+            x = event.pageX;
+            y = event.pageY;
+
             if(event.which === 1) {
                 //不存在map或已经开始拖拽不执行处理逻辑
                 if( !that.beDraged && that.getChild('map') ) {
                     that.beDraged = true;
-
-                    scrollX = kampfer.dom.scrollLeft(that._element);
-                    scrollY = kampfer.dom.scrollTop(that._element);
-                    x = event.pageX;
-                    y = event.pageY;
-
-                    return false;
                 }
             }
         });
 
         kampfer.events.addListener(this._element, 'contextmenu', function(event) {
-            kampfer.mindMap.contextMenu.setPosition(event.pageX, event.pageY);
+            kampfer.mindMap.contextMenu.setPosition(event.pageX + scrollX, event.pageY + scrollY);
             kampfer.mindMap.contextMenu.show();
             return false;
         });
