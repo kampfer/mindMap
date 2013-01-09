@@ -147,10 +147,13 @@ div.node-caption.dark-blue{
     background-repeat: repeat-x;
 }
 
-div.node-caption.blue:hover{
-    background-color: #2F96B4;
+div.node-caption:hover{
     background-position: 0 -15px;
     transition: background-position 0.1s linear 0s;
+}
+
+div.node-caption.blue:hover{
+    background-color: #2F96B4;
 }
 
 div.node canvas{
