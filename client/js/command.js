@@ -3,13 +3,23 @@ kampfer.require('Class');
 kampfer.require('BlobBuilder');
 kampfer.require('saveAs');
 kampfer.require('mindMap.Node');
+kampfer.require('mindMap.Map');
 kampfer.require('mindMap.MapManager');
 
 kampfer.provide('mindMap.command');
+kampfer.provide('mindMap.map');
+kampfer.provide('mindMap.mapManager');
+
+kampfer.mindMap.map = null;
+
+kampfer.mindMap.mapManager = null;
 
 kampfer.mindMap.command.createNewMap = function() {
-	var manager = new kampfer.mindMap.MapManager();
-	document.title = manager.getMapName();
+	var mapContainer = document.getElementById('map-container');
+	kampfer.mindMap.mapManager = new kampfer.mindMap.MapManager();
+	kampfer.mindMap.map = new kampfer.mindMap.Map(kampfer.mindMap.mapManager);
+	kampfer.mindMap.map.render(mapContainer);
+	document.title = kampfer.mindMap.mapManager.getMapName();
 };
 
 kampfer.mindMap.command.Base = kampfer.Class.extend({

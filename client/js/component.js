@@ -59,13 +59,13 @@ kampfer.Component = kampfer.Composition.extend({
 		return this._wasDecorated;
 	},
 	
-	render : function() {
+	render : function(parent) {
 		if(!this._inDocument) {
 			if(!this._element) {
 				this.createDom();
 			}
 			
-			this.enterDocument();
+			this.enterDocument(parent);
 			
 			this.decorate();
 			

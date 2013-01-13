@@ -33,7 +33,13 @@ kampfer.mindMap.command.Controller = kampfer.events.EventTarget.extend({
 	},
 
 	doCommand : function(event) {
-		console.log(event);
+		var command = kampfer.mindMap.command[event.command];
+		if(command) {
+			var ret = command(event);
+			if(ret) {
+				this.commandStack[this.commandStackIndex++] = ret;
+			}
+		}
 		this.dispatch.apply(this, arguments);
 	},
 
