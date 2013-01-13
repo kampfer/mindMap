@@ -1,32 +1,16 @@
 /*global window kampfer console localStorage*/
 kampfer.require('Class');
-kampfer.require('events');
 kampfer.require('BlobBuilder');
 kampfer.require('saveAs');
 kampfer.require('mindMap.Node');
 kampfer.require('mindMap.MapManager');
-kampfer.require('mindMap.window');
 
 kampfer.provide('mindMap.command');
 
-kampfer.mindMap.command.createNewMap = function(data) {
-	var map = new kampfer.mindMap.MapManager(data);
-    kampfer.mindMap.currentMap = new kampfer.mindMap.Map(map);
-    kampfer.mindMap.window.addChild(kampfer.mindMap.currentMap);
-    kampfer.mindMap.currentMap.render();
-	document.title = map.getMapName();
+kampfer.mindMap.command.createNewMap = function() {
+	var manager = new kampfer.mindMap.MapManager();
+	document.title = manager.getMapName();
 };
-
-kampfer.mindMap.command.createNewNode = function(data) {
-
-};
-
-
-kampfer.mindMap.command.commandList = [];
-
-
-kampfer.mindMap.command.index = 0;
-
 
 kampfer.mindMap.command.Base = kampfer.Class.extend({
 	initializer : function() {},
@@ -148,12 +132,12 @@ kampfer.mindMap.command.DeleteNode = kampfer.mindMap.command.Base.extend({
 				this.mapManager.addNode(node);
 			}
 			//node类会自动添加后代节点，所以不在循环中添加addChild
-			this.commandTarget.addChild( 
+			this.commandTarget.addChild(
 				new kampfer.mindMap.Node(this.nodeData[0], this.mapManager), true );
 		} else {
 			node = this.mapManager.createNode(this.nodeData);
 			this.mapManager.addNode(node);
-			this.commandTarget.addChild( 
+			this.commandTarget.addChild(
 				new kampfer.mindMap.Node(node, this.mapManager), true );
 		}
 

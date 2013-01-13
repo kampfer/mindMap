@@ -2,11 +2,13 @@ kampfer.require('Component');
 kampfer.require('events');
 kampfer.require('Menu');
 kampfer.require('dom');
+kampfer.require('mindMap.command.controller');
 
 kampfer.provide('mindMap.Window');
 kampfer.provide('mindMap.contextMenu');
 
 kampfer.mindMap.contextMenu = new kampfer.Menu( document.getElementById('context-menu') );
+kampfer.mindMap.command.controller.subscribe(kampfer.mindMap.contextMenu);
 
 //TODO 构造器使用与menu相同的逻辑
 kampfer.mindMap.Window = kampfer.Component.extend({

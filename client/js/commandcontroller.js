@@ -1,54 +1,51 @@
+/*global kampfer*/
 kampfer.require('events.EventTarget');
 kampfer.require('mindMap.command');
-kampfer.require('events');
 
-kampfer.provide('mindMap.CommandController');
+kampfer.provide('mindMap.command.Controller');
+kampfer.provide('mindMap.command.controller');
 
 //暂时长这样吧#_#
 //以后再改
-kampfer.mindMap.CommandController = kampfer.events.EventTarget.extend({
+kampfer.mindMap.command.Controller = kampfer.events.EventTarget.extend({
 	initializer : function() {
 		this.commandStack = [];
 		this.commandStackIndex = 0;
-		this.publishers = [];
+	},
 
-		for(var i = 0, a; a = arguments[i]; i++) {
-			this.subscrible(a);
+	subscribe : function(obj) {
+		obj.addListener('beforeshow', this.checkCommand, this);
+		obj.addListener('executeCommand', this.doCommand, this);
+	},
+
+	checkCommand : function(event) {
+		var menu = event.target;
+		var commands = menu.getElement().querySelectorAll('[command]');
+		for(var i = 0, command; command = commands[i]; i++) {
+			var name = command.getAttribute('command');
+			command = kampfer.mindMap.command[name];
+			if( command && command.isAvailable && !command.isAvailable() ) {
+				menu.disable(i);
+			} else {
+				menu.enable(i);
+			}
 		}
+	},
+
+	doCommand : function(event) {
+		console.log(event);
+		this.dispatch.apply(this, arguments);
 	},
 
 	commandStack : null,
 
 	commandStackIndex : null,
 
-	publishers : null,
-
-	subscrible : function(target) {
-		this.publishers.push(target);
-		kampfer.events.addListener(target, 'executeCommand', function(event) {
-			console.log(event);
-			console.log('executeCommand : ' + event.command);
-			var command = kampfer.mindMap.command[event.command];
-			if(command) {
-				command(event);
-			}
-		});
-	},
-
-	undo : function(level) {
-		level = level || 1;
-	},
-
-	redo : function(level) {
-		level = level || 1;
-	},
-
 	dispose : function() {
 		kampfer.mindMap.CommandController.superClass.dispose.apply(this, arguments);
-		for(var i = 0, p; p = this.publishers[i]; i++) {
-			kampfer.events.removeListener(p, 'executeCommand');
-		}
 		this.publishers = null;
 		this.commandStack = null;
 	}
 });
+
+kampfer.mindMap.command.controller = new kampfer.mindMap.command.Controller();

@@ -63,7 +63,7 @@ kampfer.Menu = kampfer.Component.extend({
 
     enable : function(index) {
         if(typeof index === 'number') {
-            kampfper.dom.removeClass(this._element.children[index], 'disabled');
+            kampfer.dom.removeClass(this._element.children[index], 'disabled');
         }
     },
 

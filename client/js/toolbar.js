@@ -1,6 +1,7 @@
 kampfer.require('Component');
 kampfer.require('events');
 kampfer.require('Menu');
+kampfer.require('mindMap.command.controller');
 
 kampfer.provide('mindMap.ToolBar');
 
@@ -20,9 +21,23 @@ kampfer.mindMap.ToolBar = kampfer.Component.extend({
         } else {
             return;
         }
+
+        this.resolve();
 	},
 
+    resolve : function() {
+        if(this._element) {
+            var triggers = this._element.querySelectorAll('[role=menu-trigger]');
+            for(var i = 0, trigger; trigger = triggers[i]; i++) {
+                var menu = trigger.querySelector('[role=menu]');
+                this.addMenu(menu, trigger);
+            }
+        }
+    },
+
 	addMenu : function(menu, trigger) {
-		this.addChild( new kampfer.Menu(menu, trigger), true );
+        var menu = new kampfer.Menu(menu, trigger);
+        kampfer.mindMap.command.controller.subscribe(menu);
+		this.addChild(menu, true);
 	}
 });

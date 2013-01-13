@@ -46,8 +46,8 @@ kampfer.dom.removeClass = function(elem, value) {
                 for ( c = 0, cl = classNames.length; c < cl; c++ ) {
                     className = className.replace(" " + classNames[ c ] + " ", " ");
                 }
-                elem.className = kampfer.string.trim( className );
-
+                //elem.className = kampfer.string.trim( className );
+                elem.className = className.trim();
             } else {
                 elem.className = "";
             }
