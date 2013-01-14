@@ -8,6 +8,10 @@ kampfer.provide('mindMap.toolBar');
 
 
 kampfer.mindMap.init = function() {
-	kampfer.mindMap.window = new kampfer.mindMap.Window('map-container');
-	kampfer.mindMap.toolBar = new kampfer.mindMap.ToolBar('app-tool-bar');
+	var window = new kampfer.mindMap.Window('map-container'),
+		nodeContextMenu = new kampfer.Menu( document.getElementById('node-context-menu') ),
+		contextMenu = new kampfer.Menu(document.getElementById('context-menu'));
+
+	kampfer.mindMap.command.controller = new kampfer.mindMap.command.Controller(
+		window, nodeContextMenu, contextMenu);
 };

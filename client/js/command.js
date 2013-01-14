@@ -23,7 +23,16 @@ kampfer.mindMap.command.createNewMap = function() {
 };
 
 
-kampfer.mindMap.command.createNode = function() {};
+kampfer.mindMap.command._createNode = function() {};
+
+kampfer.mindMap.command.createNewNode = function(event) {
+	var node = kampfer.mindMap.mapManager.createNode();
+	node.offset.x = kampfer.mindMap.window.scrollLeft() + event.pageX;
+	node.offset.y = kampfer.mindMap.window.scrollTop() + event.pageY;
+	node = new kampfer.mindMap.Node(node);
+	kampfer.mindMap.map.addChild(node, true);
+	console.log(node);
+};
 
 kampfer.mindMap.command.Base = kampfer.Class.extend({
 	initializer : function() {},

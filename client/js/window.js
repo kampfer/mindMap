@@ -2,13 +2,9 @@ kampfer.require('Component');
 kampfer.require('events');
 kampfer.require('Menu');
 kampfer.require('dom');
-kampfer.require('mindMap.command.controller');
 
 kampfer.provide('mindMap.Window');
-kampfer.provide('mindMap.contextMenu');
 
-kampfer.mindMap.contextMenu = new kampfer.Menu( document.getElementById('context-menu') );
-kampfer.mindMap.command.controller.subscribe(kampfer.mindMap.contextMenu);
 
 //TODO 构造器使用与menu相同的逻辑
 kampfer.mindMap.Window = kampfer.Component.extend({
@@ -37,7 +33,7 @@ kampfer.mindMap.Window = kampfer.Component.extend({
 
             if(event.which === 1) {
                 //不存在map或已经开始拖拽不执行处理逻辑
-                if( !that.beDraged && that.getChild('map') ) {
+                if( !that.beDraged && kampfer.mindMap.map) {
                     that.beDraged = true;
                 }
             }
@@ -57,16 +53,6 @@ kampfer.mindMap.Window = kampfer.Component.extend({
 
                 return false;
             }
-        });
-
-        kampfer.events.addListener(this._element, 'contextmenu', function(event) {
-            kampfer.mindMap.contextMenu.setPosition(event.pageX + scrollX, event.pageY + scrollY);
-            kampfer.mindMap.contextMenu.show();
-            return false;
-        });
-
-        kampfer.events.addListener(this._element, 'click', function(event) {
-            kampfer.mindMap.contextMenu.hide();
         });
     },
 

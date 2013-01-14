@@ -127,7 +127,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 				x : 100,
 				y : 100
 			}
-		}, 
+		},
 		type = kampfer.type(data);
 
 		if( type === 'object' ) {

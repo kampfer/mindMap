@@ -3,12 +3,9 @@ kampfer.require('events');
 kampfer.require('dom');
 kampfer.require('Component');
 kampfer.require('mindMap.Node');
+kampfer.require('mindMap.command.controller');
 
 kampfer.provide('mindMap.Map');
-kampfer.provide('mindMap.nodeContextMenu');
-
-
-kampfer.mindMap.nodeContextMenu = new kampfer.Menu( document.getElementById('node-context-menu') );
 
 kampfer.mindMap.Map = kampfer.Component.extend({
 
@@ -36,6 +33,7 @@ kampfer.mindMap.Map = kampfer.Component.extend({
                 that.getChild(event.target.id);
 
             kampfer.mindMap.nodeContextMenu.hide();
+            kampfer.mindMap.contextMenu.hide();
 
             if(event.which === 1) {
                 if(role === 'caption' || role === 'node') {
@@ -62,15 +60,22 @@ kampfer.mindMap.Map = kampfer.Component.extend({
         });
 
         kampfer.events.addListener(this._element, 'contextmenu', function(event) {
-            var role = event.target.getAttribute('role');
+            var role = event.target.getAttribute('role'),
+                parentElement = that._element.parentNode,
+                scrollX = kampfer.dom.scrollLeft(parentElement),
+                scrollY = kampfer.dom.scrollTop(parentElement);
+
+            var menu;
             if(role === 'caption' || role === 'node') {
-                var parentElement = that.getParent().getElement(),
-                    scrollX = kampfer.dom.scrollLeft(parentElement),
-                    scrollY = kampfer.dom.scrollTop(parentElement);
-                kampfer.mindMap.nodeContextMenu.setPosition(event.pageX + scrollX, event.pageY + scrollY);
-                kampfer.mindMap.nodeContextMenu.show();
-                return false;
+                menu = kampfer.mindMap.nodeContextMenu;
+            } else {
+                menu = kampfer.mindMap.contextMenu;
             }
+
+            menu.setPosition(event.pageX + scrollX, event.pageY + scrollY);
+            menu.show();
+
+            return false;
         });
     },
 

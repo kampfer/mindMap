@@ -3,14 +3,24 @@ kampfer.require('events.EventTarget');
 kampfer.require('mindMap.command');
 
 kampfer.provide('mindMap.command.Controller');
-kampfer.provide('mindMap.command.controller');
+kampfer.provide('mindMap.window');
+kampfer.provide('mindMap.contextMenu');
+kampfer.provide('mindMap.nodeContextMenu');
 
 //暂时长这样吧#_#
 //以后再改
 kampfer.mindMap.command.Controller = kampfer.events.EventTarget.extend({
-	initializer : function() {
+	initializer : function(window, contextMenu, nodeContextMenu) {
 		this.commandStack = [];
 		this.commandStackIndex = 0;
+
+		kampfer.mindMap.window = window;
+		kampfer.mindMap.contextMenu = contextMenu;
+		kampfer.mindMap.nodeContextMenu = nodeContextMenu;
+
+		for(var i = 0, view; view = arguments[i]; i++) {
+			this.subscribe(view);
+		}
 	},
 
 	subscribe : function(obj) {
@@ -34,6 +44,7 @@ kampfer.mindMap.command.Controller = kampfer.events.EventTarget.extend({
 
 	doCommand : function(event) {
 		var command = kampfer.mindMap.command[event.command];
+		console.log(event.command);
 		if(command) {
 			var ret = command(event);
 			if(ret) {
@@ -53,5 +64,3 @@ kampfer.mindMap.command.Controller = kampfer.events.EventTarget.extend({
 		this.commandStack = null;
 	}
 });
-
-kampfer.mindMap.command.controller = new kampfer.mindMap.command.Controller();
