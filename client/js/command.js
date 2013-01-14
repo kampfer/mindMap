@@ -22,6 +22,9 @@ kampfer.mindMap.command.createNewMap = function() {
 	document.title = kampfer.mindMap.mapManager.getMapName();
 };
 
+
+kampfer.mindMap.command.createNode = function() {};
+
 kampfer.mindMap.command.Base = kampfer.Class.extend({
 	initializer : function() {},
 

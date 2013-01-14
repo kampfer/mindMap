@@ -71,11 +71,17 @@ kampfer.mindMap.Window = kampfer.Component.extend({
     },
 
     scrollLeft : function(offset) {
-        kampfer.dom.scrollLeft(this._element, offset);
+        var offsetX = kampfer.dom.scrollLeft(this._element, offset);
+        if(offsetX) {
+            return offsetX;
+        }
     },
 
     scrollTop : function(offset) {
-        kampfer.dom.scrollTop(this._element, offset);
+        var offsetY = kampfer.dom.scrollTop(this._element, offset);
+        if(offsetY) {
+            return offsetY;
+        }
     },
 
     beDraged : null,
