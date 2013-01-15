@@ -1,7 +1,6 @@
 kampfer.require('Component');
 kampfer.require('events');
 kampfer.require('Menu');
-kampfer.require('mindMap.command.controller');
 
 kampfer.provide('mindMap.ToolBar');
 
@@ -37,7 +36,6 @@ kampfer.mindMap.ToolBar = kampfer.Component.extend({
 
 	addMenu : function(menu, trigger) {
         var menu = new kampfer.Menu(menu, trigger);
-        kampfer.mindMap.command.controller.subscribe(menu);
 		this.addChild(menu, true);
 	}
 });

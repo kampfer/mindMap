@@ -3,7 +3,6 @@ kampfer.require('events');
 kampfer.require('dom');
 kampfer.require('Component');
 kampfer.require('mindMap.Node');
-kampfer.require('mindMap.command.controller');
 
 kampfer.provide('mindMap.Map');
 

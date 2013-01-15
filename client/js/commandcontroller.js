@@ -1,6 +1,7 @@
 /*global kampfer*/
-kampfer.require('events.EventTarget');
+kampfer.require('Class');
 kampfer.require('mindMap.command');
+kampfer.require('mindMap.radio');
 
 kampfer.provide('mindMap.command.Controller');
 kampfer.provide('mindMap.window');
@@ -9,8 +10,8 @@ kampfer.provide('mindMap.nodeContextMenu');
 
 //暂时长这样吧#_#
 //以后再改
-kampfer.mindMap.command.Controller = kampfer.events.EventTarget.extend({
-	initializer : function(window, contextMenu, nodeContextMenu) {
+kampfer.mindMap.command.Controller = kampfer.Class.extend({
+	initializer : function(window, nodeContextMenu, contextMenu) {
 		this.commandStack = [];
 		this.commandStackIndex = 0;
 
@@ -18,18 +19,11 @@ kampfer.mindMap.command.Controller = kampfer.events.EventTarget.extend({
 		kampfer.mindMap.contextMenu = contextMenu;
 		kampfer.mindMap.nodeContextMenu = nodeContextMenu;
 
-		for(var i = 0, view; view = arguments[i]; i++) {
-			this.subscribe(view);
-		}
+		kampfer.mindMap.radio.addListener('executeCommand', this.doCommand, this);
+		kampfer.mindMap.radio.addListener('beforemenushow', this.checkCommand, this);
 	},
 
-	subscribe : function(obj) {
-		obj.addListener('beforeshow', this.checkCommand, this);
-		obj.addListener('executeCommand', this.doCommand, this);
-	},
-
-	checkCommand : function(event) {
-		var menu = event.target;
+	checkCommand : function(event, menu) {
 		var commands = menu.getElement().querySelectorAll('[command]');
 		for(var i = 0, command; command = commands[i]; i++) {
 			var name = command.getAttribute('command');
@@ -51,7 +45,6 @@ kampfer.mindMap.command.Controller = kampfer.events.EventTarget.extend({
 				this.commandStack[this.commandStackIndex++] = ret;
 			}
 		}
-		this.dispatch.apply(this, arguments);
 	},
 
 	commandStack : null,

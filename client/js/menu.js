@@ -1,7 +1,7 @@
-/*global kampfer console*/
 kampfer.require('Component');
 kampfer.require('dom');
 kampfer.require('events');
+kampfer.require('mindMap.radio');
 
 kampfer.provide('Menu');
 kampfer.provide('MenuItem');
@@ -41,7 +41,7 @@ kampfer.Menu = kampfer.Component.extend({
                 //this.dispatch('executeCommand', command);
                 event.type = 'executeCommand';
                 event.command = command;
-                this.dispatch(event);
+                kampfer.mindMap.radio.dispatch(event);
                 return false;
             }
         }, this);
@@ -54,6 +54,11 @@ kampfer.Menu = kampfer.Component.extend({
     },
 
     trigger : null,
+
+    show : function() {
+        kampfer.mindMap.radio.dispatch('beforemenushow', this);
+        kampfer.Menu.superClass.show.apply(this);
+    },
 
     disable : function(index) {
         if(typeof index === 'number') {
