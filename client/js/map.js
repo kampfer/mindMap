@@ -31,9 +31,6 @@ kampfer.mindMap.Map = kampfer.Component.extend({
                 that.getChild(event.target.id).getParent() :
                 that.getChild(event.target.id);
 
-            kampfer.mindMap.nodeContextMenu.hide();
-            kampfer.mindMap.contextMenu.hide();
-
             if(event.which === 1) {
                 if(role === 'caption' || role === 'node') {
                     dragingNode = true;
@@ -56,25 +53,6 @@ kampfer.mindMap.Map = kampfer.Component.extend({
                 that.currentNode.moveTo(event.pageX - x, event.pageY - y);
                 return false;
             }
-        });
-
-        kampfer.events.addListener(this._element, 'contextmenu', function(event) {
-            var role = event.target.getAttribute('role'),
-                parentElement = that._element.parentNode,
-                scrollX = kampfer.dom.scrollLeft(parentElement),
-                scrollY = kampfer.dom.scrollTop(parentElement);
-
-            var menu;
-            if(role === 'caption' || role === 'node') {
-                menu = kampfer.mindMap.nodeContextMenu;
-            } else {
-                menu = kampfer.mindMap.contextMenu;
-            }
-
-            menu.setPosition(event.pageX + scrollX, event.pageY + scrollY);
-            menu.show();
-
-            return false;
         });
     },
 

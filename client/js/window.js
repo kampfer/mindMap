@@ -58,14 +58,14 @@ kampfer.mindMap.Window = kampfer.Component.extend({
 
     scrollLeft : function(offset) {
         var offsetX = kampfer.dom.scrollLeft(this._element, offset);
-        if(offsetX) {
+        if(typeof offsetX === 'number') {
             return offsetX;
         }
     },
 
     scrollTop : function(offset) {
         var offsetY = kampfer.dom.scrollTop(this._element, offset);
-        if(offsetY) {
+        if(typeof offsetY === 'number') {
             return offsetY;
         }
     },

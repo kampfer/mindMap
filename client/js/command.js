@@ -31,7 +31,6 @@ kampfer.mindMap.command.createNewNode = function(event) {
 	node.offset.y = kampfer.mindMap.window.scrollTop() + event.pageY;
 	node = new kampfer.mindMap.Node(node);
 	kampfer.mindMap.map.addChild(node, true);
-	console.log(node);
 };
 
 kampfer.mindMap.command.Base = kampfer.Class.extend({
