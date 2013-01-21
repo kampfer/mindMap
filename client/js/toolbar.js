@@ -36,6 +36,7 @@ kampfer.mindMap.ToolBar = kampfer.Component.extend({
 
 	addMenu : function(menu, trigger) {
         var menu = new kampfer.Menu(menu, trigger);
+        menu.getElement().id = menu.getId();
 		this.addChild(menu, true);
 	}
 });

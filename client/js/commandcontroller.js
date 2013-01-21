@@ -8,25 +8,18 @@ kampfer.provide('mindMap.command.Controller');
 //暂时长这样吧#_#
 //以后再改
 kampfer.mindMap.command.Controller = kampfer.Class.extend({
-	initializer : function() {
+	initializer : function(window) {
+		this.window = window;
+
 		this.commandStack = [];
 		this.commandStackIndex = 0;
 
 		kampfer.mindMap.radio.addListener('executeCommand', this.doCommand, this);
-		kampfer.mindMap.radio.addListener('beforemenushow', this.checkCommand, this);
 	},
 
-	checkCommand : function(event, menu) {
-		var commands = menu.getElement().querySelectorAll('[command]');
-		for(var i = 0, command; command = commands[i]; i++) {
-			var name = command.getAttribute('command');
-			command = kampfer.mindMap.command[name];
-			if( command && command.isAvailable && !command.isAvailable() ) {
-				menu.disable(i);
-			} else {
-				menu.enable(i);
-			}
-		}
+	getCommand : function(name) {
+		return kampfer.mindMap.command[name] ||
+			kampfer.mindMap.command.Base;
 	},
 
 	doCommand : function(event) {

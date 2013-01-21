@@ -30,6 +30,8 @@ kampfer.Menu = kampfer.Component.extend({
             return;
         }
 
+        this._element.style.display = 'none';
+
         kampfer.events.addListener(this._element, 'click', function(event) {
             var command = event.target.getAttribute('command');
             //点击菜单后菜单项自动获得焦点并且高亮显示,我们不需要这种效果,
@@ -48,15 +50,25 @@ kampfer.Menu = kampfer.Component.extend({
 
         if(trigger && trigger.nodeType) {
             this.trigger = trigger;
-            kampfer.events.addListener(trigger, 'mouseover', this.show, this);
-            kampfer.events.addListener(trigger, 'mouseout', this.hide, this);
+            kampfer.events.addListener(trigger, 'mouseover', function(event) {
+                console.log(event);
+                if(event.target === trigger) {
+                    this.show();
+                }
+            }, this);
+            kampfer.events.addListener(trigger, 'mouseout', function(event) {
+                console.log(event);
+                if(event.target === trigger) {
+                    this.hide();
+                }
+            }, this);
         }
     },
 
     trigger : null,
 
     show : function() {
-        kampfer.mindMap.radio.dispatch('beforemenushow', this);
+        this.dispatch('beforemenushow');
         kampfer.Menu.superClass.show.apply(this);
     },
 

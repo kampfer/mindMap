@@ -54,6 +54,31 @@ kampfer.mindMap.Window = kampfer.Component.extend({
                 return false;
             }
         });
+
+        kampfer.events.addListener(this._element, 'contextmenu', function(event) {
+            var role = event.target.getAttribute('role'),
+                scrollX = kampfer.mindMap.window.scrollLeft(),
+                scrollY = kampfer.mindMap.window.scrollTop();
+
+            var menu;
+            if(role === 'caption' || role === 'node') {
+                menu = kampfer.mindMap.nodeContextMenu;
+            } else if(role === 'map') {
+                menu = kampfer.mindMap.contextMenu;
+            }
+
+            if(menu) {
+                menu.setPosition(event.pageX + scrollX, event.pageY + scrollY);
+                menu.show();
+            }
+
+            return false;
+        });
+
+        kampfer.events.addListener(this._element, 'click', function() {
+            kampfer.mindMap.contextMenu.hide();
+            kampfer.mindMap.nodeContextMenu.hide();
+        });
     },
 
     scrollLeft : function(offset) {
@@ -74,7 +99,6 @@ kampfer.mindMap.Window = kampfer.Component.extend({
 
     dispose : function() {
         kampfer.mindMap.Window.superClass.dispose.apply(this);
-        this._element = null;
         kampfer.events.removeListener(this._element);
     }
 });

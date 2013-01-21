@@ -9,28 +9,39 @@ kampfer.require('mindMap.MapManager');
 kampfer.provide('mindMap.command');
 kampfer.provide('mindMap.map');
 kampfer.provide('mindMap.mapManager');
+kampfer.provide('mindMap.command.commandStack');
 
 kampfer.mindMap.map = null;
 
 kampfer.mindMap.mapManager = null;
 
 kampfer.mindMap.command.createNewMap = function() {
-	var mapContainer = document.getElementById('map-container');
 	kampfer.mindMap.mapManager = new kampfer.mindMap.MapManager();
+
 	kampfer.mindMap.map = new kampfer.mindMap.Map(kampfer.mindMap.mapManager);
-	kampfer.mindMap.map.render(mapContainer);
+
+	kampfer.mindMap.window.addChild(map, true);
+
 	document.title = kampfer.mindMap.mapManager.getMapName();
 };
 
-
-kampfer.mindMap.command._createNode = function() {};
-
 kampfer.mindMap.command.createNewNode = function(event) {
-	var node = kampfer.mindMap.mapManager.createNode();
-	node.offset.x = kampfer.mindMap.window.scrollLeft() + event.pageX;
-	node.offset.y = kampfer.mindMap.window.scrollTop() + event.pageY;
-	node = new kampfer.mindMap.Node(node);
+	var nodeData = kampfer.mindMap.mapManager.createNode();
+	nodeData.offset.x = kampfer.mindMap.window.scrollLeft() + event.pageX;
+	nodeData.offset.y = kampfer.mindMap.window.scrollTop() + event.pageY;
+	kampfer.mindMap.mapManager.addNode(nodeData);
+
+	var node = new kampfer.mindMap.Node(nodeData);
+
 	kampfer.mindMap.map.addChild(node, true);
+
+	document.title = '*' + document.title;
+
+	return {
+		execute : 'createNewNode',
+		unExecute : 'deleteNode',
+		arg : [nodeData]
+	};
 };
 
 kampfer.mindMap.command.Base = kampfer.Class.extend({
@@ -340,28 +351,11 @@ kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 	level : 1,
 
 	isAvailable : function() {
-		if( kampfer.mindMap.command.index >= 
+		if( kampfer.mindMap.command.index >=
 			kampfer.mindMap.command.commandList.length ) {
 			return false;
-		} 
+		}
 		return true;
-	}
-});
-
-
-kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
-	initializer : function(data, localstore) {
-		this.data = data;
-		this.localstore = localstore;
-	},
-
-	execute : function() {
-		var manager = new kampfer.mindMap.MapManager(this.data, this.localstore);
-		document.title = manager.getMapName();
-		controller = new kampfer.mindMap.MapController(manager, this.localstore);
-		controller.render();
-		controller.monitorEvents();
-		return controller;
 	}
 });
 
@@ -374,7 +368,7 @@ kampfer.mindMap.command.SaveAsText = kampfer.mindMap.command.Base.extend({
 	execute : function() {
 		var content = this.mapManager.dataToJSON();
 		var mapName = this.mapManager.getMapName();
-		//The standard W3C File API BlobBuilder interface is not available in all browsers. 
+		//The standard W3C File API BlobBuilder interface is not available in all browsers.
 		//BlobBuilder.js is a cross-browser BlobBuilder implementation that solves this.
 		var bb = new kampfer.BlobBuilder();
 		bb.append(content);
