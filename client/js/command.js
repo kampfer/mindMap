@@ -15,35 +15,6 @@ kampfer.mindMap.map = null;
 
 kampfer.mindMap.mapManager = null;
 
-kampfer.mindMap.command.createNewMap = function() {
-	kampfer.mindMap.mapManager = new kampfer.mindMap.MapManager();
-
-	kampfer.mindMap.map = new kampfer.mindMap.Map(kampfer.mindMap.mapManager);
-
-	kampfer.mindMap.window.addChild(map, true);
-
-	document.title = kampfer.mindMap.mapManager.getMapName();
-};
-
-kampfer.mindMap.command.createNewNode = function(event) {
-	var nodeData = kampfer.mindMap.mapManager.createNode();
-	nodeData.offset.x = kampfer.mindMap.window.scrollLeft() + event.pageX;
-	nodeData.offset.y = kampfer.mindMap.window.scrollTop() + event.pageY;
-	kampfer.mindMap.mapManager.addNode(nodeData);
-
-	var node = new kampfer.mindMap.Node(nodeData);
-
-	kampfer.mindMap.map.addChild(node, true);
-
-	document.title = '*' + document.title;
-
-	return {
-		execute : 'createNewNode',
-		unExecute : 'deleteNode',
-		arg : [nodeData]
-	};
-};
-
 kampfer.mindMap.command.Base = kampfer.Class.extend({
 	initializer : function() {},
 
@@ -67,6 +38,19 @@ kampfer.mindMap.command.Base = kampfer.Class.extend({
 	},
 
 	dispose : function() {}
+});
+
+
+kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
+	execute : function() {
+		kampfer.mindMap.mapManager = new kampfer.mindMap.MapManager();
+
+		kampfer.mindMap.map = new kampfer.mindMap.Map(kampfer.mindMap.mapManager);
+
+		kampfer.mindMap.window.addChild(kampfer.mindMap.map, true);
+
+		document.title = kampfer.mindMap.mapManager.getMapName();
+	}
 });
 
 

@@ -24,7 +24,6 @@ kampfer.mindMap.init = function() {
     kampfer.mindMap.toolBar.eachChild(function(child) {
         child.addListener('beforemenushow', function() {
             var commands = this.getElement().querySelectorAll('[command]');
-            console.log(commands.length);
             for(var i = 0, command; (command = commands[i]); i++) {
                 var name = command.getAttribute('command');
                 command = kampfer.mindMap.command.controller.getCommand(name);

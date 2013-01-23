@@ -23,12 +23,12 @@ kampfer.mindMap.command.Controller = kampfer.Class.extend({
 	},
 
 	doCommand : function(event) {
-		var command = kampfer.mindMap.command[event.command];
-		console.log(event.command);
-		if(command) {
-			var ret = command(event);
-			if(ret) {
-				this.commandStack[this.commandStackIndex++] = ret;
+		var Command = kampfer.mindMap.command[event.command], command;
+		if( Command && (!Command.isAvailable || Command.isAvailable()) ) {
+			command = new Command(event);
+			command.execute();
+			if(command.needPush) {
+				this.commandStack[this.commandStackIndex++] = command;
 			}
 		}
 	},

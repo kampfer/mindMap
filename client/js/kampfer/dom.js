@@ -143,3 +143,23 @@ kampfer.dom.scrollTop = function(elem, val) {
         elem[ method ] = val;
     }
 };
+
+
+//http://www.cnblogs.com/rubylouvre/archive/2011/05/30/1583523.html
+kampfer.dom.contains = function(parent, child) {
+    if(parent.compareDocumentPosition) {
+        return parent === child || !!(parent.compareDocumentPosition(child) & 16);
+    }
+
+    if(parent.contains && child.nodeType === 1) {
+        return parent.contains(child) && parent !== child;
+    }
+
+    while( (child = child.parentNode) ) {
+        if(child === parent) {
+            return true;
+        }
+    }
+
+    return false;
+};
