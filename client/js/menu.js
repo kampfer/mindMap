@@ -43,7 +43,7 @@ kampfer.Menu = kampfer.Component.extend({
                 //this.dispatch('executeCommand', command);
                 event.type = 'executeCommand';
                 event.command = command;
-                kampfer.mindMap.radio.dispatch(event);
+                kampfer.mindMap.radio.dispatch(event, this);
                 return false;
             }
         }, this);
@@ -70,7 +70,7 @@ kampfer.Menu = kampfer.Component.extend({
     trigger : null,
 
     show : function() {
-        this.dispatch('beforemenushow');
+        this.dispatch('beforemenushow', this);
         kampfer.Menu.superClass.show.apply(this);
     },
 

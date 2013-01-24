@@ -21,18 +21,26 @@ kampfer.mindMap.init = function() {
 
     kampfer.mindMap.command.controller = new kampfer.mindMap.command.Controller(window);
 
-    kampfer.mindMap.toolBar.eachChild(function(child) {
-        child.addListener('beforemenushow', function() {
-            var commands = this.getElement().querySelectorAll('[command]');
-            for(var i = 0, command; (command = commands[i]); i++) {
-                var name = command.getAttribute('command');
-                command = kampfer.mindMap.command.controller.getCommand(name);
-                if( command.isAvailable && !command.isAvailable() ) {
-                    this.disable(i);
-                } else {
-                    this.enable(i);
-                }
+    function checkMenuCommand(event) {
+        var commands = event.currentTarget.getElement().querySelectorAll('[command]');
+        for(var i = 0, command; (command = commands[i]); i++) {
+            var name = command.getAttribute('command');
+            if( !kampfer.mindMap.command.controller.isCommandAvalilable(name) ) {
+                this.disable(i);
+            } else {
+                this.enable(i);
             }
-        });
+        }
+    }
+
+    kampfer.mindMap.toolBar.eachChild(function(child) {
+        child.addListener('beforemenushow', checkMenuCommand);
+    });
+    kampfer.mindMap.contextMenu.addListener('beforemenushow', checkMenuCommand);
+    kampfer.mindMap.nodeContextMenu.addListener('beforemenushow', checkMenuCommand);
+
+    kampfer.events.addListener(window, 'beforeunload', function(event) {
+        event.returnValue = 'map未保存,确定退出?';
+        return 'map未保存,确定退出?';
     });
 };

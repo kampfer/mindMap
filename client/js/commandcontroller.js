@@ -33,6 +33,15 @@ kampfer.mindMap.command.Controller = kampfer.Class.extend({
 		}
 	},
 
+	isCommandAvalilable : function(command) {
+		command = this.getCommand(command);
+		if( command.isAvailable && !command.isAvailable() ) {
+			return false;
+		} else {
+			return true;
+		}
+	},
+
 	commandStack : null,
 
 	commandStackIndex : null,

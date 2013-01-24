@@ -24,19 +24,6 @@ kampfer.mindMap.command.Base = kampfer.Class.extend({
 
 	needPush : false,
 
-	//command默认是可执行的
-	isAvailable : function() {
-		return true;
-	},
-
-	push2Stack : function() {
-		if( this.needPush ) {
-			var kmc = kampfer.mindMap.command;
-			var length = kmc.commandList.length - kmc.index;
-			kmc.commandList.splice(kmc.index++, length, this);
-		}
-	},
-
 	dispose : function() {}
 });
 
@@ -52,6 +39,72 @@ kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
 		document.title = kampfer.mindMap.mapManager.getMapName();
 	}
 });
+
+kampfer.mindMap.command.CreateNewMap.isAvailable = function() {
+	if(kampfer.mindMap.map || kampfer.mindMap.mapManager) {
+		return false;
+	}
+	return true;
+};
+
+
+kampfer.mindMap.command.CreateNewRootNode = kampfer.mindMap.command.Base.extend({
+	initializer : function(event) {
+		var nodeData = kampfer.mindMap.mapManager.createNode(),
+			window = kampfer.mindMap.map.getParent();
+		nodeData.offset.x = event.pageX + window.scrollLeft();
+		nodeData.offset.y = event.pageY + window.scrollTop();
+		this.nodeData = nodeData;
+	},
+
+	execute : function() {
+		var node = new kampfer.mindMap.Node(this.nodeData),
+			parent;
+
+		if(this.nodeData.parent) {
+			parent = kampfer.mindMap.map.getChild(this.nodeData.parent);
+		} else {
+			parent = kampfer.mindMap.map;
+		}
+
+		kampfer.mindMap.mapManager.addNode(this.nodeData);
+		parent.addChild(node, true);
+
+		document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
+	},
+
+	unExecute : function() {
+		kampfer.mindMap.map.removeChild(this.nodeData.id, true);
+		this.mapManager.deleteNode(this.nodeData.id);
+
+		document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
+	},
+
+	needPush : true
+});
+
+kampfer.mindMap.command.CreateNewRootNode.isAvailable = function() {
+	if(kampfer.mindMap.map) {
+		return true;
+	}
+	return false;
+};
+
+
+kampfer.mindMap.command.AppendChildNode = kampfer.mindMap.command.CreateNewRootNode.extend({
+	initializer : function(event) {
+		var nodeData = kampfer.mindMap.mapManager.createNode();
+		nodeData.parent = kampfer.mindMap.map.currentNode.getId();
+		this.nodeData = nodeData;
+	}
+});
+
+kampfer.mindMap.command.AppendChildNode.isAvailable = function() {
+	if(kampfer.mindMap.map.currentNode) {
+		return true;
+	}
+	return false;
+};
 
 
 kampfer.mindMap.command.CreateNode = kampfer.mindMap.command.Base.extend({
