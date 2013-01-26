@@ -5,15 +5,19 @@ kampfer.require('saveAs');
 kampfer.require('mindMap.Node');
 kampfer.require('mindMap.Map');
 kampfer.require('mindMap.MapManager');
+kampfer.require('mindMap.MapsManager');
 
 kampfer.provide('mindMap.command');
 kampfer.provide('mindMap.map');
 kampfer.provide('mindMap.mapManager');
+kampfer.provide('mindMap.mapsManager');
 kampfer.provide('mindMap.command.commandStack');
 
 kampfer.mindMap.map = null;
 
 kampfer.mindMap.mapManager = null;
+
+kampfer.mindMap.mapsManager = new kampfer.mindMap.MapsManager('mindMap');
 
 kampfer.mindMap.command.Base = kampfer.Class.extend({
 	initializer : function() {},
@@ -46,6 +50,32 @@ kampfer.mindMap.command.CreateNewMap.isAvailable = function() {
 	}
 	return true;
 };
+
+
+kampfer.mindMap.command.SaveMapInStorage = kampfer.mindMap.command.Base.extend({
+
+});
+
+kampfer.mindMap.command.SaveMapInStorage.isAvailable = function() {};
+
+
+kampfer.mindMap.command.SaveMapInDisk = kampfer.mindMap.command.Base.extend({
+
+});
+
+
+kampfer.mindMap.command.OpenMapInStorage = kampfer.mindMap.command.Base.extend({
+
+});
+
+kampfer.mindMap.command.OpenMapInStorage.isAvailable = function() {
+
+};
+
+
+kampfer.mindMap.command.OpenMapInDisk = kampfer.mindMap.command.Base.extend({
+
+});
 
 
 kampfer.mindMap.command.CreateNewRootNode = kampfer.mindMap.command.Base.extend({
@@ -105,64 +135,6 @@ kampfer.mindMap.command.AppendChildNode.isAvailable = function() {
 	}
 	return false;
 };
-
-
-kampfer.mindMap.command.CreateNode = kampfer.mindMap.command.Base.extend({
-	initializer : function(map, mapManager, controller) {
-		this.map = map;
-		this.mapManager = mapManager;
-		this.commandTargt = map.currentNode;
-
-		var mapPosition = map.getPosition();
-		if(this.commandTargt.getId() === 'map') {
-			this.offsetX = Math.abs(mapPosition.left) + controller.lastPageX;
-			this.offsetY = Math.abs(mapPosition.top) + controller.lastPageY;
-		}
-	},
-
-	nodeData : null,
-
-	needPush : true,
-
-	execute : function() {
-		if( !this.isAvailable() ) {
-			return;
-		}
-		if(!this.nodeData) {
-			var node = {
-				parent : this.commandTargt.getId()
-			};
-			if(node.parent === 'map') {
-				node.offset = {};
-				node.offset.x = this.offsetX;
-				node.offset.y = this.offsetY;
-			}
-			this.nodeData = this.mapManager.createNode(node);
-		}
-		this.mapManager.addNode(this.nodeData);
-		this.commandTargt.addChild(
-			new kampfer.mindMap.Node(this.nodeData, this.mapManager), true );
-
-		document.title = this.mapManager.getMapName() + '*';
-	},
-
-	unExecute : function() {
-		if( !this.isAvailable() ) {
-			return;
-		}
-		this.commandTargt.removeChild(this.nodeData.id, true);
-		this.mapManager.deleteNode(this.nodeData.id);
-
-		document.title = this.mapManager.getMapName() + '*';
-	},
-
-	dispose : function() {
-		this.nodeData = null;
-		this.map = null;
-		this.mapManger = null;
-		this.commandTarget = null;
-	}
-});
 
 
 kampfer.mindMap.command.DeleteNode = kampfer.mindMap.command.Base.extend({
