@@ -18,30 +18,15 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
      * 当传递给构建函数的参数是一个对象，那么这个对象被用作mindmap数据来源
      * @param   name{string|object|null}
      */
-    initializer : function(data, localstore) {
-        //将prototype中的默认数据深拷贝一份
-        this._mapData = {
-            nodeTree : {},
-            //map中保存的都是到node的引用
-            nodeMap : {},
-            oriData : null,
-            name : 'untitled'
-        };
+    initializer : function(data) {
+        this._oriData = data;
 
-        this._lastModified = +new Date();
-
-        //如果传入了数据,就使用新数据替换原始数据
-        if( kampfer.type(data) === 'object' ) {
-            this._mapData.oriData = data;
-            //tree结构更方便操作node，特别是操作多节点node
-            this._mapData.nodeTree = data.document;
-            //map用于快速查找
-            this._mapData.nodeMap = this.parseTree(this._mapData.nodeTree);
-            this._mapData.name = data.name;
-            this._lastModified = this._mapData.oriData.lastModified;
-        }
-
-        this._localStore = localstore;
+        data = data || {};
+        this._nodeTree = data.document || [];
+        this._mapName = data.name || 'untitled';
+        this._lastModified = data.lastModified || +new Date();
+        //map用于快速查找
+        this._nodeMap = this.parseTree(this._nodeTree);
         this._isModified = false;
     },
 
@@ -57,8 +42,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
     parseTree : function(data) {
         var map = {};
 
-        //迭代生成节点的树型结构
-        for(var i = 0, root; root = data[i]; i++) {
+        for(var i = 0, root; (root = data[i]); i++) {
             this.traverseNode(root, function(node) {
                 map[node.id] = node;
             });
@@ -71,17 +55,12 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
         return this._isModified;
     },
     
-    dataToJSON : function() {
-        return JSON.stringify({
-            tree:this._mapData.nodeTree, name:this._mapData.name});
-    },
-    
     getMapName : function() {
-        return this._mapData.name;
+        return this._mapName;
     },
     
     getNode : function(id) {
-        return this._mapData.nodeMap[id];
+        return this._nodeMap[id];
     },
     
     getChildren : function(id) {
@@ -92,24 +71,28 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
     },
 
     getNodeTree : function() {
-        return this._mapData.nodeTree;
+        return this._nodeTree;
     },
     
     //如果有同id的node那么新的node不会被添加
     addNode : function(node) {
         if( kampfer.type(node) === 'object' && !this.getNode(node.id) ) {
             var parent = this.getNode(node.parent);
+
             //add node to nodeTree
             if(parent) {
                 if(!parent.children) {
                     parent.children = [];
                 }
                 parent.children.push(node);
+            } else {
+                this._nodeTree.push(node);
             }
-            //add node to nodeMap
+
+            //保存node和它的子节点的引用
             this.traverseNode(node, function(node) {
-                if( !(node.id in this._mapData.nodeMap) ) {
-                    this._mapData.nodeMap[node.id] = node;
+                if( !(node.id in this._nodeMap) ) {
+                    this._nodeMap[node.id] = node;
                 }
             });
             
@@ -151,7 +134,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
                 node.id = this.generateUniqueId();
             }
             if(node.children) {
-                for(var i = 0, c; c = node.children[i]; i++) {
+                for(var i = 0, c; (c = node.children[i]); i++) {
                     c.parent = node.id;
                 }
             }
@@ -162,14 +145,14 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
     
     //此方法会立即改变children数组的长度
     deleteNode : function(id) {
-        var node = this.getNode(id);
+        var node = this.getNode(id), parent;
 
         if(node) {
-            var parent = this.getNode(node.parent);
+            parent = this.getNode(node.parent);
         }
         if(parent && parent.children) {
             //delete node from tree
-            for(var i = 0, c; c = parent.children[i]; i++) {
+            for(var i = 0, c; (c = parent.children[i]); i++) {
                 if(c.id === id) {
                     parent.children.splice(i, 1);
                     break;
@@ -177,7 +160,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
             }
             //delete node from map
             this.traverseNode(node, function(node) {
-                delete this._mapData.nodeMap[node.id];
+                delete this._nodeMap[node.id];
             });
             
         }
@@ -218,19 +201,16 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
     },
     
     setMapName : function(name) {
-        this._mapData.name = name;
+        this._mapName = name;
         this._isModified = true;
     },
 
-    saveMap : function() {
-        //如果map被重命名,那么需要删除旧map
-        if(this._mapName !== this._mapData.name) {
-            this._localStore.removeMap(this._mapData.name);
-            this._mapData.name = this._mapName;
-        }
-        this._localStore.saveMapToLocalStorage(
-            {tree:this._mapData.nodeTree, name:this._mapData.name});
-        this._isModified = false;
+    getMapData : function() {
+        return {
+            document : this._nodeTree,
+            name : this._mapName,
+            lastModified : this._lastModified
+        };
     },
 
     traverseNode : function(node, callback, forward) {
@@ -238,7 +218,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
             callback.call(this, node);
         }
         if(node.children) {
-            for(var i = 0, child; child = node.children[i]; i++) {
+            for(var i = 0, child; (child = node.children[i]); i++) {
                 this.traverseNode(child, callback, forward);
             }
         }
@@ -248,7 +228,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
     },
 
     traverse : function(callback) {
-        for(var i = 0, node; node = this._mapData.nodeTree[i]; i++) {
+        for(var i = 0, node; (node = this._nodeTree[i]); i++) {
             this.traverseNode(node, callback, true);
         }
     },
@@ -271,8 +251,11 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
     },
     
     dispose : function() {
-        this._mapData = null;
-        this._localStore = null;
+        delete this._oriData;
+        delete this._nodeTree;
+        delete this._mapName;
+        delete this._lastModified;
+        delete this._nodeMap;
+        delete this._isModified;
     }
-    
 });

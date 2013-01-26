@@ -1,7 +1,7 @@
 kampfer.require('mindMap.Window');
 kampfer.require('mindMap.ToolBar');
-kampfer.require('mindMap.Menu');
 kampfer.require('mindMap.command.Controller');
+kampfer.require('Menu');
 kampfer.require('events');
 
 kampfer.provide('mindMap');

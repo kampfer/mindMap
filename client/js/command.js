@@ -1,5 +1,6 @@
 /*global window kampfer console localStorage*/
 kampfer.require('Class');
+kampfer.require('JSON');
 kampfer.require('BlobBuilder');
 kampfer.require('saveAs');
 kampfer.require('mindMap.Node');
@@ -56,26 +57,46 @@ kampfer.mindMap.command.SaveMapInStorage = kampfer.mindMap.command.Base.extend({
 
 });
 
-kampfer.mindMap.command.SaveMapInStorage.isAvailable = function() {};
+kampfer.mindMap.command.SaveMapInStorage.isAvailable = function() {
+	if(kampfer.mindMap.map && kampfer.mindMap.mapManager) {
+		return true;
+	}
+	return false;
+};
 
 
 kampfer.mindMap.command.SaveMapInDisk = kampfer.mindMap.command.Base.extend({
+	execute : function() {
+		var content = JSON.stringify( kampfer.mindMap.mapManager.getMapData() );
+		var mapName = kampfer.mindMap.mapManager.getMapName();
+		//The standard W3C File API BlobBuilder interface is not available in all browsers.
+		//BlobBuilder.js is a cross-browser BlobBuilder implementation that solves this.
+		var bb = new kampfer.BlobBuilder();
+		bb.append(content);
+		kampfer.saveAs( bb.getBlob('text/plain;charset=utf-8'), mapName + '.json' );
 
+		document.title = kampfer.mindMap.mapManager.getMapName();
+	}
 });
+
+kampfer.mindMap.command.SaveMapInDisk.isAvailable =
+	kampfer.mindMap.command.SaveMapInStorage.isAvailable;
 
 
 kampfer.mindMap.command.OpenMapInStorage = kampfer.mindMap.command.Base.extend({
 
 });
 
-kampfer.mindMap.command.OpenMapInStorage.isAvailable = function() {
-
-};
+kampfer.mindMap.command.OpenMapInStorage.isAvailable =
+	kampfer.mindMap.command.CreateNewMap.isAvailable;
 
 
 kampfer.mindMap.command.OpenMapInDisk = kampfer.mindMap.command.Base.extend({
 
 });
+
+kampfer.mindMap.command.OpenMapInDisk.isAvailable =
+	kampfer.mindMap.command.CreateNewMap.isAvailable;
 
 
 kampfer.mindMap.command.CreateNewRootNode = kampfer.mindMap.command.Base.extend({
@@ -365,23 +386,6 @@ kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
 			return false;
 		}
 		return true;
-	}
-});
-
-
-kampfer.mindMap.command.SaveAsText = kampfer.mindMap.command.Base.extend({
-	initializer : function(map, mapManager) {
-		this.mapManager = mapManager;
-	},
-
-	execute : function() {
-		var content = this.mapManager.dataToJSON();
-		var mapName = this.mapManager.getMapName();
-		//The standard W3C File API BlobBuilder interface is not available in all browsers.
-		//BlobBuilder.js is a cross-browser BlobBuilder implementation that solves this.
-		var bb = new kampfer.BlobBuilder();
-		bb.append(content);
-		kampfer.saveAs( bb.getBlob('text/plain;charset=utf-8'), mapName + '.txt' );
 	}
 });
 
