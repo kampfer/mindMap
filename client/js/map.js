@@ -3,6 +3,7 @@ kampfer.require('events');
 kampfer.require('dom');
 kampfer.require('Component');
 kampfer.require('mindMap.Node');
+kampfer.require('mindMap.radio');
 
 kampfer.provide('mindMap.Map');
 
@@ -51,6 +52,13 @@ kampfer.mindMap.Map = kampfer.Component.extend({
         kampfer.events.addListener(this._element, 'mousemove', function(event) {
             if(dragingNode) {
                 that.currentNode.moveTo(event.pageX - x, event.pageY - y);
+                kampfer.mindMap.dispatch({
+                    type : 'executeCommand',
+                    command : 'SaveNodePosition',
+                    nodeId : that.currentNode.getId(),
+                    x : event.pageX - x,
+                    y : event.pageY - y
+                });
                 return false;
             }
         });

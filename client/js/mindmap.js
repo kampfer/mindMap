@@ -40,7 +40,9 @@ kampfer.mindMap.init = function() {
     kampfer.mindMap.nodeContextMenu.addListener('beforemenushow', checkMenuCommand);
 
     kampfer.events.addListener(window, 'beforeunload', function(event) {
-        event.returnValue = 'map未保存,确定退出?';
-        return 'map未保存,确定退出?';
+        if(kampfer.mindMap.map && kampfer.mindMap.mapManager) {
+            event.returnValue = 'map未保存,确定退出?';
+            return 'map未保存,确定退出?';
+        }
     });
 };

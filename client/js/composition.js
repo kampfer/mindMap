@@ -63,7 +63,7 @@ kampfer.Composition = kampfer.events.EventTarget.extend({
 		this.setParentEventTarget(parent);
 		this._parent = parent;
 
-		if( !parent.getChild(this._id) ) {
+		if( parent && !parent.getChild(this._id) ) {
 			parent.addChild(this);
 		}
 	},
