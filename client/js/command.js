@@ -250,37 +250,39 @@ kampfer.mindMap.command.DeleteNode = kampfer.mindMap.command.Base.extend({
 
 kampfer.mindMap.command.SaveNodePosition = kampfer.mindMap.command.Base.extend({
     initializer : function(data) {
+        var id = data.nodeId,
+            nodeData = kampfer.mindMap.mapManager.getNode(id);
+
+        this.oriX = nodeData.offset.x;
+        this.oriY = nodeData.offset.y;
+
+        nodeData.offset.x = data.x;
+        nodeData.offset.y = data.y;
+
+        this.nodeData = nodeData;
     },
 
     needPush : true,
 
     execute : function() {
-        if( !this.isAvailable() ) {
-            return;
-        }
-        //不需要再改变view的位置
-        //不直接使用map.currentNode是因为它会随时改变
-        this.map.getNode(this.nodeId).moveTo(this.newPos.left, this.newPos.top);
-        this.mapManager.setNodePosition(this.nodeId, this.newPos.left, this.newPos.top);
+        kampfer.mindMap.map.currentNode.moveTo(this.nodeData.x, this.nodeData.y);
+        kampfer.mindMap.mapManager.setNodePosition(this.nodeData.id,
+            this.nodeData.offset.x, this.nodeData.offset.y);
 
-        document.title = this.mapManager.getMapName() + '*';
+        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     unExecute : function() {
-        if( !this.isAvailable() ) {
-            return;
-        }
-        this.map.getNode(this.nodeId).moveTo(this.oriPos.left, this.oriPos.top);
-        this.mapManager.setNodePosition(this.nodeId, this.oriPos.left, this.oriPos.top);
+        kampfer.mindMap.map.currentNode.moveTo(this.oriX, this.oriY);
+        kampfer.mindMap.mapManager.setNodePosition(this.nodeData.id, this.oriX, this.oriY);
 
-        document.title = this.mapManager.getMapName() + '*';
+        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     dispose : function() {
-        this.map = null;
-        this.mapManager = null;
-        this.newPos = null;
-        this.oriPos = null;
+        delete this.nodeData;
+        delete this.oriY;
+        delete this.oriX;
     }
 });
 

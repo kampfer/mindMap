@@ -46,19 +46,19 @@ kampfer.mindMap.Map = kampfer.Component.extend({
         kampfer.events.addListener(this._element, 'mouseup', function(event) {
             if(dragingNode) {
                 dragingNode = false;
-            }
-        });
-
-        kampfer.events.addListener(this._element, 'mousemove', function(event) {
-            if(dragingNode) {
-                that.currentNode.moveTo(event.pageX - x, event.pageY - y);
-                kampfer.mindMap.dispatch({
+                kampfer.mindMap.radio.dispatch({
                     type : 'executeCommand',
                     command : 'SaveNodePosition',
                     nodeId : that.currentNode.getId(),
                     x : event.pageX - x,
                     y : event.pageY - y
                 });
+            }
+        });
+
+        kampfer.events.addListener(this._element, 'mousemove', function(event) {
+            if(dragingNode) {
+                that.currentNode.moveTo(event.pageX - x, event.pageY - y);
                 return false;
             }
         });

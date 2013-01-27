@@ -15,7 +15,7 @@ kampfer.addDependency('kampfer/eventtarget.js', ['events.EventTarget'], ['events
 kampfer.addDependency('kampfer/helper/es5-shim.js', [], []);
 kampfer.addDependency('kampfer/helper/json2.js', ['JSON'], []);
 kampfer.addDependency('kampfer/support.js', ['browser.support'], []);
-kampfer.addDependency('map.js', ['mindMap.Map'], ['events','dom','Component','mindMap.Node']);
+kampfer.addDependency('map.js', ['mindMap.Map'], ['events','dom','Component','mindMap.Node','mindMap.radio']);
 kampfer.addDependency('MapManager.js', ['mindMap.MapManager'], ['Class']);
 kampfer.addDependency('MapsManager.js', ['mindMap.MapsManager'], ['Class','store']);
 kampfer.addDependency('menu.js', ['Menu','MenuItem'], ['Component','dom','events','mindMap.radio']);
