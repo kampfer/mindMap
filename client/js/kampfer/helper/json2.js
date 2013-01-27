@@ -484,3 +484,5 @@ if (typeof JSON !== 'object') {
         };
     }
 }());
+
+kampfer.provide('JSON');

@@ -13,7 +13,7 @@ kampfer.addDependency('kampfer/dom.js', ['dom'], []);
 kampfer.addDependency('kampfer/events.js', ['events','events.Event','events.Listener'], ['data']);
 kampfer.addDependency('kampfer/eventtarget.js', ['events.EventTarget'], ['events','Class']);
 kampfer.addDependency('kampfer/helper/es5-shim.js', [], []);
-kampfer.addDependency('kampfer/helper/json2.js', [], []);
+kampfer.addDependency('kampfer/helper/json2.js', ['JSON'], []);
 kampfer.addDependency('kampfer/support.js', ['browser.support'], []);
 kampfer.addDependency('map.js', ['mindMap.Map'], ['events','dom','Component','mindMap.Node']);
 kampfer.addDependency('MapManager.js', ['mindMap.MapManager'], ['Class']);

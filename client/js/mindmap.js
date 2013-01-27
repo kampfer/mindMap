@@ -19,7 +19,7 @@ kampfer.mindMap.init = function() {
     kampfer.mindMap.nodeContextMenu = new kampfer.Menu(nodeContextMenu);
     kampfer.mindMap.contextMenu = new kampfer.Menu(contextMenu);
 
-    kampfer.mindMap.command.controller = new kampfer.mindMap.command.Controller(window);
+    kampfer.mindMap.command.controller = new kampfer.mindMap.command.Controller(kampfer.mindMap.window);
 
     function checkMenuCommand(event) {
         var commands = event.currentTarget.getElement().querySelectorAll('[command]');

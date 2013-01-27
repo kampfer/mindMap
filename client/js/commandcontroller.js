@@ -9,7 +9,7 @@ kampfer.provide('mindMap.command.Controller');
 //以后再改
 kampfer.mindMap.command.Controller = kampfer.Class.extend({
 	initializer : function(window) {
-		this.window = window;
+		this.view = window;
 
 		this.commandStack = [];
 		this.commandStackIndex = 0;
@@ -25,10 +25,12 @@ kampfer.mindMap.command.Controller = kampfer.Class.extend({
 	doCommand : function(event) {
 		var Command = kampfer.mindMap.command[event.command], command;
 		if( Command && (!Command.isAvailable || Command.isAvailable()) ) {
-			command = new Command(event);
+			command = new Command(event, this.view);
 			command.execute();
 			if(command.needPush) {
 				this.commandStack[this.commandStackIndex++] = command;
+			} else {
+				command.dispose();
 			}
 		}
 	},
