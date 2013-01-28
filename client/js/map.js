@@ -7,6 +7,7 @@ kampfer.require('mindMap.radio');
 
 kampfer.provide('mindMap.Map');
 
+//TODO 将map改造成controller
 kampfer.mindMap.Map = kampfer.Component.extend({
 
     _id : 'map',
@@ -28,12 +29,20 @@ kampfer.mindMap.Map = kampfer.Component.extend({
         kampfer.events.addListener(this._element, 'mousedown', function(event) {
             var role = event.target.getAttribute('role');
 
-            that.currentNode = role === 'caption' ?
-                that.getChild(event.target.id).getParent() :
-                that.getChild(event.target.id);
+            if(role === 'map' || role === 'branch') {
+                if( that.currentNode && that.currentNode.isEditing() ) {
+                    kampfer.mindMap.radio.dispatch({
+                        type : 'executeCommand',
+                        command : 'SaveNodeContent',
+                        nodeId : that.currentNode.getId()
+                    });
+                }
+            } else if(role === 'content' || role === 'caption') {
+                that.currentNode = role === 'caption' ?
+                    that.getChild(event.target.id).getParent() :
+                    that.getChild(event.target.parentNode.id).getParent();
 
-            if(event.which === 1) {
-                if(role === 'caption' || role === 'node') {
+                if( event.which === 1 && !that.currentNode.isEditing() ) {
                     dragingNode = true;
 
                     var position = that.currentNode.getPosition();

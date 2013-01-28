@@ -13,7 +13,14 @@ kampfer.mindMap.Caption = kampfer.Component.extend({
         this._id = this.prefix + data.id;
 
         this.createDom();
+
+        this._contentHolder = document.createElement('div');
+        this._contentHolder.setAttribute('role', 'content');
+        this._element.appendChild(this._contentHolder);
+
         this.setContent(data.content);
+
+        this.isEditing = false;
     },
     
     decorate : function() {
@@ -26,11 +33,14 @@ kampfer.mindMap.Caption = kampfer.Component.extend({
     },
     
     setContent : function(text) {
-        this._element.innerHTML = text;
+        this.hideTextarea();
+        this.showContentHolder();
+        this._contentHolder.innerHTML = text;
+        this.isEditing = false;
     },
     
     getContent : function() {
-        return this._element.innerHTML;
+        return this._contentHolder.innerHTML;
     },
     
     fixPosition : function() {
@@ -40,23 +50,44 @@ kampfer.mindMap.Caption = kampfer.Component.extend({
     
     insertTextarea : function() {
         var value = this.getContent();
-        this._textarea = this._doc.createElement('textarea');
-        this._textarea.value = value;
-        this._textarea.id = 'node-editor';
-        this._textarea.setAttribute('node-type', 'editor');
-        this._textarea.className = 'node-editor';
-        this._element.innerHTML = '';
-        this._element.appendChild(this._textarea);
+        if(!this._textarea) {
+            this._textarea = this._doc.createElement('textarea');
+            this._textarea.value = value;
+            this._textarea.id = 'node-editor';
+            this._textarea.setAttribute('node-type', 'editor');
+            this._textarea.className = 'node-editor';
+            this._element.appendChild(this._textarea);
+            this.isEditing = true;
+        } else {
+            this.showTextarea();
+        }
+        this.hideContentHolder();
     },
-    
-    insertText : function() {
-        //textarea存在且在文档中
-        if(this._textarea && this._textarea.parentNode) {
-            var text = this._textarea.value;
-            this._textarea.parentNode.removeChild(this._textarea);
-            this._element.innerHTML = text;
-            this.fixPosition();
-            return text;
+
+    showTextarea : function() {
+        if(this._textarea) {
+            this.isEditing = true;
+            this._textarea.style.display = '';
+        }
+    },
+
+    hideTextarea : function() {
+        if(this._textarea) {
+            this._textarea.style.display = 'none';
+        }
+    },
+
+    showContentHolder : function() {
+        this._contentHolder.style.display = '';
+    },
+
+    hideContentHolder : function() {
+        this._contentHolder.style.display = 'none';
+    },
+
+    getTextareaValue : function() {
+        if(this._textarea) {
+            return this._textarea.value;
         }
     },
     

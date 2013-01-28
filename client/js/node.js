@@ -77,6 +77,10 @@ kampfer.mindMap.Node = kampfer.Component.extend({
         }
     },
 
+    isEditing : function() {
+        return this.getCaption().isEditing;
+    },
+
     dispose : function() {}
     
 });

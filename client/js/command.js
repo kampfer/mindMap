@@ -287,40 +287,41 @@ kampfer.mindMap.command.SaveNodePosition = kampfer.mindMap.command.Base.extend({
 });
 
 
+kampfer.mindMap.command.EditNodeContent = kampfer.mindMap.command.Base.extend({
+    execute : function() {
+        kampfer.mindMap.map.currentNode.getCaption().insertTextarea();
+    }
+});
+
+
 kampfer.mindMap.command.SaveNodeContent = kampfer.mindMap.command.Base.extend({
     initializer : function(data) {
+        var id = data.nodeId;
+        this.view = kampfer.mindMap.map.getChild(id);
+        this.oriContent = this.view.getCaption().getContent();
+        this.newContent = this.view.getCaption().getTextareaValue();
     },
 
     needPush : true,
 
     execute : function() {
-        if( !this.isAvailable() ) {
-            return;
-        }
-        var caption = this.map.getNode(this.nodeId).getCaption();
-        if(!this.newContent) {
-            this.newContent = caption.insertText();
-        }
-        caption.setContent(this.newContent);
-        this.mapManager.setNodeContent(this.nodeId, this.newContent);
+        this.view.getCaption().setContent(this.newContent);
+        kampfer.mindMap.mapManager.setNodeContent(this.view.getId(), this.newContent);
 
-        document.title = this.mapManager.getMapName() + '*';
+        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     unExecute : function() {
-        if( !this.isAvailable() ) {
-            return;
-        }
-        this.map.getNode(this.nodeId).getCaption().setContent(this.oriContent);
-        this.mapManager.setNodeContent(this.nodeId, this.oriContent);
+        this.view.getCaption().setContent(this.oriContent);
+        this.mapManager.setNodeContent(this.view.getId(), this.oriContent);
 
-        document.title = this.mapManager.getMapName() + '*';
+        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     dispose : function() {
-        this.map = null;
-        this.mapManager = null;
-        this.mapController = null;
+        delete this.view;
+        delete this.oriContent;
+        delete this.newContent;
     }
 });
 

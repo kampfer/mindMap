@@ -61,7 +61,7 @@ kampfer.mindMap.Window = kampfer.Component.extend({
                 scrollY = kampfer.mindMap.window.scrollTop();
 
             var menu;
-            if(role === 'caption' || role === 'node') {
+            if(role === 'content' || role === 'caption' || role === 'node') {
                 menu = kampfer.mindMap.nodeContextMenu;
             } else if(role === 'map') {
                 menu = kampfer.mindMap.contextMenu;

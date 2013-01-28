@@ -92,7 +92,7 @@ div.node{
 
 div.node-caption{
     min-width: 100px;
-    max-width: 200px;
+    max-width: 300px;
     padding:10px;
     z-index: 99;
     border: 1px solid rgba(0, 0, 0, 0.4);
@@ -102,6 +102,10 @@ div.node-caption{
     background-color: black;
     color: white;
     position: absolute;
+}
+
+div.node-caption textarea{
+    margin: 0;
 }
 
 div.node-caption.black{
