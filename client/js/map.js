@@ -37,6 +37,8 @@ kampfer.mindMap.Map = kampfer.Component.extend({
                         nodeId : that.currentNode.getId()
                     });
                 }
+                
+                that.currentNode = null;
             } else if(role === 'content' || role === 'caption') {
                 that.currentNode = role === 'caption' ?
                     that.getChild(event.target.id).getParent() :

@@ -128,18 +128,6 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
             node.parent = data;
         }
 
-        //copy时会清除所有id，这里需要再设置一次
-        this.traverseNode(node, function(node) {
-            if(!node.id) {
-                node.id = this.generateUniqueId();
-            }
-            if(node.children) {
-                for(var i = 0, c; (c = node.children[i]); i++) {
-                    c.parent = node.id;
-                }
-            }
-        });
-
         return node;
     },
     

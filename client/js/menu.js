@@ -76,13 +76,15 @@ kampfer.Menu = kampfer.Component.extend({
 
     disable : function(index) {
         if(typeof index === 'number') {
-            kampfer.dom.addClass(this._element.children[index], 'disabled');
+            var commandItems = this._element.querySelectorAll('[command]');
+            kampfer.dom.addClass(commandItems[index].parentNode, 'disabled');
         }
     },
 
     enable : function(index) {
         if(typeof index === 'number') {
-            kampfer.dom.removeClass(this._element.children[index], 'disabled');
+            var commandItems = this._element.querySelectorAll('[command]');
+            kampfer.dom.removeClass(commandItems[index].parentNode, 'disabled');
         }
     },
 

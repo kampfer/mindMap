@@ -62,7 +62,10 @@ kampfer.mindMap.command.CreateNewMap.isAvailable = function() {
 
 
 kampfer.mindMap.command.SaveMapInStorage = kampfer.mindMap.command.Base.extend({
-
+    execute : function() {
+        var map = kampfer.mindMap.mapManager.getMapData();
+        kampfer.mindMap.mapsManager.saveMapToLocalStorage(map);
+    }
 });
 
 kampfer.mindMap.command.SaveMapInStorage.isAvailable = function() {
@@ -89,6 +92,7 @@ kampfer.mindMap.command.SaveMapInDisk = kampfer.mindMap.command.Base.extend({
 
 kampfer.mindMap.command.SaveMapInDisk.isAvailable =
     kampfer.mindMap.command.SaveMapInStorage.isAvailable;
+
 
 kampfer.mindMap.command.OpenMapInDisk = kampfer.mindMap.command.Base.extend({
     initializer : function(data, view) {
@@ -247,6 +251,13 @@ kampfer.mindMap.command.DeleteNode = kampfer.mindMap.command.Base.extend({
     }
 });
 
+kampfer.mindMap.command.DeleteNode.isAvailable = function() {
+    if(!kampfer.mindMap.map || !kampfer.mindMap.map.currentNode) {
+        return false;
+    }
+    return true;
+};
+
 
 kampfer.mindMap.command.SaveNodePosition = kampfer.mindMap.command.Base.extend({
     initializer : function(data) {
@@ -326,6 +337,75 @@ kampfer.mindMap.command.SaveNodeContent = kampfer.mindMap.command.Base.extend({
 });
 
 
+kampfer.mindMap.command.Copy = kampfer.mindMap.command.Base.extend({
+    execute : function() {
+        var nodeId = kampfer.mindMap.map.currentNode.getId();
+
+        var node = kampfer.mindMap.mapManager.createNode( 
+            kampfer.mindMap.mapManager.getNode(nodeId) );
+        
+        kampfer.mindMap.mapsManager.setClipboard(node);
+    }
+});
+
+kampfer.mindMap.command.Copy.isAvailable = function() {
+    if(!kampfer.mindMap.map || !kampfer.mindMap.map.currentNode) {
+        return false;
+    }
+    return true;
+}
+
+
+kampfer.mindMap.command.Cut = kampfer.mindMap.command.DeleteNode.extend({
+    execute : function() {
+        kampfer.mindMap.command.Cut.superClass.execute.apply(this);
+
+        var node = kampfer.mindMap.mapManager.createNode(this.nodeData);
+        
+        kampfer.mindMap.mapsManager.setClipboard(node);
+    }
+});
+
+kampfer.mindMap.command.Cut.isAvailable = kampfer.mindMap.command.DeleteNode.isAvailable;
+
+
+kampfer.mindMap.command.Paste = kampfer.mindMap.command.CreateNewRootNode.extend({
+    initializer : function(data) {
+        this.nodeData = kampfer.mindMap.mapsManager.getClipboard();
+
+        //重置所有id
+        kampfer.mindMap.mapManager.traverseNode(this.nodeData, function(node) {
+            node.id = kampfer.mindMap.mapManager.generateUniqueId();
+            node.parent = null;
+            if(node.children) {
+                var child, i = 0;
+                while( (child = node.children[i++]) ) {
+                    child.parent = node.id;
+                }
+            }
+        });
+
+        if(kampfer.mindMap.map.currentNode) {
+            this.nodeData.parent = kampfer.mindMap.map.currentNode.getId();
+        }
+
+        if(!this.nodeData.parent) {
+            var window = kampfer.mindMap.map.getParent();
+            this.nodeData.offset.x = data.pageX + window.scrollLeft();
+            this.nodeData.offset.y = data.pageY + window.scrollTop();
+        }
+    }
+});
+
+kampfer.mindMap.command.Paste.isAvailable = function() {
+    var clipboard = kampfer.mindMap.mapsManager.getClipboard();
+    if( !kampfer.mindMap.map || !clipboard || clipboard.length <= 0) {
+        return false;
+    }
+    return true;
+};
+
+
 kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
     initializer : function(map, mapManager) {
         this.mapManager = mapManager;
@@ -390,124 +470,4 @@ kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
         }
         return true;
     }
-});
-
-
-kampfer.mindMap.command.Copy = kampfer.mindMap.command.Base.extend({
-    initializer : function(map, mapManager) {
-        this.commandTarget = map.currentNode;
-        this.mapManager = mapManager;
-    },
-
-    execute : function() {
-        var nodeId = this.commandTarget.getId();
-        var node = kampfer.extend( true, {}, this.mapManager.getNode(nodeId) );
-        //copy的节点数据必须处理．保证node id唯一
-        //清除节点的id
-        this.mapManager.traverseNode(node, function(node) {
-            node.id = null;
-        });
-        
-        this.mapManager._localStore.setClipboard(node);
-    }
-});
-
-
-kampfer.mindMap.command.Cut = kampfer.mindMap.command.Base.extend({
-    initializer : function(map, mapManager, mapController) {
-        this.map = map;
-        this.mapManager = mapManager;
-        this.commandTarget = map.currentNode;
-    },
-
-    execute : function() {
-        if(!this.nodeData) {
-            var nodeId = this.commandTarget.getId();
-            this.nodeData = this.mapManager.getNode(nodeId);
-
-            var data = kampfer.extend(true, {}, this.nodeData);
-            //清除节点的id
-            //使用已有数据创建节点时,如果没有id,会自动设置id,并且设置child的parent属性
-            //使之总是指向正确的父节点
-            this.mapManager.traverseNode(data, function(node) {
-                node.id = null;
-            });
-            this.mapManager._localStore.setClipboard(data);
-        }
-
-        //删除节点
-        //不能使用commandTarget.getParent()。因为removeChild之后commandTarget到
-        //parent的引用就被断开了。redo undo时会报错。
-        this.map.getNode(this.nodeData.parent).removeChild(this.nodeData.id, true);
-        this.mapManager.deleteNode(this.nodeData.id);
-
-        document.title = this.mapManager.getMapName() + '*';
-    },
-
-    unExecute : function() {
-        this.mapManager.addNode(this.nodeData);
-        //node类会自动添加后代节点，所以不在循环中添加addChild
-        this.map.getNode(this.nodeData.parent).addChild(
-            new kampfer.mindMap.Node(this.nodeData, this.mapManager), true );
-
-        document.title = this.mapManager.getMapName() + '*';
-    },
-
-    needPush : true
-});
-
-
-kampfer.mindMap.command.Paste = kampfer.mindMap.command.Base.extend({
-    initializer : function(map, mapManager, mapController) {
-        this.map = map;
-        this.mapManager = mapManager;
-        this.mapController = mapController;
-        this.commandTarget = map.currentNode;
-    },
-
-    isAvailable : function() {
-        var clipboard = this.mapManager._localStore.getClipboard();
-        if( !clipboard || clipboard.length <= 0) {
-            return false;
-        }
-        return true;
-    },
-
-    execute : function() {
-        if(!this.nodeData) {
-            this.nodeData = this.mapManager._localStore.getClipboard();
-        
-            //重置node的坐标，parent
-            var pid = this.commandTarget.getId();
-            this.nodeData.parent = pid;
-            if(this.commandTarget.getId() === 'map') {
-                var mapPosition = this.map.getPosition();
-                this.nodeData.offset.x = Math.abs(mapPosition.left) + this.mapController.lastPageX;
-                this.nodeData.offset.y = Math.abs(mapPosition.top) + this.mapController.lastPageY;
-            }  else {
-                this.nodeData.offset.x = 100;
-                this.nodeData.offset.y = 100;
-            }
-        }
-
-        this.nodeData = this.mapManager.createNode(this.nodeData);
-        this.mapManager.addNode(this.nodeData);
-
-        //node类会自动添加后代节点，所以不在循环中添加addChild
-        this.commandTarget.addChild(
-            new kampfer.mindMap.Node(this.nodeData, this.mapManager), true );
-        
-
-        document.title = this.mapManager.getMapName() + '*';
-    },
-
-    unExecute : function() {
-        var node = this.nodeData;
-        this.commandTarget.removeChild(node.id, true);
-        this.mapManager.deleteNode(node.id);
-
-        document.title = this.mapManager.getMapName() + '*';
-    },
-
-    needPush : true
 });
