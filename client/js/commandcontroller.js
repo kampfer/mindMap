@@ -26,7 +26,7 @@ kampfer.mindMap.command.Controller = kampfer.Class.extend({
 			command = new Command(event, this.view);
 			command.execute();
 			if(command.needPush) {
-				this.command.stack[this.command.stack.index++] = command;
+				this.command.stack.push(command);
 			} else {
 				command.dispose();
 			}
