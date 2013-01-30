@@ -1,6 +1,7 @@
 /*global kampfer*/
 kampfer.require('Class');
 kampfer.require('mindMap.command');
+kampfer.require('mindMap.command.stack');
 kampfer.require('mindMap.radio');
 
 kampfer.provide('mindMap.command.Controller');
@@ -10,9 +11,6 @@ kampfer.provide('mindMap.command.Controller');
 kampfer.mindMap.command.Controller = kampfer.Class.extend({
 	initializer : function(window) {
 		this.view = window;
-
-		this.commandStack = [];
-		this.commandStackIndex = 0;
 
 		kampfer.mindMap.radio.addListener('executeCommand', this.doCommand, this);
 	},
@@ -28,7 +26,7 @@ kampfer.mindMap.command.Controller = kampfer.Class.extend({
 			command = new Command(event, this.view);
 			command.execute();
 			if(command.needPush) {
-				this.commandStack[this.commandStackIndex++] = command;
+				this.command.stack[this.command.stack.index++] = command;
 			} else {
 				command.dispose();
 			}
@@ -43,10 +41,6 @@ kampfer.mindMap.command.Controller = kampfer.Class.extend({
 			return true;
 		}
 	},
-
-	commandStack : null,
-
-	commandStackIndex : null,
 
 	dispose : function() {
 		kampfer.mindMap.CommandController.superClass.dispose.apply(this, arguments);
