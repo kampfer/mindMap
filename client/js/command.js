@@ -341,7 +341,7 @@ kampfer.mindMap.command.Copy = kampfer.mindMap.command.Base.extend({
     execute : function() {
         var nodeId = kampfer.mindMap.map.currentNode.getId();
 
-        var node = kampfer.mindMap.mapManager.createNode( 
+        var node = kampfer.mindMap.mapManager.createNode(
             kampfer.mindMap.mapManager.getNode(nodeId) );
         
         kampfer.mindMap.mapsManager.setClipboard(node);
@@ -353,7 +353,7 @@ kampfer.mindMap.command.Copy.isAvailable = function() {
         return false;
     }
     return true;
-}
+};
 
 
 kampfer.mindMap.command.Cut = kampfer.mindMap.command.DeleteNode.extend({

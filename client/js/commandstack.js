@@ -3,21 +3,61 @@ kampfer.provide('mindMap.command.Redo');
 kampfer.provide('mindMap.command.Undo');
 
 kampfer.mindMap.command.stack = {
-    queue : [],
+    _queue : [],
 
-    index : 0,
+    _index : 0,
+
+    _maxLength : 50,
 
     push : function(command) {
-        this.queue.push(command);
-        this.index++;
+        if(this._queue.length >= this._maxLength) {
+            this._queue.shift();
+            this._index--;
+        }
+        this._queue.push(command);
+        this._index++;
     },
 
-    pop : function() {
-        return this.queue.pop();
+    stepForward : function() {
+        if( !this.atEnd() ) {
+            this.index++;
+            return this._queue[this._index];
+        }
     },
 
-    getLength : function() {
-        return this.queue.length;
+    stepBackward : function() {
+        if( !this.atStart() ) {
+            this._index--;
+            return this._queue[this._index];
+        }
+    },
+
+    atEnd : function() {
+        if(this._index === this._queue.length - 1) {
+            return true;
+        }
+        return false;
+    },
+
+    atStart : function() {
+        if(this._index === 0) {
+            return true;
+        }
+        return false;
+    },
+
+    get : function(index) {
+        if(index > 0 && index < this._queue.length) {
+            return this._queue[index];
+        }
+     },
+
+    getStackLength : function() {
+        return this._queue.length;
+    },
+
+    getStackIndex : function() {
+        return this._index;
     }
 };
 
@@ -26,12 +66,12 @@ kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
     execute : function(level) {
         var kmcs = kampfer.mindMap.command.stack;
         level = level || this.level;
+
         for(var i = 0; i < this.level; i++) {
-            if(kmcs.index > 0) {
-                var command = kmcs.queue[--kmcs.index];
+            var command = kmcs.get( kmcs.getStackIndex() );
+            if(command) {
                 command.unExecute();
-            } else {
-                return;
+                kmcs.stepBackward();
             }
         }
 
@@ -41,8 +81,8 @@ kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
     level : 1
 });
 
-kampfer.mindMap.command.Undo.isAvailable : function() {
-    if(kampfer.mindMap.command.index <= 0) {
+kampfer.mindMap.command.Undo.isAvailable = function() {
+    if( kampfer.mindMap.command.stack.atStart() ) {
         return false;
     }
     return true;
@@ -51,29 +91,26 @@ kampfer.mindMap.command.Undo.isAvailable : function() {
 
 kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
     execute : function() {
-        if( !this.isAvailable() ) {
-            return;
-        }
-        var kmc = kampfer.mindMap.command;
+        var kmcs = kampfer.mindMap.command.stack;
+        level = level || this.level;
+
         for(var i = 0; i < this.level; i++) {
-            if(kmc.index <kmc.commandList.length) {
-                var command = kmc.commandList[kmc.index++];
+            kmcs.stepForward();
+            var command = kmcs.get( kmcs.getStackIndex() );
+            if(command) {
                 command.execute();
-            } else {
-                return;
             }
         }
 
         document.title = this.mapManager.getMapName() + '*';
     },
 
-    level : 1,
-
-    isAvailable : function() {
-        if( kampfer.mindMap.command.index >=
-            kampfer.mindMap.command.commandList.length ) {
-            return false;
-        }
-        return true;
-    }
+    level : 1
 });
+
+kampfer.mindMap.command.Redo.isAvailable = function() {
+    if( kampfer.mindMap.command.stack.atEnd() ) {
+        return false;
+    }
+    return true;
+};
