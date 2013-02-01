@@ -254,8 +254,8 @@ kampfer.mindMap.command.SaveNodePosition = kampfer.mindMap.command.Base.extend({
         this.oriX = nodeData.offset.x;
         this.oriY = nodeData.offset.y;
 
-        nodeData.offset.x = data.x;
-        nodeData.offset.y = data.y;
+        this.newX = data.x;
+        this.newY = data.y;
 
         this.nodeData = nodeData;
     },
@@ -263,10 +263,8 @@ kampfer.mindMap.command.SaveNodePosition = kampfer.mindMap.command.Base.extend({
     needPush : true,
 
     execute : function() {
-        kampfer.mindMap.map.getChild(this.nodeData.id).moveTo(
-            this.nodeData.offset.x, this.nodeData.offset.y);
-        kampfer.mindMap.mapManager.setNodePosition(this.nodeData.id,
-            this.nodeData.offset.x, this.nodeData.offset.y);
+        kampfer.mindMap.map.getChild(this.nodeData.id).moveTo(this.newX, this.newY);
+        kampfer.mindMap.mapManager.setNodePosition(this.nodeData.id, this.newX, this.newY);
     },
 
     unExecute : function() {
@@ -278,6 +276,8 @@ kampfer.mindMap.command.SaveNodePosition = kampfer.mindMap.command.Base.extend({
         delete this.nodeData;
         delete this.oriY;
         delete this.oriX;
+        delete this.newX;
+        delete this.newY;
     }
 });
 

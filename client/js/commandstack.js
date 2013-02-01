@@ -15,7 +15,7 @@ kampfer.mindMap.command.stack = {
 
     push : function(command) {
         if(this._queue.length >= this._maxLength) {
-            this._queue.shift();
+            this._queue.shift().dispose();
             this._index--;
         }
         this._queue.push(command);
