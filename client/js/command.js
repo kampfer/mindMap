@@ -44,8 +44,6 @@ kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
         kampfer.mindMap.map = new kampfer.mindMap.Map(kampfer.mindMap.mapManager);
 
         this.view.addChild(kampfer.mindMap.map, true);
-
-        document.title = kampfer.mindMap.mapManager.getMapName();
     },
 
     dispose : function() {
@@ -85,8 +83,6 @@ kampfer.mindMap.command.SaveMapInDisk = kampfer.mindMap.command.Base.extend({
         var bb = new kampfer.BlobBuilder();
         bb.append(content);
         kampfer.saveAs( bb.getBlob('text/plain;charset=utf-8'), mapName + '.json' );
-
-        document.title = kampfer.mindMap.mapManager.getMapName();
     }
 });
 
@@ -112,7 +108,6 @@ kampfer.mindMap.command.OpenMapInDisk = kampfer.mindMap.command.Base.extend({
                             kampfer.mindMap.mapManager = new kampfer.mindMap.MapManager(data);
                             kampfer.mindMap.map = new kampfer.mindMap.Map(kampfer.mindMap.mapManager);
                             view.addChild(kampfer.mindMap.map, true);
-                            document.title = kampfer.mindMap.mapManager.getMapName();
                         };
                         reader.readAsText(f);
                     }
@@ -166,15 +161,11 @@ kampfer.mindMap.command.CreateNewRootNode = kampfer.mindMap.command.Base.extend(
 
         kampfer.mindMap.mapManager.addNode(this.nodeData);
         parent.addChild(node, true);
-
-        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     unExecute : function() {
         kampfer.mindMap.map.removeChild(this.nodeData.id, true);
         this.mapManager.deleteNode(this.nodeData.id);
-
-        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     dispose : function() {
@@ -226,8 +217,6 @@ kampfer.mindMap.command.DeleteNode = kampfer.mindMap.command.Base.extend({
 
         parent.removeChild(this.nodeData.id, true);
         kampfer.mindMap.mapManager.deleteNode(this.nodeData.id);
-
-        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     unExecute : function() {
@@ -242,8 +231,6 @@ kampfer.mindMap.command.DeleteNode = kampfer.mindMap.command.Base.extend({
 
         kampfer.mindMap.mapManager.addNode(this.nodeData);
         parent.addChild(node, true);
-
-        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     dispose : function() {
@@ -276,18 +263,15 @@ kampfer.mindMap.command.SaveNodePosition = kampfer.mindMap.command.Base.extend({
     needPush : true,
 
     execute : function() {
-        kampfer.mindMap.map.currentNode.moveTo(this.nodeData.x, this.nodeData.y);
+        kampfer.mindMap.map.getChild(this.nodeData.id).moveTo(
+            this.nodeData.offset.x, this.nodeData.offset.y);
         kampfer.mindMap.mapManager.setNodePosition(this.nodeData.id,
             this.nodeData.offset.x, this.nodeData.offset.y);
-
-        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     unExecute : function() {
-        kampfer.mindMap.map.currentNode.moveTo(this.oriX, this.oriY);
+        kampfer.mindMap.map.getChild(this.nodeData.id).moveTo(this.oriX, this.oriY);
         kampfer.mindMap.mapManager.setNodePosition(this.nodeData.id, this.oriX, this.oriY);
-
-        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     dispose : function() {
@@ -318,15 +302,11 @@ kampfer.mindMap.command.SaveNodeContent = kampfer.mindMap.command.Base.extend({
     execute : function() {
         this.view.getCaption().setContent(this.newContent);
         kampfer.mindMap.mapManager.setNodeContent(this.view.getId(), this.newContent);
-
-        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     unExecute : function() {
         this.view.getCaption().setContent(this.oriContent);
         this.mapManager.setNodeContent(this.view.getId(), this.oriContent);
-
-        document.title =  '*' + kampfer.mindMap.mapManager.getMapName();
     },
 
     dispose : function() {

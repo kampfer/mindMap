@@ -1,6 +1,8 @@
 /*global kampfer*/
 kampfer.require('Class');
 kampfer.require('mindMap.command');
+kampfer.require('mindMap.map');
+kampfer.require('mindMap.mapManager');
 kampfer.require('mindMap.command.stack');
 kampfer.require('mindMap.radio');
 
@@ -26,9 +28,17 @@ kampfer.mindMap.command.Controller = kampfer.Class.extend({
 			command = new Command(event, this.view);
 			command.execute();
 			if(command.needPush) {
-				this.command.stack.push(command);
+				kampfer.mindMap.command.stack.push(command);
 			} else {
 				command.dispose();
+			}
+		}
+		
+		if(kampfer.mindMap.mapManager) {
+			if( kampfer.mindMap.mapManager.isModified() ) {
+				document.title = '*' + kampfer.mindMap.mapManager.getMapName();
+			} else {
+				document.title = kampfer.mindMap.mapManager.getMapName();
 			}
 		}
 	},

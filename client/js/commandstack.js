@@ -1,3 +1,5 @@
+kampfer.require('mindMap.command');
+
 kampfer.provide('mindMap.command.stack');
 kampfer.provide('mindMap.command.Redo');
 kampfer.provide('mindMap.command.Undo');
@@ -5,6 +7,8 @@ kampfer.provide('mindMap.command.Undo');
 kampfer.mindMap.command.stack = {
     _queue : [],
 
+    // <index 是execute过的命令
+    // >=index 是被unExecute过的命令
     _index : 0,
 
     _maxLength : 50,
@@ -33,7 +37,7 @@ kampfer.mindMap.command.stack = {
     },
 
     atEnd : function() {
-        if(this._index === this._queue.length - 1) {
+        if(this._index === this._queue.length) {
             return true;
         }
         return false;
@@ -47,7 +51,7 @@ kampfer.mindMap.command.stack = {
     },
 
     get : function(index) {
-        if(index > 0 && index < this._queue.length) {
+        if(index > 0 && index <= this._queue.length) {
             return this._queue[index];
         }
      },
@@ -58,6 +62,10 @@ kampfer.mindMap.command.stack = {
 
     getStackIndex : function() {
         return this._index;
+    },
+
+    isEmpty : function() {
+        return this._queue.length === 0;
     }
 };
 
@@ -68,21 +76,19 @@ kampfer.mindMap.command.Undo = kampfer.mindMap.command.Base.extend({
         level = level || this.level;
 
         for(var i = 0; i < this.level; i++) {
-            var command = kmcs.get( kmcs.getStackIndex() );
+            var command = kmcs.stepBackward();
             if(command) {
                 command.unExecute();
-                kmcs.stepBackward();
             }
         }
-
-        document.title = this.mapManager.getMapName() + '*';
     },
 
     level : 1
 });
 
 kampfer.mindMap.command.Undo.isAvailable = function() {
-    if( kampfer.mindMap.command.stack.atStart() ) {
+    if( kampfer.mindMap.command.stack.isEmpty() ||
+        kampfer.mindMap.command.stack.atStart() ) {
         return false;
     }
     return true;
@@ -90,26 +96,24 @@ kampfer.mindMap.command.Undo.isAvailable = function() {
 
 
 kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
-    execute : function() {
+    execute : function(level) {
         var kmcs = kampfer.mindMap.command.stack;
         level = level || this.level;
 
         for(var i = 0; i < this.level; i++) {
-            kmcs.stepForward();
-            var command = kmcs.get( kmcs.getStackIndex() );
+            var command = kmcs.stepForward();
             if(command) {
                 command.execute();
             }
         }
-
-        document.title = this.mapManager.getMapName() + '*';
     },
 
     level : 1
 });
 
 kampfer.mindMap.command.Redo.isAvailable = function() {
-    if( kampfer.mindMap.command.stack.atEnd() ) {
+    if( kampfer.mindMap.command.stack.isEmpty() ||
+        kampfer.mindMap.command.stack.atEnd() ) {
         return false;
     }
     return true;
