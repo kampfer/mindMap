@@ -24,8 +24,8 @@ kampfer.mindMap.command.stack = {
 
     stepForward : function() {
         if( !this.atEnd() ) {
-            this.index++;
-            return this._queue[this._index];
+            this._index++;
+            return this._queue[this._index - 1];
         }
     },
 

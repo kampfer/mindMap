@@ -102,7 +102,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
     
     createNode : function(data) {
         var node = {
-            id : null,
+            id : this.generateUniqueId(),
             parent : null,
             children : null,
             content : 'node',

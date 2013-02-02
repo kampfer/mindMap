@@ -164,8 +164,14 @@ kampfer.mindMap.command.CreateNewRootNode = kampfer.mindMap.command.Base.extend(
     },
 
     unExecute : function() {
-        kampfer.mindMap.map.removeChild(this.nodeData.id, true);
-        this.mapManager.deleteNode(this.nodeData.id);
+        var parent;
+        if(this.nodeData.parent) {
+            parent = kampfer.mindMap.map.getChild(this.nodeData.parent);
+        } else {
+            parent = kampfer.mindMap.map;
+        }
+        parent.removeChild(this.nodeData.id, true);
+        kampfer.mindMap.mapManager.deleteNode(this.nodeData.id);
     },
 
     dispose : function() {
@@ -291,22 +297,25 @@ kampfer.mindMap.command.EditNodeContent = kampfer.mindMap.command.Base.extend({
 
 kampfer.mindMap.command.SaveNodeContent = kampfer.mindMap.command.Base.extend({
     initializer : function(data) {
-        var id = data.nodeId;
-        this.view = kampfer.mindMap.map.getChild(id);
-        this.oriContent = this.view.getCaption().getContent();
-        this.newContent = this.view.getCaption().getTextareaValue();
+        //CreatRootNode和AppendChild命令的undo、redo操作会删除旧view而后生成新的view
+        //这里如果缓存view,那么SaveNodeContent的操作对象就是已经从文档中删除的旧view
+        //this.view = kampfer.mindMap.map.getChild(id);
+        this.nodeId = data.nodeId;
+        var view = kampfer.mindMap.map.getChild(this.nodeId);
+        this.oriContent = view.getCaption().getContent();
+        this.newContent = view.getCaption().getTextareaValue();
     },
 
     needPush : true,
 
     execute : function() {
-        this.view.getCaption().setContent(this.newContent);
-        kampfer.mindMap.mapManager.setNodeContent(this.view.getId(), this.newContent);
+        kampfer.mindMap.map.getChild(this.nodeId).getCaption().setContent(this.newContent);
+        kampfer.mindMap.mapManager.setNodeContent(this.nodeId, this.newContent);
     },
 
     unExecute : function() {
-        this.view.getCaption().setContent(this.oriContent);
-        this.mapManager.setNodeContent(this.view.getId(), this.oriContent);
+        kampfer.mindMap.map.getChild(this.nodeId).getCaption().setContent(this.oriContent);
+        kampfer.mindMap.mapManager.setNodeContent(this.nodeId, this.oriContent);
     },
 
     dispose : function() {
