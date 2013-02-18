@@ -6,3 +6,12 @@
 程序的启动程序的主要工作是：初始化view、model和controller。model比较封闭，初始化时一般不需要外部帮助；view初始化一般需要model数据等信息；controller需要view和model的引用，保证view和model信息的同步。
 
 数据的流动方向和路径？
+
+
+已经使用的设计模式
+==================
+
+1. Observer
+2. Composition
+3. Command
+4. Template Method

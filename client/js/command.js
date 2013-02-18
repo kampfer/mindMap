@@ -128,7 +128,10 @@ kampfer.mindMap.command.OpenMapInDisk.isAvailable =
 
 
 kampfer.mindMap.command.OpenMapInStorage = kampfer.mindMap.command.Base.extend({
-
+    execute : function() {
+        var mapData = kampfer.mindMap.mapsManager.getMapStorage();
+        console.log(mapData);
+    }
 });
 
 kampfer.mindMap.command.OpenMapInStorage.isAvailable =
