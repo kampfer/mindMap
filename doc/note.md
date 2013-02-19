@@ -15,3 +15,7 @@
 2. Composition
 3. Command
 4. Template Method
+
+
+**Composition模式**
+类有两部分的功能: 管理子节点和递归操作
