@@ -7,6 +7,7 @@ kampfer.require('mindMap.Node');
 kampfer.require('mindMap.Map');
 kampfer.require('mindMap.MapManager');
 kampfer.require('mindMap.MapsManager');
+kampfer.require('mindMap.OpenMapDialog');
 
 kampfer.provide('mindMap.command');
 kampfer.provide('mindMap.map');
@@ -35,11 +36,12 @@ kampfer.mindMap.command.Base = kampfer.Class.extend({
 
 kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
     initializer : function(data, view) {
+        this.data = data;
         this.view = view;
     },
 
     execute : function() {
-        kampfer.mindMap.mapManager = new kampfer.mindMap.MapManager();
+        kampfer.mindMap.mapManager = new kampfer.mindMap.MapManager(this.data);
 
         kampfer.mindMap.map = new kampfer.mindMap.Map(kampfer.mindMap.mapManager);
 
@@ -48,6 +50,7 @@ kampfer.mindMap.command.CreateNewMap = kampfer.mindMap.command.Base.extend({
 
     dispose : function() {
         delete this.view;
+        delete this.data;
     }
 });
 
@@ -128,9 +131,12 @@ kampfer.mindMap.command.OpenMapInDisk.isAvailable =
 
 
 kampfer.mindMap.command.OpenMapInStorage = kampfer.mindMap.command.Base.extend({
+    initializer : function(data, view) {
+        kampfer.mindMap.command.OpenMapInStorage.openMapDialog =
+            new kampfer.OpenMapDialog(kampfer.mindMap.mapsManager, view);
+    },
     execute : function() {
-        var mapData = kampfer.mindMap.mapsManager.getMapStorage();
-        console.log(mapData);
+        kampfer.mindMap.command.OpenMapInStorage.openMapDialog.show();
     }
 });
 

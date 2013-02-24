@@ -1,8 +1,8 @@
 kampfer.require('events.EventTarget');
 
-kampfer.provide('Composition');
+kampfer.provide('class.Composition');
 
-kampfer.Composition = kampfer.events.EventTarget.extend({
+kampfer.class.Composition = kampfer.events.EventTarget.extend({
     _id : null,
 
     _parent : null,
@@ -20,7 +20,7 @@ kampfer.Composition = kampfer.events.EventTarget.extend({
     //递归调用子节点的指定方法
     //实现composition模式的关键方法之一
     walk : function(method) {
-        var args = Array.prototype.slice.apply(arguments, 1);
+        var args = Array.prototype.slice.call(arguments, 1);
         this.forEachChild(function(child, i) {
             if( kampfer.type(child[method]) === 'function' ) {
                 child[method].apply(child, args);
@@ -30,7 +30,7 @@ kampfer.Composition = kampfer.events.EventTarget.extend({
     
     getId : function() {
         return this._id ||
-            ( this._id = kampfer.UIComponent.generateUniqueId() );
+            ( this._id = kampfer.Composition.generateUniqueId() );
     },
     
     setId : function(id) {
@@ -148,11 +148,14 @@ kampfer.Composition = kampfer.events.EventTarget.extend({
         return child;
     },
     
-    removeChildAt : function(index, unrender) {
-        this.remochild( this.getChildAt(index), unrender );
+    removeChildAt : function(index) {
+        this.remochild( this.getChildAt(index) );
     },
     
     forEachChild : function(callback, context) {
+        if(!this._children) {
+            return;
+        }
         for(var i = 0, child; (child = this._children[i]); i++) {
             if( calllback.call(context || child, child, i) === false ) {
                 return;

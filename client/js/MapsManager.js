@@ -74,7 +74,7 @@ kampfer.mindMap.MapsManager = kampfer.Class.extend({
 			var ret = [];
 			for(var map in mapStorage.maps) {
 				if( map !== '_count') {
-					ret.push(map);
+					ret.push(mapStorage.maps[map]);
 				}
 			}
 			return ret;

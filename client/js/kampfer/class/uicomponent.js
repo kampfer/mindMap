@@ -1,11 +1,17 @@
-kampfer.require('Composition');
+kampfer.require('class.Composition');
+kampfer.require('events');
 
-kampfer.provide('UIComponent');
+kampfer.provide('class.UIComponent');
 
-kampfer.UIComponent = kampfer.Composition.extend({
+kampfer.class.UIComponent = kampfer.class.Composition.extend({
     _element : null,
 
     _inDocument : false,
+
+    /**
+     * @type {object}
+     */
+    events : null,
 
     isInDocument : function() {
         return this._inDocument;
@@ -24,15 +30,59 @@ kampfer.UIComponent = kampfer.Composition.extend({
         return this._element;
     },
 
-    decorate : function() {},
+    //component有两种初始化的方式:
+    //1.动态生成
+    //2.传入已有dom,component解析
+    //decorate方法就是针对第二种方式处理解析和预处理逻辑
+    decorate : function(element) {},
 
     enterDocument : function() {
         this._inDocument = true;
+
+        var that = this;
+        if(this.events) {
+            for(var attr in this.events) {
+                kampfer.events.addListener(this._element, attr, this._transition, this);
+            }
+        }
+
         this.walk('enterDocument');
+    },
+
+    _transition : function(event) {
+        var element = event.target,
+            handlers = this.events[event.type],
+            action = element.getAttribute('data-action');
+
+        while( !action && (element = element.parentNode) ) {
+            if(element.getAttribute) {
+                action = element.getAttribute('data-action');
+            }
+        }
+
+        if( !action || !handlers || !(action in handlers) ) {
+            return;
+        }
+
+        event.target = element;
+
+        if(typeof handlers[action] === 'string') {
+            handlers = handlers[action].split(' ');
+            for(var i = 0, handle; (handle = handlers[i]); i++) {
+                if( this[handle] && this[handle](event) === false ) {
+                    return false;
+                }
+            }
+        } else if(typeof handlers[action] === 'function') {
+            handlers[action].call(this, event);
+        }
     },
 
     exitDocument : function() {
         this._inDocument = true;
+
+        kampfer.events.removeListener(this._element);
+
         this.walk('exitDocument');
     },
 
@@ -51,11 +101,7 @@ kampfer.UIComponent = kampfer.Composition.extend({
             document.body.appendChild(this._element);
         }
 
-        // If this component has a parent component that isn't in the document yet,
-        // we don't call enterDocument() here.  Instead, when the parent component
-        // enters the document, the enterDocument() call will propagate to its
-        // children, including this one.  If the component doesn't have a parent
-        // or if the parent is already in the document, we call enterDocument().
+        //父component存在,但是它不在document中,那么子component不进入document
         if( !this._parent || this._parent.isInDocument() ) {
             this.enterDocument();
         }
@@ -98,6 +144,7 @@ kampfer.UIComponent = kampfer.Composition.extend({
 
     dispose : function() {
         kampfer.UIComponent.superClass.dispose.call(this);
+        this.exitDocument();
         delete this._element;
     }
 });
