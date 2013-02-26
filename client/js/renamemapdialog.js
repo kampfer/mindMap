@@ -1,20 +1,20 @@
 kampfer.require('Dialog');
 kampfer.require('mindMap.command');
 
-kampfer.provide('mindMap.OpenMapDialog');
+kampfer.provide('mindMap.RenameMapDialog');
 
-kampfer.OpenMapDialog = kampfer.Dialog.extend({
+kampfer.RenameMapDialog = kampfer.Dialog.extend({
     initializer : function(storage, view) {
         this._storage = storage;
         this._view = view;
         this.render();
         this.setContent(this._content);
-        this.setTitle('请选择:');
+        this.setTitle('另存为:');
     },
 
     events : {
         click : {
-            'ok' : 'openMap hide',
+            'ok' : 'ok hide',
             'close' : 'hide',
             'cancel' : 'hide',
             map : function(event) {
@@ -97,14 +97,8 @@ kampfer.OpenMapDialog = kampfer.Dialog.extend({
         return this._selectedMap;
     },
 
-    openMap : function() {
-        var mapData = this.getSelectedMap();
-        if(!mapData) {
-            return false;
-        }
-        
-        var command = new kampfer.mindMap.command.CreateNewMap(mapData, this._view);
-        command.execute();
+    ok : function() {
+        this.dispatch('ok', this._element.querySelector('#map-name').value);
     },
 
     show : function() {

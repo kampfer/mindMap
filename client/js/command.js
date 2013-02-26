@@ -8,6 +8,7 @@ kampfer.require('mindMap.Map');
 kampfer.require('mindMap.MapManager');
 kampfer.require('mindMap.MapsManager');
 kampfer.require('mindMap.OpenMapDialog');
+kampfer.require('mindMap.RenameMapDialog');
 
 kampfer.provide('mindMap.command');
 kampfer.provide('mindMap.map');
@@ -63,9 +64,20 @@ kampfer.mindMap.command.CreateNewMap.isAvailable = function() {
 
 
 kampfer.mindMap.command.SaveMapInStorage = kampfer.mindMap.command.Base.extend({
+    initializer : function(data, view) {
+        kampfer.mindMap.command.OpenMapInStorage.renameMapDialog =
+            new kampfer.RenameMapDialog(kampfer.mindMap.mapsManager, view);
+        kampfer.events.addListener(kampfer.mindMap.command.OpenMapInStorage.renameMapDialog,
+            'ok', function(event, name) {
+                kampfer.mindMap.mapManager.setMapName(name);
+                var map = kampfer.mindMap.mapManager.getMapData();
+                kampfer.mindMap.mapsManager.saveMapToLocalStorage(map);
+            });
+    },
     execute : function() {
-        var map = kampfer.mindMap.mapManager.getMapData();
-        kampfer.mindMap.mapsManager.saveMapToLocalStorage(map);
+        if( !kampfer.mindMap.mapManager.getMapName() ) {
+            kampfer.mindMap.command.OpenMapInStorage.renameMapDialog.show();
+        }
     }
 });
 
@@ -142,11 +154,6 @@ kampfer.mindMap.command.OpenMapInStorage = kampfer.mindMap.command.Base.extend({
 
 kampfer.mindMap.command.OpenMapInStorage.isAvailable =
     kampfer.mindMap.command.CreateNewMap.isAvailable;
-
-
-kampfer.mindMap.command.RenameMap = kampfer.mindMap.command.Base.extend({
-
-});
 
 
 kampfer.mindMap.command.CreateNewRootNode = kampfer.mindMap.command.Base.extend({

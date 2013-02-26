@@ -1,7 +1,7 @@
 kampfer.addDependency('base.js', [], []);
 kampfer.addDependency('branch.js', ['mindMap.Branch'], ['Component','dom','events']);
 kampfer.addDependency('caption.js', ['mindMap.Caption'], ['Component','dom','events']);
-kampfer.addDependency('command.js', ['mindMap.command','mindMap.map','mindMap.mapManager','mindMap.mapsManager','mindMap.command.commandStack'], ['Class','JSON','BlobBuilder','saveAs','mindMap.Node','mindMap.Map','mindMap.MapManager','mindMap.MapsManager','mindMap.OpenMapDialog']);
+kampfer.addDependency('command.js', ['mindMap.command','mindMap.map','mindMap.mapManager','mindMap.mapsManager','mindMap.command.commandStack'], ['Class','JSON','BlobBuilder','saveAs','mindMap.Node','mindMap.Map','mindMap.MapManager','mindMap.MapsManager','mindMap.OpenMapDialog','mindMap.RenameMapDialog']);
 kampfer.addDependency('commandcontroller.js', ['mindMap.command.Controller'], ['Class','mindMap.command','mindMap.map','mindMap.mapManager','mindMap.command.stack','mindMap.radio']);
 kampfer.addDependency('commandstack.js', ['mindMap.command.stack','mindMap.command.Redo','mindMap.command.Undo'], ['mindMap.command']);
 kampfer.addDependency('component.js', ['Component'], ['Composition','dom']);
@@ -27,11 +27,12 @@ kampfer.addDependency('MapsManager.js', ['mindMap.MapsManager'], ['Class','store
 kampfer.addDependency('menu.js', ['Menu','MenuItem'], ['Component','dom','events','mindMap.radio']);
 kampfer.addDependency('mindmap.js', ['mindMap','mindMap.window','mindMap.toolBar','mindMap.nodeContextMenu','mindMap.contextMenu'], ['mindMap.Window','mindMap.ToolBar','mindMap.command.Controller','Menu','events']);
 kampfer.addDependency('node.js', ['mindMap.Node'], ['events','dom','Component','mindMap.Branch','mindMap.Caption']);
-kampfer.addDependency('openmapdialog.js', ['mindMap.OpenMapDialog'], ['Dialog']);
+kampfer.addDependency('openmapdialog.js', ['mindMap.OpenMapDialog'], ['Dialog','mindMap.command']);
 kampfer.addDependency('plugins/BlobBuilder.min.js', ['BlobBuilder'], []);
 kampfer.addDependency('plugins/FileSaver.min.js', ['saveAs'], []);
 kampfer.addDependency('plugins/modernizr-latest.js', [], []);
 kampfer.addDependency('plugins/store.min.js', ['store'], []);
 kampfer.addDependency('radio.js', ['mindMap.radio'], ['events.EventTarget']);
+kampfer.addDependency('renamemapdialog.js', ['mindMap.RenameMapDialog'], ['Dialog','mindMap.command']);
 kampfer.addDependency('toolbar.js', ['mindMap.ToolBar'], ['Component','events','Menu']);
 kampfer.addDependency('window.js', ['mindMap.Window'], ['Component','events','Menu','dom']);

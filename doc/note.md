@@ -19,3 +19,9 @@
 
 **Composition模式**
 类有两部分的功能: 管理子节点和递归操作
+
+**Decorator模式**
+https://gist.github.com/kampfer/5012413
+
+**Abstract Factory/Factory Method**
+抽象工厂模式依赖工厂方法模式 他们也经常和模板方法模式一起使用

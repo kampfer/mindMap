@@ -23,7 +23,7 @@ kampfer.mindMap.MapManager = kampfer.Class.extend({
 
         data = data || {};
         this._nodeTree = data.document || [];
-        this._mapName = data.name || 'untitled';
+        this._mapName = data.name;
         this._lastModified = data.lastModified || +new Date();
         //map用于快速查找
         this._nodeMap = this.parseTree(this._nodeTree);
