@@ -3,13 +3,10 @@ kampfer.require('mindMap.command');
 
 kampfer.provide('mindMap.RenameMapDialog');
 
-kampfer.RenameMapDialog = kampfer.Dialog.extend({
+kampfer.mindMap.RenameMapDialog = kampfer.Dialog.extend({
     initializer : function(storage, view) {
         this._storage = storage;
         this._view = view;
-        this.render();
-        this.setContent(this._content);
-        this.setTitle('另存为:');
     },
 
     events : {
@@ -52,11 +49,17 @@ kampfer.RenameMapDialog = kampfer.Dialog.extend({
             document.createElement('button')
         ];
         buttons[0].setAttribute('data-action', 'ok');
-        buttons[0].innerHTML = 'Open Map';
+        buttons[0].innerHTML = 'Save';
         buttons[1].setAttribute('data-action', 'cancel');
         buttons[1].innerHTML = 'Cancel';
         return buttons;
     })(),
+
+    render : function() {
+        kampfer.mindMap.RenameMapDialog.superClass.render.call(this);
+        this.setContent(this._content);
+        this.setTitle('另存为:');
+    },
 
     updateMapCount : function() {
         var mapCount = this._storage.getMapCount();
@@ -102,9 +105,9 @@ kampfer.RenameMapDialog = kampfer.Dialog.extend({
     },
 
     show : function() {
+        kampfer.OpenMapDialog.superClass.show.call(this);
         this.updateMapCount();
         this.updateMapList();
-        kampfer.OpenMapDialog.superClass.show.call(this);
     },
 
     dispose : function() {

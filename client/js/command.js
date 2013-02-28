@@ -65,18 +65,23 @@ kampfer.mindMap.command.CreateNewMap.isAvailable = function() {
 
 kampfer.mindMap.command.SaveMapInStorage = kampfer.mindMap.command.Base.extend({
     initializer : function(data, view) {
-        kampfer.mindMap.command.OpenMapInStorage.renameMapDialog =
-            new kampfer.RenameMapDialog(kampfer.mindMap.mapsManager, view);
-        kampfer.events.addListener(kampfer.mindMap.command.OpenMapInStorage.renameMapDialog,
-            'ok', function(event, name) {
+        if(!kampfer.mindMap.command.OpenMapInStorage.renameMapDialog) {
+            kampfer.mindMap.command.OpenMapInStorage.renameMapDialog =
+                new kampfer.mindMap.RenameMapDialog(kampfer.mindMap.mapsManager, view);
+            kampfer.events.addListener(kampfer.mindMap.command.OpenMapInStorage.renameMapDialog,
+                'ok', function(event, name) {
                 kampfer.mindMap.mapManager.setMapName(name);
                 var map = kampfer.mindMap.mapManager.getMapData();
                 kampfer.mindMap.mapsManager.saveMapToLocalStorage(map);
             });
+        }
     },
     execute : function() {
         if( !kampfer.mindMap.mapManager.getMapName() ) {
             kampfer.mindMap.command.OpenMapInStorage.renameMapDialog.show();
+        } else {
+            var map = kampfer.mindMap.mapManager.getMapData();
+            kampfer.mindMap.mapsManager.saveMapToLocalStorage(map);
         }
     }
 });

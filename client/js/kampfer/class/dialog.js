@@ -73,6 +73,9 @@ kampfer.Dialog = kampfer.class.UIComponent.extend({
     },
 
     show : function() {
+        if(!this._element) {
+            this.render();
+        }
         this._element.style.display = '';
     },
 
