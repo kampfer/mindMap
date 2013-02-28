@@ -72,6 +72,7 @@ kampfer.mindMap.command.SaveMapInStorage = kampfer.mindMap.command.Base.extend({
                 'ok', function(event, name) {
                 kampfer.mindMap.mapManager.setMapName(name);
                 var map = kampfer.mindMap.mapManager.getMapData();
+                kampfer.mindMap.mapManager._isModified = false;
                 kampfer.mindMap.mapsManager.saveMapToLocalStorage(map);
             });
         }
@@ -81,6 +82,7 @@ kampfer.mindMap.command.SaveMapInStorage = kampfer.mindMap.command.Base.extend({
             kampfer.mindMap.command.OpenMapInStorage.renameMapDialog.show();
         } else {
             var map = kampfer.mindMap.mapManager.getMapData();
+            kampfer.mindMap.mapManager._isModified = false;
             kampfer.mindMap.mapsManager.saveMapToLocalStorage(map);
         }
     }
