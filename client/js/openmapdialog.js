@@ -68,6 +68,10 @@ kampfer.OpenMapDialog = kampfer.Dialog.extend({
 
     updateMapList : function() {
         var mapList = this._storage.getMapList();
+        if(!mapList) {
+            return;
+        }
+
         for(var i = 0, map; (map = mapList[i]); i++) {
             this.addMap2List(map, i + 1);
         }
@@ -102,7 +106,7 @@ kampfer.OpenMapDialog = kampfer.Dialog.extend({
         if(!mapData) {
             return false;
         }
-        
+
         var command = new kampfer.mindMap.command.CreateNewMap(mapData, this._view);
         command.execute();
     },

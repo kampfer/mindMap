@@ -49,19 +49,21 @@ kampfer.Menu = kampfer.Component.extend({
 
         if(trigger && trigger.nodeType) {
             this.trigger = trigger;
+
             //trigger的子元素的mouseover&mouseout冒泡到trigger上导致处理函数重复触发
-            //使用mouseenter替代mouseover
-            //使用mouseleave替代mouseout
-            //webkit浏览器不支持mouseenter&mouseleave,其他浏览器支持
-            kampfer.events.addListener(trigger, 'mouseenter', function(event) {
-                //if( !kampfer.dom.contains(trigger, event.target) ) {
+            //webkit浏览器不支持mouseenter和mouseleave, 无法使用. 这里使用hook处理处理函数重复触发的问题
+            kampfer.events.addListener(trigger, 'mouseover', function(event) {
+                var relatedElement = event.relatedElement;
+                if( !kampfer.dom.contains(trigger, relatedElement) ) {
                     this.show();
-                //}
+                }
             }, this);
-            kampfer.events.addListener(trigger, 'mouseleave', function(event) {
-                //if( !kampfer.dom.contains(trigger, event.target) ) {
+
+            kampfer.events.addListener(trigger, 'mouseout', function() {
+                var relatedElement = event.relatedElement;
+                if( !kampfer.dom.contains(trigger, relatedElement) ) {
                     this.hide();
-                //}
+                }
             }, this);
         }
     },

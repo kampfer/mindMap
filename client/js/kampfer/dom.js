@@ -6,7 +6,7 @@ kampfer.dom.create = function(name) {
 };
 
 kampfer.dom.addClass = function(elem, value) {
-        
+
     var classNames, i, l,
         setClass, c, cl;
 
@@ -29,7 +29,7 @@ kampfer.dom.addClass = function(elem, value) {
             }
         }
     }
-    
+
 };
 
 

@@ -71,6 +71,10 @@ kampfer.mindMap.RenameMapDialog = kampfer.Dialog.extend({
 
     updateMapList : function() {
         var mapList = this._storage.getMapList();
+        if(!mapList) {
+            return;
+        }
+        
         for(var i = 0, map; (map = mapList[i]); i++) {
             this.addMap2List(map, i + 1);
         }
