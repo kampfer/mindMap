@@ -31,8 +31,9 @@ kampfer.addDependency('openmapdialog.js', ['mindMap.OpenMapDialog'], ['Dialog','
 kampfer.addDependency('plugins/BlobBuilder.min.js', ['BlobBuilder'], []);
 kampfer.addDependency('plugins/FileSaver.min.js', ['saveAs'], []);
 kampfer.addDependency('plugins/modernizr-latest.js', [], []);
+kampfer.addDependency('plugins/mousetrap.min.js', ['mousetrap'], []);
 kampfer.addDependency('plugins/store.min.js', ['store'], []);
-kampfer.addDependency('radio.js', ['mindMap.radio'], ['events.EventTarget']);
+kampfer.addDependency('radio.js', ['mindMap.radio','mindMap.Radio'], ['events.EventTarget','mousetrap','mindMap.command']);
 kampfer.addDependency('renamemapdialog.js', ['mindMap.RenameMapDialog'], ['Dialog','mindMap.command']);
 kampfer.addDependency('toolbar.js', ['mindMap.ToolBar'], ['Component','events','Menu']);
 kampfer.addDependency('window.js', ['mindMap.Window'], ['Component','events','Menu','dom']);

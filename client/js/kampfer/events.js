@@ -110,7 +110,7 @@ kampfer.events.fixEvent = function(event) {
 	var oriEvent = event;
 
 	event = new kampfer.events.Event(oriEvent);
-	
+
 	kampfer.each(kampfer.events.Event.props, function(i, prop) {
 		event[prop] = oriEvent[prop];
 	});
