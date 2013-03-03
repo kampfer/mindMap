@@ -93,6 +93,8 @@ kampfer.mindMap.command.Undo.isAvailable = function() {
     return true;
 };
 
+kampfer.mindMap.command.Undo.shortcut = 'ctrl+z';
+
 
 kampfer.mindMap.command.Redo = kampfer.mindMap.command.Base.extend({
     execute : function(level) {
@@ -117,3 +119,5 @@ kampfer.mindMap.command.Redo.isAvailable = function() {
     }
     return true;
 };
+
+kampfer.mindMap.command.Redo.shortcut = 'ctrl+y';

@@ -62,6 +62,8 @@ kampfer.mindMap.command.CreateNewMap.isAvailable = function() {
     return true;
 };
 
+kampfer.mindMap.command.CreateNewMap.shortcut = 'ctrl+n';
+
 
 kampfer.mindMap.command.SaveMapInStorage = kampfer.mindMap.command.Base.extend({
     initializer : function(data, view) {
@@ -95,6 +97,8 @@ kampfer.mindMap.command.SaveMapInStorage.isAvailable = function() {
     return false;
 };
 
+kampfer.mindMap.command.SaveMapInStorage.shortcut = 'ctrl+s';
+
 
 kampfer.mindMap.command.SaveMapInDisk = kampfer.mindMap.command.Base.extend({
     execute : function() {
@@ -110,6 +114,8 @@ kampfer.mindMap.command.SaveMapInDisk = kampfer.mindMap.command.Base.extend({
 
 kampfer.mindMap.command.SaveMapInDisk.isAvailable =
     kampfer.mindMap.command.SaveMapInStorage.isAvailable;
+
+kampfer.mindMap.command.SaveMapInDisk.shortcut = 'shift+ctrl+s';
 
 
 kampfer.mindMap.command.OpenMapInDisk = kampfer.mindMap.command.Base.extend({
@@ -367,6 +373,8 @@ kampfer.mindMap.command.Copy.isAvailable = function() {
     return true;
 };
 
+kampfer.mindMap.command.Copy.shortcut = 'ctrl+c';
+
 
 kampfer.mindMap.command.Cut = kampfer.mindMap.command.DeleteNode.extend({
     execute : function() {
@@ -379,6 +387,8 @@ kampfer.mindMap.command.Cut = kampfer.mindMap.command.DeleteNode.extend({
 });
 
 kampfer.mindMap.command.Cut.isAvailable = kampfer.mindMap.command.DeleteNode.isAvailable;
+
+kampfer.mindMap.command.Cut.shortcut = 'ctrl+z';
 
 
 kampfer.mindMap.command.Paste = kampfer.mindMap.command.CreateNewRootNode.extend({
@@ -416,3 +426,5 @@ kampfer.mindMap.command.Paste.isAvailable = function() {
     }
     return true;
 };
+
+kampfer.mindMap.command.Paste.shortcut = 'ctrl+v';
