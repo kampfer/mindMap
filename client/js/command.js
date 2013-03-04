@@ -62,7 +62,7 @@ kampfer.mindMap.command.CreateNewMap.isAvailable = function() {
     return true;
 };
 
-kampfer.mindMap.command.CreateNewMap.shortcut = 'ctrl+n';
+kampfer.mindMap.command.CreateNewMap.shortcut = 'ctrl+m';
 
 
 kampfer.mindMap.command.SaveMapInStorage = kampfer.mindMap.command.Base.extend({
