@@ -35,6 +35,33 @@ var VerifyTransformAnimationSupport = function() {
     return false;
 };
 
+// Fetches CSS files from the webserver and returns the plaintext
+var XHRCSSFiles = function() {
+    var request = new XMLHttpRequest();
+    request.open("GET", "css/FullPageAnimationsPrefixed.css", false);
+    request.send("");
+
+    // For the Test Drive demo we also want to vendor prefix animations/transforms utilized for demonstration purposes
+    // When you use this script on your site, you probably want to remove this
+    var request2 = new XMLHttpRequest();
+    request2.open("GET", "css/DemoTransformsAnimations.css", false);
+    request2.send("");
+
+    return request.responseText + "\n" + request2.responseText;
+};
+
+function injectCSS(cssString) {
+    var ele = document.createElement("style");
+    ele.type = "text/css";
+    if (ele.styleSheet) {
+        ele.styleSheet.cssText = cssString;
+    } else {
+        ele.appendChild(document.createTextNode(cssString));
+    }
+    document.getElementsByTagName("head")[0].appendChild(ele);
+}
+
+
 // Since CSS Animations and Transforms are not always supported in their unprefixed form, we have to perform some feature detection
 var DetectPrefixes = function() {
 
@@ -59,6 +86,12 @@ var DetectPrefixes = function() {
     } else if (animationName == "OAnimation") {
         prefix = "-o-";
     }
+    // Then we fetch the CSS files (that have been composed using the -ms- prefix)
+    var CSSFileString = XHRCSSFiles();
+    // Following we do a simple String.replace of -ms- with the actual vendor prefix
+    CSSFileString = CSSFileString.replace(/-ms-/gi, prefix);
+    // And finally we inject the CSS
+    injectCSS(CSSFileString);
 };
 
 var ApplyAnimationToElement = function(element, animName) {
