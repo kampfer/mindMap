@@ -38,16 +38,10 @@ var VerifyTransformAnimationSupport = function() {
 // Fetches CSS files from the webserver and returns the plaintext
 var XHRCSSFiles = function() {
     var request = new XMLHttpRequest();
-    request.open("GET", "css/FullPageAnimationsPrefixed.css", false);
+    request.open("GET", "/css/FullPageAnimationsPrefixed.css", false);
     request.send("");
 
-    // For the Test Drive demo we also want to vendor prefix animations/transforms utilized for demonstration purposes
-    // When you use this script on your site, you probably want to remove this
-    var request2 = new XMLHttpRequest();
-    request2.open("GET", "css/DemoTransformsAnimations.css", false);
-    request2.send("");
-
-    return request.responseText + "\n" + request2.responseText;
+    return request.responseText;
 };
 
 function injectCSS(cssString) {
@@ -126,8 +120,25 @@ var SetupBodyBringToViewAnimation = function(animName) {
     ApplyAnimationToElement(document.body, animName);
 };
 
-DetectPrefixes();
+var AnimationEndCallback = function(action) {
+    window.location.href = action;
+};
 
-addListener(document.body, 'animationend', function() {
-    alert('animationend');
-}, false);
+var TriggerBodyRemoveFromViewAnimation = function(animName, action) {
+    if (!VerifyTransformAnimationSupport()) {
+        AnimationEndCallback(action);
+        return;
+    }
+    var ele = document.body;
+
+    // first we add a listener for the animationend event so we can perform a navigation once the transition is complete
+    addListener(ele, animationEndName, function() { AnimationEndCallback(action); });
+
+    // If you are not using the CSS wrapper pattern described in our article you may want to uncomment this
+    // in order to mitigate visual skewing from perspective projection
+    //SetupProjectionOrigin();
+    SetupAnimationParameters(document.body);
+    ApplyAnimationToElement(ele, animName);
+};
+
+DetectPrefixes();
