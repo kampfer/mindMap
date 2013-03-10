@@ -38,7 +38,7 @@ var VerifyTransformAnimationSupport = function() {
 // Fetches CSS files from the webserver and returns the plaintext
 var XHRCSSFiles = function() {
     var request = new XMLHttpRequest();
-    request.open("GET", "/css/FullPageAnimationsPrefixed.css", false);
+    request.open("GET", "../css/FullPageAnimationsPrefixed.css", false);
     request.send("");
 
     return request.responseText;
