@@ -33,7 +33,7 @@ kampfer.mindMap.Window = kampfer.Component.extend({
 
             if(event.which === 1) {
                 //不存在map或已经开始拖拽不执行处理逻辑
-                if( !that.beDraged && kampfer.mindMap.map) {
+                if( !that.beDraged && kampfer.mindMap.map && event.target.getAttribute('role') === 'map') {
                     that.beDraged = true;
                 }
             }

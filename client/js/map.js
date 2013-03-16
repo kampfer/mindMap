@@ -13,13 +13,13 @@ kampfer.mindMap.Map = kampfer.Component.extend({
     _id : 'map',
 
     currentNode : null,
-    
+
     initializer : function(mapManager) {
         kampfer.mindMap.Map.superClass.initializer.apply(this, arguments);
 
         this.addChildren( mapManager.getNodeTree() );
     },
-    
+
     decorate : function() {
         this._element.id = this.getId();
         this._element.setAttribute('role', 'map');
@@ -37,7 +37,7 @@ kampfer.mindMap.Map = kampfer.Component.extend({
                         nodeId : that.currentNode.getId()
                     });
                 }
-                
+
                 that.currentNode = null;
             } else if(role === 'content' || role === 'caption') {
                 that.currentNode = role === 'caption' ?

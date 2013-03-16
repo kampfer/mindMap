@@ -18,8 +18,9 @@ kampfer.mindMap.command.stack = {
             this._queue.shift().dispose();
             this._index--;
         }
-        this._queue.push(command);
-        this._index++;
+        //this._queue.push(command);
+        //this._index++;
+        this._queue.splice(this._index++, 0, command);
     },
 
     stepForward : function() {
