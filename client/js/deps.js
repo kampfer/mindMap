@@ -1,11 +1,12 @@
 kampfer.addDependency('base.js', [], []);
 kampfer.addDependency('branch.js', ['mindMap.Branch'], ['Component','dom','events']);
 kampfer.addDependency('caption.js', ['mindMap.Caption'], ['Component','dom','events']);
-kampfer.addDependency('command.js', ['mindMap.command','mindMap.map','mindMap.mapManager','mindMap.mapsManager','mindMap.command.commandStack'], ['Class','JSON','BlobBuilder','saveAs','mindMap.Node','mindMap.Map','mindMap.MapManager','mindMap.MapsManager','mindMap.OpenMapDialog','mindMap.RenameMapDialog']);
+kampfer.addDependency('command.js', ['mindMap.command','mindMap.map','mindMap.mapManager','mindMap.mapsManager'], ['Class','JSON','BlobBuilder','saveAs','mindMap.Node','mindMap.Map','mindMap.MapManager','mindMap.MapsManager','mindMap.OpenMapDialog','mindMap.RenameMapDialog']);
 kampfer.addDependency('commandcontroller.js', ['mindMap.command.Controller'], ['Class','mindMap.command','mindMap.map','mindMap.mapManager','mindMap.command.stack','mindMap.radio','mousetrap']);
 kampfer.addDependency('commandstack.js', ['mindMap.command.stack','mindMap.command.Redo','mindMap.command.Undo'], ['mindMap.command']);
 kampfer.addDependency('component.js', ['Component'], ['Composition','dom']);
 kampfer.addDependency('composition.js', ['Composition'], ['events.EventTarget']);
+kampfer.addDependency('help.js', [], []);
 kampfer.addDependency('kampfer/ajax.js', ['ajax'], []);
 kampfer.addDependency('kampfer/base.js', [], []);
 kampfer.addDependency('kampfer/class/class.js', ['Class'], []);

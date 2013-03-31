@@ -247,3 +247,51 @@ exports.add = function() {
     }
 
 };
+
+
+exports.getFileDependency = function(uri) {
+    uri = path.relative(exports.dir, uri);
+
+    var nameToPath = dependencies.nameToPath,
+        deps = [],
+        visited = {},
+        added = {};
+    
+    function visit(uri) {
+        if(added[uri]) {
+            return;
+        }
+
+        if(visited[uri]) {
+            //throw uri + ' circle refer';
+            if(!added[uri]) {
+                deps.push(uri);
+                added[uri] = true;
+                return;
+            }
+        }
+        visited[uri] = true;
+
+        var requires = dependencies.requires[uri];
+        
+        if(requires) {
+            for(var file in requires) {
+                file = nameToPath[file];
+                if(!added[file]) {
+                    visit(file);
+                }
+            }
+        }
+        
+        if(!added[uri]) {
+            deps.push(uri);
+            added[uri] = true;
+        }
+    }
+    
+    if(dependencies.requires[uri]) {
+        visit(uri);
+    }
+
+    return deps;
+};

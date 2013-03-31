@@ -14,7 +14,6 @@ kampfer.provide('mindMap.command');
 kampfer.provide('mindMap.map');
 kampfer.provide('mindMap.mapManager');
 kampfer.provide('mindMap.mapsManager');
-kampfer.provide('mindMap.command.commandStack');
 
 kampfer.mindMap.map = null;
 
@@ -130,16 +129,19 @@ kampfer.mindMap.command.OpenMapInDisk = kampfer.mindMap.command.Base.extend({
             kampfer.events.addListener(input, 'change', function(e){
                 if (window.File && window.FileReader && window.FileList && window.Blob) {
                     var files = e.target.files;
+
+                    var onloadHandler = function(e) {
+                        var result = e.target.result;
+                        var data = JSON.parse(result);
+
+                        kampfer.mindMap.mapManager = new kampfer.mindMap.MapManager(data);
+                        kampfer.mindMap.map = new kampfer.mindMap.Map(kampfer.mindMap.mapManager);
+                        view.addChild(kampfer.mindMap.map, true);
+                    };
+
                     for(var i = 0, f; (f = files[i]); i++) {
                         var reader = new FileReader();
-                        reader.onload = function(e) {
-                            var result = e.target.result;
-                            var data = JSON.parse(result);
-
-                            kampfer.mindMap.mapManager = new kampfer.mindMap.MapManager(data);
-                            kampfer.mindMap.map = new kampfer.mindMap.Map(kampfer.mindMap.mapManager);
-                            view.addChild(kampfer.mindMap.map, true);
-                        };
+                        reader.onload = onloadHandler;
                         reader.readAsText(f);
                     }
                 } else {
