@@ -17,7 +17,7 @@ exports.combine = function(uri) {
         var deps = dep.getFileDependency(uri),
             content = [];
 
-        console.log(deps);
+        //TODO  生成一个依赖树
 
         for(var i = deps.length - 1; i >= 0; i--) {
             var depPath = path.join(config.jsDir, deps[i]),
