@@ -15,19 +15,16 @@ exports.combine = function(uri) {
             });
     } else if( stat.isFile() ) {
         var deps = dep.getFileDependency(uri),
-            file = fs.openSync(uri, 'w+'),
-            content = fs.readFileSync(uri);
-
-        fs.writeFileSync(file, '');
+            content = [];
 
         console.log(deps);
 
-        deps.forEach(function(depPath) {
-            depPath = path.join(config.jsDir, depPath);
-            var temp = fs.readFileSync(depPath);
-            fs.appendFileSync(uri, temp);
-        });
+        for(var i = deps.length - 1; i >= 0; i--) {
+            var depPath = path.join(config.jsDir, deps[i]),
+                temp = fs.readFileSync(depPath);
+            content.unshift(temp);
+        }
 
-        fs.appendFileSync(uri, content);
+        fs.writeFileSync( uri, content.join('\n') );
     }
 };
