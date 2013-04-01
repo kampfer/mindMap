@@ -1,10 +1,29 @@
-var combine = require('./combine').combine;
-var path = require('path');
-var makeDeps = require('./dependency').makeDeps;
-var compress = require('./compress').compressFile;
+var fs = require('fs'),
+    path = require('path'),
+    combine = require('./lib/combine'),
+    dep = require('./lib/dependency');
+    //compress = require('./compress').compressFile;
 
-//makeDeps( path.resolve( __dirname, '../client/js/') );
+try{
+    var config = JSON.parse( fs.readFileSync('config.json') );
+} catch(e) {
+    console.log(e);
+}
 
-combine( path.resolve( __dirname, '../client/js/mindmap.js') );
+var root = path.resolve(__dirname, '..'), 
+    uri;
 
-compress( path.resolve( __dirname, '../client/js/mindmap.js') );
+function getPath(uri) {
+    return path.join(root, uri);
+}
+
+if(config) {
+    if(config.source) {
+        dep.init( getPath(config.source), config.nameSpace );
+    }
+
+    if(config.distribute) {
+        combine.init(dep);
+        combine.merge( getPath(config.distribute) );
+    }
+}
