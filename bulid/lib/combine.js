@@ -1,32 +1,71 @@
 var path = require('path'),
     fs = require('fs');
 
-var dependency;
+var //项目名
+    prefix,
+    //依赖关系
+    dep,
+    //项目路径
+    jsDir;
 
-exports.merge = function(uri) {
-    var stat = fs.statSync(uri);
-
-    if( stat.isDirectory() ) {
-        fs.readDirSync(uri)
-            .foreach(function(file) {
-                exports.combine( path.join(uri + file) );
-            });
-    } else if( stat.isFile() ) {
-        var deps = dependency.getImportScripts(uri),
-            content = [];
-
-        //TODO  生成一个依赖树
-
-        for(var i = deps.length - 1; i >= 0; i--) {
-            var depPath = path.join(config.root, deps[i]),
-                temp = fs.readFileSync(depPath);
-            content.unshift(temp);
-        }
-
-        fs.writeFileSync( uri, content.join('\n') );
+var sort = function(src) {
+    if(!dep) {
+        console.log('Please call combine.init method first!');
+        return;
     }
+
+    var scripts = [],
+        visited = {},
+        visit = function(node) {
+            if(node in visited) {
+                return;
+            }
+            visited[node] = true;
+            
+            var requires = dep.getRequiresByPath(node);
+
+            for(var require in requires) {
+                visit( dep.getPathByName(require) );
+            }
+            
+            scripts.push(node);
+        };
+
+    visit(src);
+
+    return scripts;
 };
 
-exports.init = function(dep) {
-    dependency = dep;
+var deleteRequire = function(code) {
+    var reg = prefix + '\\.require\\([\'\"](.+)[\'\"]\\);';
+    reg = new RegExp(reg, 'g');
+    return code.replace(reg, '');
 };
+
+exports.init = function(dependency, config) {
+    dep = dependency;
+    jsDir = config.getJsDir();
+    prefix = config.getProjectName();
+};
+
+exports.combineCode = function(src) {
+    if(!src) {
+        console.log('Please input a file');
+        return;
+    }
+
+    src = path.relative(jsDir, src).replace(/\\/g, '/');
+    var scripts = sort(src), code = [];
+    
+    for(var i = 0, l = scripts.length; i < l; i++) {
+        src = path.join(jsDir, scripts[i]);
+        var content = fs.readFileSync(src).toString();
+        code.push( deleteRequire(content) );
+    }
+
+    return code.join('\n\n');
+};
+
+exports.combineFile = function() {};
+
+exports.combine = function() {};

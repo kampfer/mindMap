@@ -1,6 +1,8 @@
 {
-    "nameSpace" : "kampfer",
-    "source" : "client/js/",
-    "distribute" : "client/js/mindmap.js",
-    "export" : "client/js/mindMap.min.js"
+    "name" : "kampfer",
+    "jsDir" : "client/js/",
+    "combine" : {
+        "source" : "",
+        "export" : ""
+    }
 }
