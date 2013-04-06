@@ -37,7 +37,7 @@ var sort = function(src) {
 };
 
 var deleteRequire = function(code) {
-    var reg = prefix + '\\.require\\([\'\"](.+)[\'\"]\\);';
+    var reg = prefix + '\\.require\\([\'\"]([-_\\.a-zA-Z0-9]+)[\'\"]\\);[\n\r]*';
     reg = new RegExp(reg, 'g');
     return code.replace(reg, '');
 };
@@ -66,6 +66,10 @@ exports.combineCode = function(src) {
     return code.join('\n\n');
 };
 
-exports.combineFile = function() {};
+exports.combineFile = function(src, output) {
+    var content = exports.combineCode(src);
+    fs.writeFileSync(output, content);
+    console.log('success! -> Combined File : ' + src);
+};
 
 exports.combine = function() {};

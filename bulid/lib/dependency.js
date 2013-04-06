@@ -65,7 +65,7 @@ function scanFile(uri) {
         return;
     }
 
-    var reg = prefix + '\\.(require|provide)\\([\'\"](.+)[\'\"]\\)',
+    var reg = prefix + '\\.(require|provide)\\([\'\"]([-_\\.a-zA-Z0-9]+)[\'\"]\\);[\n\r]*',
         provides = [],
         requires = [],
         content = fs.readFileSync(uri),
