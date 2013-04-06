@@ -61,7 +61,7 @@ function addDepsToObj(src, provides, requires) {
 }
 
 function scanFile(uri) {
-    if(uri === depsPath) {
+    if( path.basename(uri) === 'deps.js') {
         return;
     }
 
@@ -72,7 +72,7 @@ function scanFile(uri) {
         match;
 
     reg = new RegExp(reg, 'g');
-    uri = path.relative(jsDir, uri).replace(path.sep, '/');
+    uri = path.relative(jsDir, uri).replace(/\\/g, '/');
 
     do {
         match = reg.exec(content);
